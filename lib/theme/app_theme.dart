@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 /// 应用主题配置
 class AppTheme {
   /// 主色调
-  static const Color primaryColor = Colors.deepPurple;
+  static const Color primaryColor = Colors.indigoAccent;
 
   /// 次要色调
-  static const Color secondaryColor = Colors.amber;
+  static const Color secondaryColor = Colors.indigo;
 
   /// 背景色
   static const Color backgroundColor = Colors.white;
@@ -18,7 +18,7 @@ class AppTheme {
   static const Color secondaryTextColor = Colors.black54;
 
   /// 边框颜色
-  static const Color borderColor = Colors.deepPurple;
+  static const Color borderColor = Colors.indigo;
 
   /// 获取主题数据
   static ThemeData get themeData {

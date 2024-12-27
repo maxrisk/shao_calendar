@@ -89,8 +89,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
           selectedBuilder: (context, day, focusedDay) {
             return Container(
               margin: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: Colors.deepPurple,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor,
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               child: Padding(
@@ -115,8 +115,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
           todayBuilder: (context, day, focusedDay) {
             return Container(
               margin: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: Colors.deepPurpleAccent,
+              decoration: BoxDecoration(
+                color: AppTheme.secondaryColor,
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               child: Padding(
