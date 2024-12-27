@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'widgets/lunar_calendar.dart';
 import 'widgets/bottom_nav_bar.dart';
+import 'pages/pages.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Calendar Demo',
+      title: '邵氏先天历',
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -43,8 +43,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
-  DateTime? _selectedDay;
-  DateTime _focusedDay = DateTime.now();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -59,28 +57,14 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: false,
       ),
-      body: _selectedIndex == 0
-          ? SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  LunarCalendar(
-                    onDaySelected: (selectedDay, focusedDay) {
-                      setState(() {
-                        _selectedDay = selectedDay;
-                        _focusedDay = focusedDay;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            )
-          : Center(
-              child: Text(
-                _selectedIndex == 1 ? '个人运势' : '个人中心',
-                style: const TextStyle(fontSize: 24),
-              ),
-            ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: const [
+          CalendarPage(),
+          FortunePage(),
+          ProfilePage(),
+        ],
+      ),
       bottomNavigationBar: BottomNavBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
