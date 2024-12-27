@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 /// 应用底部导航栏
 class BottomNavBar extends StatelessWidget {
@@ -33,7 +34,8 @@ class BottomNavBar extends StatelessWidget {
         ),
       ],
       currentIndex: currentIndex,
-      selectedItemColor: Colors.amber[800],
+      selectedItemColor: AppTheme.primaryColor,
+      unselectedItemColor: AppTheme.primaryTextColor,
       onTap: onTap,
     );
   }

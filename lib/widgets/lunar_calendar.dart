@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:lunar/lunar.dart';
+import '../theme/app_theme.dart';
 
 class LunarCalendar extends StatefulWidget {
   const LunarCalendar({
@@ -28,7 +29,7 @@ class _LunarCalendarState extends State<LunarCalendar> {
     return Container(
       margin: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.deepPurple),
+        border: Border.all(color: AppTheme.borderColor),
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: TableCalendar(
@@ -57,11 +58,11 @@ class _LunarCalendarState extends State<LunarCalendar> {
         },
         calendarStyle: const CalendarStyle(
           todayDecoration: BoxDecoration(
-            color: Colors.deepPurpleAccent,
+            color: AppTheme.secondaryColor,
             borderRadius: BorderRadius.all(Radius.circular(8)),
           ),
           selectedDecoration: BoxDecoration(
-            color: Colors.deepPurple,
+            color: AppTheme.primaryColor,
             borderRadius: BorderRadius.all(Radius.circular(8)),
           ),
         ),

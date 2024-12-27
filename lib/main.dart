@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'pages/pages.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '邵氏先天历',
+      theme: AppTheme.themeData,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -23,11 +25,7 @@ class MyApp extends StatelessWidget {
         Locale('zh', 'CN'),
       ],
       locale: const Locale('zh', 'CN'),
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: '邵氏先天历'),
     );
   }
 }
