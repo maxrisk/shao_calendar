@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'widgets/lunar_calendar.dart';
+import 'widgets/bottom_nav_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -80,23 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: const TextStyle(fontSize: 24),
               ),
             ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: '先天历',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assessment),
-            label: '个人运势',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '个人中心',
-          ),
-        ],
+      bottomNavigationBar: BottomNavBar(
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
     );
