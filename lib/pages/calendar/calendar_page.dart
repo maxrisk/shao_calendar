@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../widgets/lunar_calendar.dart';
 import '../../widgets/hexagram_display.dart';
 import '../../widgets/hexagram_detail.dart';
-import '../../theme/app_theme.dart';
 
 /// 先天历页面
 class CalendarPage extends StatefulWidget {
@@ -30,6 +29,7 @@ class _CalendarPageState extends State<CalendarPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Text(_selectedDay?.toString() ?? ''),
                 LunarCalendar(
                   onDaySelected: (selectedDay, focusedDay) {
                     setState(() {

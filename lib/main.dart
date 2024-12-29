@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'pages/pages.dart';
+import 'pages/scanner/qr_scanner_page.dart';
 import 'theme/app_theme.dart';
 
 void main() {
@@ -48,12 +49,35 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> _onScanPressed() async {
+    final result = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const QRScannerPage(),
+      ),
+    );
+
+    if (!mounted) return; // 确保在使用 context 前检查 mounted
+
+    if (result != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('扫描结果: $result')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         centerTitle: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.qr_code_scanner),
+            onPressed: _onScanPressed,
+          ),
+        ],
       ),
       body: IndexedStack(
         index: _selectedIndex,
