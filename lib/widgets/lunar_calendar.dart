@@ -33,6 +33,7 @@ class _LunarCalendarState extends State<LunarCalendar> {
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: TableCalendar(
+        availableGestures: AvailableGestures.horizontalSwipe,
         firstDay: DateTime.utc(2020, 1, 1),
         lastDay: DateTime.utc(2030, 12, 31),
         focusedDay: _focusedDay,
