@@ -27,9 +27,7 @@ class _CalendarPageState extends State<CalendarPage> {
               minHeight: constraints.maxHeight,
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(_selectedDay?.toString() ?? ''),
                 LunarCalendar(
                   onDaySelected: (selectedDay, focusedDay) {
                     setState(() {

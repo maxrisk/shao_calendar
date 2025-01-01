@@ -17,6 +17,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '邵氏先天历',
       theme: AppTheme.themeData,
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -43,6 +45,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
+  // 获取状态栏和AppBar的总高度
+  double get _topPadding =>
+      MediaQuery.of(context).padding.top + AppBar().preferredSize.height;
+
+  static const bgUrl = 'assets/images/navigation_bar_bg.jpg';
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -68,9 +76,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // 获取屏幕尺寸
+    final size = MediaQuery.of(context).size;
+    // 计算图片展示高度，保持原图比例
+    final imageHeight = size.width * 580 / 750; // 假设原图是 16:9 的比例
+
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: Text(widget.title),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(bgUrl),
+              fit: BoxFit.cover,
+              alignment: Alignment.topCenter,
+            ),
+          ),
+        ),
         centerTitle: false,
         actions: [
           IconButton(
@@ -79,12 +102,47 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: const [
-          CalendarPage(),
-          FortunePage(),
-          ProfilePage(),
+      body: Stack(
+        children: [
+          Positioned(
+            top: -_topPadding,
+            left: 0,
+            right: 0,
+            height: imageHeight,
+            child: ShaderMask(
+              shaderCallback: (Rect bounds) {
+                return LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppTheme.primaryColor,
+                    AppTheme.primaryColor,
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.7, 1.0],
+                ).createShader(bounds);
+              },
+              blendMode: BlendMode.dstIn,
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(bgUrl),
+                    fit: BoxFit.fitWidth, // 修改为 fitWidth 确保横向填充
+                    alignment: Alignment.topCenter,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SafeArea(
+              child: IndexedStack(
+            index: _selectedIndex,
+            children: const [
+              CalendarPage(),
+              FortunePage(),
+              ProfilePage(),
+            ],
+          )),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
