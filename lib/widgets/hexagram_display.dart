@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'glowing_hexagram.dart';
 
 /// 卦象展示组件
 class HexagramDisplay extends StatelessWidget {
@@ -24,7 +25,7 @@ class HexagramDisplay extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
         borderRadius: BorderRadius.circular(12.0),
-        image: DecorationImage(
+        image: const DecorationImage(
           image: AssetImage('assets/images/hexagram_bg.png'),
           fit: BoxFit.cover,
         ),
@@ -52,24 +53,9 @@ class HexagramDisplay extends StatelessWidget {
             ],
           ),
           // 中间卦象
-          Container(
-            width: calcWidth(context, 80),
-            height: calcWidth(context, 80),
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/word_bg.png'),
-                fit: BoxFit.contain,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                '坤',
-                style: TextStyle(
-                  fontSize: calcWidth(context, 30),
-                  color: Colors.white,
-                ),
-              ),
-            ),
+          GlowingHexagram(
+            text: '坤',
+            size: calcWidth(context, 80),
           ),
           // 底部描述
           const Text(
