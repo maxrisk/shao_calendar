@@ -67,7 +67,10 @@ flutter:
     - assets/images/navigation_bar_bg.jpg
     - assets/images/hexagram_bg.png
     - assets/images/word_bg.png
+    - assets/images/word_bg2.png
     - assets/images/signet.png
+    - assets/images/yao_bg.png
+    - assets/images/label_bg.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

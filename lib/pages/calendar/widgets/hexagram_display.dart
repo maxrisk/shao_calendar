@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'glowing_hexagram.dart';
+import '../../../widgets/glowing_hexagram.dart';
 
 /// 卦象展示组件
 class HexagramDisplay extends StatelessWidget {

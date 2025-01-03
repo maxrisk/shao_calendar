@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
 
+/// 卦象背景类型
+enum HexagramBgType {
+  /// 默认背景
+  normal,
+
+  /// 紫色背景
+  purple,
+}
+
 /// 发光卦象组件
 class GlowingHexagram extends StatefulWidget {
   /// 创建发光卦象组件
@@ -8,6 +17,7 @@ class GlowingHexagram extends StatefulWidget {
     required this.text,
     this.size = 80,
     this.enableAnimation = true,
+    this.bgType = HexagramBgType.normal,
   });
 
   /// 卦象文字
@@ -18,6 +28,9 @@ class GlowingHexagram extends StatefulWidget {
 
   /// 是否启用动画
   final bool enableAnimation;
+
+  /// 背景类型
+  final HexagramBgType bgType;
 
   @override
   State<GlowingHexagram> createState() => _GlowingHexagramState();
@@ -46,7 +59,7 @@ class _GlowingHexagramState extends State<GlowingHexagram>
     if (widget.enableAnimation) {
       _controller.repeat(reverse: true);
     } else {
-      _controller.value = 0.8; // 设置一个固定的中间值
+      _controller.value = 0.8;
     }
   }
 
@@ -124,9 +137,13 @@ class _GlowingHexagramState extends State<GlowingHexagram>
         Container(
           width: widget.size,
           height: widget.size,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/word_bg.png'),
+              image: AssetImage(
+                widget.bgType == HexagramBgType.normal
+                    ? 'assets/images/word_bg.png'
+                    : 'assets/images/word_bg2.png',
+              ),
               fit: BoxFit.contain,
             ),
           ),

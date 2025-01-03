@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'widgets/hexagram_detail.dart';
+import 'widgets/hexagram_display.dart';
 import '../../widgets/lunar_calendar.dart';
-import '../../widgets/hexagram_display.dart';
-import '../../widgets/hexagram_detail.dart';
 
 /// 先天历页面
 class CalendarPage extends StatefulWidget {

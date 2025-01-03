@@ -21,7 +21,7 @@ class BottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today),
+          icon: Icon(Icons.calendar_month_outlined),
           label: '先天历',
         ),
         BottomNavigationBarItem(
@@ -35,7 +35,7 @@ class BottomNavBar extends StatelessWidget {
       ],
       currentIndex: currentIndex,
       selectedItemColor: AppTheme.primaryColor,
-      unselectedItemColor: AppTheme.primaryTextColor,
+      unselectedItemColor: Colors.grey,
       onTap: onTap,
     );
   }
