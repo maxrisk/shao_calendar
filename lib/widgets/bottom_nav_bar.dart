@@ -22,14 +22,17 @@ class BottomNavBar extends StatelessWidget {
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.calendar_month_outlined),
+          activeIcon: Icon(Icons.calendar_month),
           label: '先天历',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.assessment),
+          icon: Icon(Icons.auto_awesome_outlined),
+          activeIcon: Icon(Icons.auto_awesome),
           label: '个人运势',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
+          icon: Icon(Icons.person_outline),
+          activeIcon: Icon(Icons.person),
           label: '个人中心',
         ),
       ],
