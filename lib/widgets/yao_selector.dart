@@ -44,7 +44,7 @@ class YaoSelector extends StatelessWidget {
                         width: itemWidth + 8,
                         height: itemWidth + 8,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor.withAlpha(25),
+                          color: Theme.of(context).colorScheme.primary,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -57,7 +57,7 @@ class YaoSelector extends StatelessWidget {
                           fit: BoxFit.contain,
                         ),
                         color: isSelected
-                            ? Theme.of(context).primaryColor
+                            ? Theme.of(context).colorScheme.primary
                             : Colors.transparent,
                         shape: BoxShape.circle,
                       ),
@@ -68,7 +68,7 @@ class YaoSelector extends StatelessWidget {
                             fontSize: 14,
                             color: isSelected
                                 ? Colors.white
-                                : Theme.of(context).primaryColor,
+                                : Theme.of(context).colorScheme.primary,
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.normal,

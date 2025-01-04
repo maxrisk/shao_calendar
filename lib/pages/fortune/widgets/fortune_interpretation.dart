@@ -61,6 +61,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
           ),
           const SizedBox(height: 5),
           const Label(text: '应对策略'),
+          const SizedBox(height: 5),
           Row(
             children: const [
               Expanded(

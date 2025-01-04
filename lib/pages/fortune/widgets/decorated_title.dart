@@ -23,8 +23,8 @@ class DecoratedTitle extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).primaryColor.withAlpha(0),
-                    Theme.of(context).primaryColor,
+                    Theme.of(context).colorScheme.primary.withAlpha(0),
+                    Theme.of(context).colorScheme.primary,
                   ],
                 ),
               ),
@@ -53,8 +53,8 @@ class DecoratedTitle extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).primaryColor,
-                    Colors.grey.withAlpha(0),
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.primary.withAlpha(0),
                   ],
                 ),
               ),

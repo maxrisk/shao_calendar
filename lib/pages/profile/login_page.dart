@@ -54,19 +54,24 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarBrightness: Brightness.light, // iOS
-        statusBarIconBrightness: Brightness.dark, // Android
+        statusBarBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.dark
+            : Brightness.light,
+        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
       ),
       child: GestureDetector(
         onTap: () => _focusNode.unfocus(),
         child: Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: colorScheme.surface,
           body: Column(
             children: [
-              // 主要内容区域
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(32.0),
@@ -74,22 +79,24 @@ class _LoginPageState extends State<LoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 60),
-                      // 标题
-                      const Text(
+                      Text(
                         '让我知道你的手机号码',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 32),
-                      // 手机号输入框
                       TextField(
                         controller: _phoneController,
                         focusNode: _focusNode,
                         keyboardType: TextInputType.phone,
                         onChanged: _validatePhone,
-                        style: const TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: colorScheme.onSurface,
+                        ),
                         decoration: InputDecoration(
                           hintText: '请输入手机号',
                           filled: true,
@@ -105,13 +112,12 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 64),
-                      // 其他登录方式
-                      const Center(
+                      Center(
                         child: Text(
                           '其他登录方式',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey,
+                            color: colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -148,21 +154,29 @@ class _LoginPageState extends State<LoginPage> {
                             child: Text.rich(
                               TextSpan(
                                 text: '我已阅读并同意',
-                                style: const TextStyle(fontSize: 14),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
                                 children: [
                                   TextSpan(
                                     text: '《用户协议》',
                                     style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
+                                      color: colorScheme.primary,
                                     ),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = _handleAgreement,
                                   ),
-                                  const TextSpan(text: '和'),
+                                  TextSpan(
+                                    text: '和',
+                                    style: TextStyle(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
                                   TextSpan(
                                     text: '《隐私政策》',
                                     style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
+                                      color: colorScheme.primary,
                                     ),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = _handlePrivacy,
@@ -177,13 +191,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              // 底部按钮区域
               Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
+                  color: colorScheme.surface,
                   border: Border(
                     top: BorderSide(
-                      color: Colors.grey.withAlpha(100),
+                      color: colorScheme.outlineVariant,
                     ),
                   ),
                 ),

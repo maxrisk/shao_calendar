@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '邵氏先天历',
       theme: AppTheme.themeData,
-      darkTheme: ThemeData.dark(),
+      darkTheme: AppTheme.darkThemeData,
       themeMode: ThemeMode.system,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

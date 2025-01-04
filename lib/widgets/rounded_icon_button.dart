@@ -17,12 +17,14 @@ class RoundedIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Colors.grey.withAlpha(100),
+          color: colorScheme.outlineVariant,
         ),
       ),
       child: IconButton(
@@ -34,7 +36,7 @@ class RoundedIconButton extends StatelessWidget {
           minHeight: 48,
         ),
         style: ButtonStyle(
-          shape: MaterialStateProperty.all(
+          shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),

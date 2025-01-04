@@ -8,6 +8,8 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -17,13 +19,17 @@ class ProfilePage extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).cardColor,
               shape: BoxShape.circle,
+              border: Border.all(
+                color: colorScheme.primary.withAlpha(50),
+                width: 2,
+              ),
             ),
             child: Icon(
               Icons.person,
               size: 40,
-              color: Theme.of(context).cardColor,
+              color: colorScheme.primary,
             ),
           ),
           const SizedBox(height: 16),
@@ -32,7 +38,7 @@ class ProfilePage extends StatelessWidget {
             '登录后查看更多内容',
             style: TextStyle(
               fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 24),
@@ -51,6 +57,7 @@ class ProfilePage extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
+              foregroundColor: colorScheme.primary,
             ),
             child: const Text(
               '立即登录',

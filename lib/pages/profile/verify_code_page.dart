@@ -83,16 +83,22 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarBrightness: Brightness.light,
-        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.dark
+            : Brightness.light,
+        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
       ),
       child: GestureDetector(
         onTap: () => _focusNode.unfocus(),
         child: Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: colorScheme.surface,
           body: Stack(
             children: [
               Column(
@@ -104,29 +110,28 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 60),
-                          // 标题
                           Text.rich(
                             TextSpan(
                               text: '输入验证码\n',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
+                                color: colorScheme.onBackground,
                                 height: 1.5,
                               ),
                               children: [
                                 TextSpan(
                                   text: '我已发送到 $_formattedPhone',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.normal,
-                                    color: Colors.grey,
+                                    color: colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           const SizedBox(height: 32),
-                          // 验证码显示框
                           GestureDetector(
                             onTap: () => _focusNode.requestFocus(),
                             child: Container(
@@ -146,14 +151,15 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                                       color: Theme.of(context).cardColor,
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: Colors.grey.withAlpha(100),
+                                        color: colorScheme.outlineVariant,
                                       ),
                                     ),
                                     child: Text(
                                       char,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
+                                        color: colorScheme.onSurface,
                                       ),
                                     ),
                                   );
@@ -165,13 +171,12 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                       ),
                     ),
                   ),
-                  // 底部按钮区域
                   Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
+                      color: colorScheme.surface,
                       border: Border(
                         top: BorderSide(
-                          color: Colors.grey.withAlpha(100),
+                          color: colorScheme.outlineVariant,
                         ),
                       ),
                     ),
@@ -184,13 +189,14 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                         ),
                         child: Row(
                           children: [
-                            // 关闭按钮
                             RoundedIconButton(
-                              icon: const Icon(Icons.close),
+                              icon: Icon(
+                                Icons.close,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
                               onPressed: () => Navigator.of(context).pop(),
                             ),
                             const Spacer(),
-                            // 重新发送按钮
                             _countdown > 0
                                 ? TextButton(
                                     onPressed: null,
@@ -201,39 +207,38 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8),
                                         side: BorderSide(
-                                          color: Colors.grey.withAlpha(100),
+                                          color: colorScheme.outlineVariant,
                                         ),
                                       ),
                                     ),
                                     child: Text(
                                       '重新发送($_countdown)',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.grey,
+                                        color: colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                   )
                                 : MaterialButton(
                                     onPressed: _handleResend,
-                                    color: Theme.of(context).primaryColor,
+                                    color: colorScheme.primary,
                                     minWidth: 120,
                                     height: 44,
                                     elevation: 0,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: const Text(
+                                    child: Text(
                                       '重新发送',
                                       style: TextStyle(
                                         fontSize: 15,
-                                        color: Colors.white,
+                                        color: colorScheme.onPrimary,
                                       ),
                                     ),
                                   ),
                             const Spacer(),
-                            // 确认按钮
                             RoundedIconButton(
-                              icon: const Icon(Icons.check),
+                              icon: Icon(Icons.check),
                               onPressed: _isValid ? _handleSubmit : null,
                             ),
                           ],
@@ -254,8 +259,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
                   keyboardType: TextInputType.number,
                   maxLength: 4,
                   decoration: const InputDecoration(
-                    fillColor: Colors.amber,
-                    filled: true,
+                    counterText: '',
                   ),
                   onChanged: _onChanged,
                   inputFormatters: [
