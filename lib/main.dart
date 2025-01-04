@@ -8,6 +8,14 @@ import 'theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // 设置状态栏样式
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   const SystemUiOverlayStyle(
+  //     statusBarColor: Colors.transparent,
+  //     statusBarBrightness: Brightness.light, // iOS
+  //     statusBarIconBrightness: Brightness.dark, // Android
+  //   ),
+  // );
   // 设置首选方向为竖屏
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
