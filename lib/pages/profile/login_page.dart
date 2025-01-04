@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import '../../../widgets/rounded_icon_button.dart';
+import 'verify_code_page.dart';
 
 /// 登录页面
 class LoginPage extends StatefulWidget {
@@ -33,7 +34,13 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleNext() {
     if (_isPhoneValid && _isAgreed) {
-      // TODO: 跳转到验证码页面
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => VerifyCodePage(
+            phone: _phoneController.text,
+          ),
+        ),
+      );
     }
   }
 

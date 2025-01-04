@@ -17,13 +17,13 @@ class ProfilePage extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
+              color: Theme.of(context).primaryColor,
               shape: BoxShape.circle,
             ),
             child: Icon(
-              Icons.person_outline,
+              Icons.person,
               size: 40,
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).cardColor,
             ),
           ),
           const SizedBox(height: 16),

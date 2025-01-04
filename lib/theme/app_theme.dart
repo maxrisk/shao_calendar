@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// 应用主题配置
 class AppTheme {
   /// 主色调
-  static const Color primaryColor = Color(0xFF8D724B);
+  static const Color primaryColor = Color(0xFF936C42);
 
   /// 次要色调
   static const Color secondaryColor = Colors.indigo;
