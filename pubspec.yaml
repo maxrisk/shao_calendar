@@ -68,6 +68,8 @@ flutter:
     - assets/images/hexagram_bg.png
     - assets/images/word_bg.png
     - assets/images/word_bg2.png
+    - assets/images/word_bg3.png
+    - assets/images/word_bg4.png
     - assets/images/signet.png
     - assets/images/yao_bg.png
     - assets/images/label_bg.png

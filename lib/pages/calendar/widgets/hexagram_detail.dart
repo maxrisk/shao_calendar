@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'yao_selector.dart';
-import 'info_card.dart';
-import 'label.dart';
+import '../../../widgets/yao_selector.dart';
+import '../../../widgets/info_card.dart';
+import '../../../widgets/label.dart';
 import '../../../widgets/glowing_hexagram.dart';
 
 /// 卦象详情组件

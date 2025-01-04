@@ -34,6 +34,7 @@ class InfoCard extends StatelessWidget {
             centered ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         children: [
           RichText(
+            textAlign: centered ? TextAlign.center : TextAlign.left,
             text: TextSpan(
               children: [
                 if (title != null)
@@ -56,7 +57,7 @@ class InfoCard extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

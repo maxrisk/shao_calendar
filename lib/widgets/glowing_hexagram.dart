@@ -7,6 +7,12 @@ enum HexagramBgType {
 
   /// 紫色背景
   purple,
+
+  /// 橙色背景
+  orange,
+
+  /// 绿色背景
+  green,
 }
 
 /// 发光卦象组件
@@ -82,6 +88,19 @@ class _GlowingHexagramState extends State<GlowingHexagram>
     }
   }
 
+  String _getBackgroundImage() {
+    switch (widget.bgType) {
+      case HexagramBgType.normal:
+        return 'assets/images/word_bg.png';
+      case HexagramBgType.purple:
+        return 'assets/images/word_bg2.png';
+      case HexagramBgType.orange:
+        return 'assets/images/word_bg3.png';
+      case HexagramBgType.green:
+        return 'assets/images/word_bg4.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -139,11 +158,7 @@ class _GlowingHexagramState extends State<GlowingHexagram>
           height: widget.size,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(
-                widget.bgType == HexagramBgType.normal
-                    ? 'assets/images/word_bg.png'
-                    : 'assets/images/word_bg2.png',
-              ),
+              image: AssetImage(_getBackgroundImage()),
               fit: BoxFit.contain,
             ),
           ),
