@@ -7,6 +7,7 @@ import '../../../widgets/glowing_hexagram.dart';
 import 'widgets/settings_cell.dart';
 import 'widgets/settings_group.dart';
 import '../profile/invite_page.dart';
+import '../profile/account_page.dart';
 
 /// 个人中心页面
 class ProfilePage extends StatefulWidget {
@@ -126,7 +127,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         icon: Icons.account_circle_outlined,
                         title: '账户中心',
                         onTap: () {
-                          // TODO: 处理点击
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AccountPage(),
+                            ),
+                          );
                         },
                       ),
                       SettingsCell(
