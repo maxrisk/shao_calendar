@@ -141,10 +141,10 @@ class InterpretationCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: colorScheme.surfaceVariant.withOpacity(0.3),
+                      color: colorScheme.surfaceContainerHighest.withAlpha(76),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: colorScheme.outlineVariant.withOpacity(0.3),
+                        color: colorScheme.outlineVariant.withAlpha(76),
                       ),
                     ),
                     child: GlowingHexagram(
@@ -181,7 +181,7 @@ class InterpretationCard extends StatelessWidget {
                   color: Theme.of(context).cardColor,
                   border: Border(
                     top: BorderSide(
-                      color: colorScheme.outlineVariant.withOpacity(0.5),
+                      color: colorScheme.outlineVariant.withAlpha(120),
                     ),
                   ),
                 ),
@@ -193,10 +193,10 @@ class InterpretationCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                       side: BorderSide(
-                        color: colorScheme.primary.withOpacity(0.12),
+                        color: colorScheme.primary.withAlpha(30),
                       ),
                     ),
-                    backgroundColor: colorScheme.primary.withOpacity(0.08),
+                    backgroundColor: colorScheme.primary.withAlpha(20),
                     foregroundColor: colorScheme.primary,
                   ),
                   child: const Text(
