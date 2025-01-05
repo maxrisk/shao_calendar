@@ -20,6 +20,15 @@ class _LoginPageState extends State<LoginPage> {
   bool _isPhoneValid = false;
 
   @override
+  void initState() {
+    super.initState();
+    // 延迟聚焦，确保页面已完全构建
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
+
+  @override
   void dispose() {
     _phoneController.dispose();
     _focusNode.dispose();

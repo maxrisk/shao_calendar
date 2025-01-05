@@ -84,78 +84,99 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // 获取屏幕尺寸
     final size = MediaQuery.of(context).size;
-    // 计算图片展示高度，保持原图比例
-    final imageHeight = size.width * 580 / 750; // 假设原图是 16:9 的比例
+    final imageHeight = size.width * 580 / 750;
+    final bool showAppBar = _selectedIndex != 2;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(widget.title),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(bgUrl),
-              fit: BoxFit.cover,
-              alignment: Alignment.topCenter,
-            ),
-          ),
-        ),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.qr_code_scanner),
-            onPressed: _onScanPressed,
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Positioned(
-            top: -_topPadding,
-            left: 0,
-            right: 0,
-            height: imageHeight,
-            child: ShaderMask(
-              shaderCallback: (Rect bounds) {
-                return LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppTheme.primaryColor,
-                    AppTheme.primaryColor,
-                    Colors.transparent,
-                  ],
-                  stops: const [0.0, 0.7, 1.0],
-                ).createShader(bounds);
-              },
-              blendMode: BlendMode.dstIn,
-              child: Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(bgUrl),
-                    fit: BoxFit.fitWidth, // 修改为 fitWidth 确保横向填充
-                    alignment: Alignment.topCenter,
+    // 根据当前页面设置状态栏样式
+    final statusBarStyle = showAppBar
+        ? const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.light,
+          )
+        : SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+            statusBarIconBrightness:
+                isDark ? Brightness.light : Brightness.dark,
+          );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: statusBarStyle,
+      child: Scaffold(
+        appBar: showAppBar
+            ? AppBar(
+                elevation: 0,
+                title: Text(widget.title),
+                flexibleSpace: Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(bgUrl),
+                      fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
+                    ),
+                  ),
+                ),
+                centerTitle: false,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.qr_code_scanner),
+                    onPressed: _onScanPressed,
+                  ),
+                ],
+              )
+            : null,
+        body: Stack(
+          children: [
+            if (showAppBar)
+              Positioned(
+                top: -_topPadding,
+                left: 0,
+                right: 0,
+                height: imageHeight,
+                child: ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppTheme.primaryColor,
+                        AppTheme.primaryColor,
+                        Colors.transparent,
+                      ],
+                      stops: const [0.0, 0.7, 1.0],
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.dstIn,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(bgUrl),
+                        fit: BoxFit.fitWidth,
+                        alignment: Alignment.topCenter,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          SafeArea(
+            SafeArea(
               child: IndexedStack(
-            index: _selectedIndex,
-            children: const [
-              CalendarPage(),
-              FortunePage(),
-              ProfilePage(),
-            ],
-          )),
-        ],
-      ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+                index: _selectedIndex,
+                children: const [
+                  CalendarPage(),
+                  FortunePage(),
+                  ProfilePage(),
+                ],
+              ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: BottomNavBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
