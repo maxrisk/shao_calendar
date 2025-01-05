@@ -6,6 +6,7 @@ import 'widgets/interpretation_card.dart';
 import '../../../widgets/glowing_hexagram.dart';
 import 'widgets/settings_cell.dart';
 import 'widgets/settings_group.dart';
+import '../profile/invite_page.dart';
 
 /// 个人中心页面
 class ProfilePage extends StatefulWidget {
@@ -48,6 +49,15 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void _handleInvite() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const InvitePage(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -63,9 +73,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ? SingleChildScrollView(
               child: Column(
                 children: [
-                  const UserInfoCard(
+                  UserInfoCard(
                     birthTime: '1990年8月1日 12:00',
                     userId: '138****0000',
+                    onInviteTap: _handleInvite,
                   ),
                   InterpretationCard(
                     title: '邵氏解读：剥离剥夺，分化瓦解',
@@ -121,9 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       SettingsCell(
                         icon: Icons.share_outlined,
                         title: '推荐邀请',
-                        onTap: () {
-                          // TODO: 处理点击
-                        },
+                        onTap: _handleInvite,
                       ),
                       SettingsCell(
                         icon: Icons.headset_mic_outlined,

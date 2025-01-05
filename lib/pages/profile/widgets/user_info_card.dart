@@ -7,6 +7,7 @@ class UserInfoCard extends StatelessWidget {
     super.key,
     required this.birthTime,
     required this.userId,
+    this.onInviteTap,
   });
 
   /// 生时
@@ -14,6 +15,9 @@ class UserInfoCard extends StatelessWidget {
 
   /// 用户ID
   final String userId;
+
+  /// 邀请按钮点击回调
+  final VoidCallback? onInviteTap;
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +77,21 @@ class UserInfoCard extends StatelessWidget {
                 ],
               ),
             ),
-            Image.asset(
-              'assets/images/icon_qrcode.png',
-              width: 50,
-              height: 50,
+            // 二维码图片
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onInviteTap,
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Image.asset(
+                    'assets/images/icon_qrcode.png',
+                    width: 50,
+                    height: 50,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
