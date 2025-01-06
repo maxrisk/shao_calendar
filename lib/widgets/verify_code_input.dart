@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'rounded_icon_button.dart';
+import 'pin_input.dart';
 
 /// 验证码输入组件
 class VerifyCodeInput extends StatefulWidget {
@@ -11,12 +12,14 @@ class VerifyCodeInput extends StatefulWidget {
     required this.title,
     required this.subtitle,
     this.customContent,
-    this.showVerifyCodeInput = true,
     this.showVerifyCodeButton = true,
     this.submitEnabled = false,
     this.onSubmit,
     this.onCancel,
     this.autoStart = false,
+    this.codeLength = 4,
+    this.obscureText = false,
+    this.autoFocus = false,
   });
 
   /// 标题
@@ -27,9 +30,6 @@ class VerifyCodeInput extends StatefulWidget {
 
   /// 自定义内容
   final Widget? customContent;
-
-  /// 是否显示验证码输入框
-  final bool showVerifyCodeInput;
 
   /// 是否显示获取验证码按钮
   final bool showVerifyCodeButton;
@@ -46,23 +46,28 @@ class VerifyCodeInput extends StatefulWidget {
   /// 是否自动开始倒计时
   final bool autoStart;
 
+  /// 是否自动获取焦点
+  final bool autoFocus;
+
+  /// 是否隐藏输入框内容
+  final bool obscureText;
+
+  /// 验证码长度
+  final int codeLength;
+
   @override
   State<VerifyCodeInput> createState() => _VerifyCodeInputState();
 }
 
 class _VerifyCodeInputState extends State<VerifyCodeInput> {
-  final _focusNode = FocusNode();
-  final _controller = TextEditingController();
   bool _isValid = false;
+  String _code = '';
   int _countdown = 0;
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // _focusNode.requestFocus();
-    });
     if (widget.autoStart) {
       _startCountdown();
     }
@@ -70,8 +75,6 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
-    _controller.dispose();
     _timer?.cancel();
     super.dispose();
   }
@@ -98,17 +101,18 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
   }
 
   void _handleSubmit() {
-    if (widget.showVerifyCodeInput) {
+    if (widget.customContent == null) {
       if (_isValid) {
-        widget.onSubmit?.call(_controller.text);
+        widget.onSubmit?.call(_code);
       }
     } else {
-      widget.onSubmit?.call(''); // 当不显示验证码输入框时，直接调用回调
+      widget.onSubmit?.call(''); // 当有自定义内容时，直接调用回调
     }
   }
 
   void _onChanged(String value) {
     setState(() {
+      _code = value;
       _isValid = value.length == 4;
     });
   }
@@ -116,6 +120,7 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isVerifyCodeInput = widget.customContent == null;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -128,7 +133,7 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
             : Brightness.dark,
       ),
       child: GestureDetector(
-        onTap: () => _focusNode.unfocus(),
+        onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
           backgroundColor: colorScheme.surface,
           body: Stack(
@@ -164,44 +169,13 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                             ),
                           ),
                           const SizedBox(height: 32),
-                          if (widget.customContent != null)
-                            widget.customContent!
-                          else if (widget.showVerifyCodeInput)
-                            GestureDetector(
-                              onTap: () => _focusNode.requestFocus(),
-                              child: Container(
-                                margin: const EdgeInsets.only(top: 16),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: List.generate(4, (index) {
-                                    final text = _controller.text;
-                                    final char =
-                                        text.length > index ? text[index] : '';
-                                    return Container(
-                                      width: 64,
-                                      height: 64,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context).cardColor,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: colorScheme.outlineVariant,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        char,
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                          color: colorScheme.onSurface,
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
+                          widget.customContent ??
+                              PinInput(
+                                length: widget.codeLength,
+                                autofocus: widget.autoFocus,
+                                onChanged: _onChanged,
+                                obscureText: widget.obscureText,
                               ),
-                            ),
                         ],
                       ),
                     ),
@@ -233,34 +207,22 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                             ),
                             const Spacer(),
                             if (widget.showVerifyCodeButton &&
-                                widget.showVerifyCodeInput)
+                                isVerifyCodeInput)
                               _countdown > 0
                                   ? TextButton(
                                       onPressed: null,
-                                      style: TextButton.styleFrom(
-                                        minimumSize: const Size(120, 44),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          side: BorderSide(
-                                            color: colorScheme.outlineVariant,
-                                          ),
-                                        ),
-                                      ),
                                       child: Text(
-                                        '重新获取($_countdown秒)',
+                                        '你可以在 $_countdown 秒后重新获取验证码',
                                         style: TextStyle(
                                           fontSize: 14,
-                                          color: colorScheme.onSurfaceVariant,
+                                          color: colorScheme.primary,
                                         ),
                                       ),
                                     )
                                   : MaterialButton(
                                       onPressed: _handleResend,
                                       color: colorScheme.primary,
-                                      minWidth: 120,
+                                      minWidth: 180,
                                       height: 44,
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
@@ -278,14 +240,14 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                             RoundedIconButton(
                               icon: Icon(
                                 Icons.check,
-                                color: (widget.showVerifyCodeInput
+                                color: (isVerifyCodeInput
                                         ? _isValid
                                         : widget.submitEnabled)
                                     ? colorScheme.primary
                                     : colorScheme.onSurfaceVariant
                                         .withAlpha(120),
                               ),
-                              onPressed: (widget.showVerifyCodeInput
+                              onPressed: (isVerifyCodeInput
                                       ? _isValid
                                       : widget.submitEnabled)
                                   ? _handleSubmit
@@ -297,25 +259,6 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                     ),
                   ),
                 ],
-              ),
-              // 隐藏的输入框
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: -200,
-                child: TextField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  keyboardType: TextInputType.number,
-                  maxLength: 4,
-                  decoration: const InputDecoration(
-                    counterText: '',
-                  ),
-                  onChanged: _onChanged,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                ),
               ),
             ],
           ),

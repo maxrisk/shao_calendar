@@ -122,7 +122,6 @@ class _BindNewPhonePageState extends State<BindNewPhonePage> {
           onChanged: _onPhoneChanged,
         ),
       ),
-      showVerifyCodeInput: false,
       showVerifyCodeButton: false,
       onSubmit: (_) => _handleNext(),
       onCancel: () => Navigator.pop(context),
