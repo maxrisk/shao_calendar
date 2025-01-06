@@ -3,6 +3,7 @@ import 'widgets/statistic_card.dart';
 import 'widgets/commission_record_cell.dart';
 import '../../models/commission_order.dart';
 import 'commission_order_page.dart';
+import 'withdraw_page.dart';
 
 /// 提成明细页面
 class CommissionDetailPage extends StatelessWidget {
@@ -41,6 +42,16 @@ class CommissionDetailPage extends StatelessWidget {
                   child: StatisticCard(
                     value: '123.00',
                     label: '余额（元）',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WithdrawPage(
+                            balance: 123.00,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
