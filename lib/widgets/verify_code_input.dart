@@ -16,6 +16,7 @@ class VerifyCodeInput extends StatefulWidget {
     this.submitEnabled = false,
     this.onSubmit,
     this.onCancel,
+    this.autoStart = false,
   });
 
   /// 标题
@@ -42,6 +43,9 @@ class VerifyCodeInput extends StatefulWidget {
   /// 取消回调
   final VoidCallback? onCancel;
 
+  /// 是否自动开始倒计时
+  final bool autoStart;
+
   @override
   State<VerifyCodeInput> createState() => _VerifyCodeInputState();
 }
@@ -59,6 +63,9 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // _focusNode.requestFocus();
     });
+    if (widget.autoStart) {
+      _startCountdown();
+    }
   }
 
   @override

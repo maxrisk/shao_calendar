@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../widgets/dialogs/index.dart' as custom;
+import '../../widgets/form/form_field.dart';
+import '../../widgets/dialogs/bottom_sheet_item.dart';
 
 /// 银行卡信息
 class BankCard {
@@ -82,63 +85,6 @@ class _BankCardPageState extends State<BankCardPage> {
     }
   }
 
-  Widget _buildTextField({
-    required String label,
-    required TextEditingController controller,
-    TextInputType? keyboardType,
-    List<TextInputFormatter>? inputFormatters,
-    int? maxLength,
-    String? hintText,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 15,
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: colorScheme.outlineVariant.withAlpha(50),
-            ),
-          ),
-          child: TextField(
-            controller: controller,
-            style: const TextStyle(
-              fontSize: 15,
-              height: 1.2,
-            ),
-            decoration: InputDecoration(
-              hintText: hintText,
-              hintStyle: TextStyle(
-                color: colorScheme.onSurfaceVariant,
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 14,
-              ),
-              border: InputBorder.none,
-              counterText: '',
-            ),
-            maxLength: maxLength,
-            keyboardType: keyboardType,
-            inputFormatters: inputFormatters,
-            onChanged: (_) => _checkValid(),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -165,193 +111,71 @@ class _BankCardPageState extends State<BankCardPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildTextField(
+                    FormItem(
                       label: '姓名',
+                      hint: '请输入姓名',
+                      icon: Icons.person_outline_rounded,
                       controller: _nameController,
-                      hintText: '请输入姓名',
+                      onChanged: (_) => _checkValid(),
                     ),
                     const SizedBox(height: 16),
-                    _buildTextField(
+                    FormItem(
                       label: '身份证号',
+                      hint: '请输入身份证号',
+                      icon: Icons.credit_card_outlined,
                       controller: _idCardController,
-                      hintText: '请输入身份证号',
                       maxLength: 18,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9Xx]')),
                       ],
+                      onChanged: (_) => _checkValid(),
                     ),
                     const SizedBox(height: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '开户银行',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: colorScheme.onSurfaceVariant,
+                    FormItem(
+                      label: '开户银行',
+                      hint: '请选择开户银行',
+                      icon: Icons.account_balance_outlined,
+                      type: FormFieldType.select,
+                      value: _selectedBank,
+                      onTap: () {
+                        custom.BottomSheet.show(
+                          context: context,
+                          title: '选择开户银行',
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height * 0.5,
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: colorScheme.outlineVariant.withAlpha(50),
-                            ),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _banks.length,
+                            itemBuilder: (context, index) {
+                              final bank = _banks[index];
+                              return BottomSheetItem(
+                                title: bank,
+                                onTap: () {
+                                  setState(() {
+                                    _selectedBank = bank;
+                                  });
+                                  _checkValid();
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
                           ),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  backgroundColor: Theme.of(context).cardColor,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(12),
-                                    ),
-                                  ),
-                                  builder: (context) => Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 14,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: colorScheme.outlineVariant
-                                                  .withAlpha(50),
-                                            ),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              '选择开户银行',
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w500,
-                                                color: colorScheme.onSurface,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            IconButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              icon: Icon(
-                                                Icons.close_rounded,
-                                                size: 20,
-                                                color: colorScheme
-                                                    .onSurfaceVariant,
-                                              ),
-                                              style: IconButton.styleFrom(
-                                                padding:
-                                                    const EdgeInsets.all(8),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          maxHeight: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.5,
-                                        ),
-                                        child: ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: _banks.length,
-                                          itemBuilder: (context, index) {
-                                            final bank = _banks[index];
-                                            return Material(
-                                              color: Colors.transparent,
-                                              child: InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    _selectedBank = bank;
-                                                  });
-                                                  _checkValid();
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 14,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    border: Border(
-                                                      bottom: BorderSide(
-                                                        color: colorScheme
-                                                            .outlineVariant
-                                                            .withAlpha(50),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    bank,
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      color:
-                                                          colorScheme.onSurface,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              borderRadius: BorderRadius.circular(12),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      _selectedBank ?? '请选择开户银行',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: _selectedBank != null
-                                            ? colorScheme.onSurface
-                                            : colorScheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Icon(
-                                      Icons.chevron_right_rounded,
-                                      size: 20,
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
-                    _buildTextField(
+                    FormItem(
                       label: '银行卡号',
+                      hint: '请输入银行卡号',
+                      icon: Icons.credit_card_outlined,
                       controller: _cardNoController,
-                      hintText: '请输入银行卡号',
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
                       ],
+                      onChanged: (_) => _checkValid(),
                     ),
                   ],
                 ),

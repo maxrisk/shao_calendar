@@ -3,11 +3,11 @@ import '../profile/login_page.dart';
 import 'widgets/login_prompt.dart';
 import 'widgets/user_info_card.dart';
 import 'widgets/interpretation_card.dart';
-import '../../../widgets/glowing_hexagram.dart';
-import 'widgets/settings_cell.dart';
-import 'widgets/settings_group.dart';
-import '../profile/invite_page.dart';
-import '../profile/account_page.dart';
+import '../../widgets/glowing_hexagram.dart';
+import '../../widgets/list/list_cell.dart';
+import '../../widgets/list/list_group.dart';
+import 'invite_page.dart';
+import 'account_page.dart';
 
 /// 个人中心页面
 class ProfilePage extends StatefulWidget {
@@ -121,9 +121,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       // TODO: 处理按钮点击
                     },
                   ),
-                  SettingsGroup(
+                  ListGroup(
                     children: [
-                      SettingsCell(
+                      ListCell(
                         icon: Icons.account_circle_outlined,
                         title: '账户中心',
                         onTap: () {
@@ -135,19 +135,19 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                         },
                       ),
-                      SettingsCell(
+                      ListCell(
                         icon: Icons.share_outlined,
                         title: '推荐邀请',
                         onTap: _handleInvite,
                       ),
-                      SettingsCell(
+                      ListCell(
                         icon: Icons.headset_mic_outlined,
                         title: '在线客服',
                         onTap: () {
                           // TODO: 处理点击
                         },
                       ),
-                      SettingsCell(
+                      ListCell(
                         icon: Icons.info_outline,
                         title: '关于我们',
                         onTap: () {

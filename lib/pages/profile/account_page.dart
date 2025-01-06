@@ -3,6 +3,10 @@ import 'package:flutter/services.dart';
 import 'edit_nickname_page.dart';
 import '../../widgets/dialogs/index.dart';
 import 'change_phone_page.dart';
+import 'bank_card_page.dart';
+import '../../widgets/list/list_cell.dart';
+import '../../widgets/list/list_group.dart';
+import 'security_page.dart';
 
 /// 账户中心页面
 class AccountPage extends StatefulWidget {
@@ -82,65 +86,80 @@ class _AccountPageState extends State<AccountPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 基本信息
-                  _buildSection(
-                    context,
-                    '基本信息',
-                    [
-                      _buildInfoItem(
-                        context,
-                        'ID',
-                        '138****0000',
-                        trailing: IconButton(
-                          onPressed: () =>
-                              _copyToClipboard(context, '138****0000'),
-                          icon: Icon(
-                            Icons.copy_rounded,
-                            size: 16,
-                            color: colorScheme.primary,
-                          ),
-                          style: IconButton.styleFrom(
-                            padding: const EdgeInsets.all(8),
-                            minimumSize: const Size(36, 36),
-                            backgroundColor: colorScheme.primary.withAlpha(20),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                  ListGroup(
+                    title: '基本信息',
+                    children: [
+                      ListCell(
+                        title: 'ID',
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '138****0000',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: () =>
+                                  _copyToClipboard(context, '138****0000'),
+                              icon: Icon(
+                                Icons.copy_rounded,
+                                size: 16,
+                                color: colorScheme.primary,
+                              ),
+                              style: IconButton.styleFrom(
+                                padding: const EdgeInsets.all(8),
+                                minimumSize: const Size(36, 36),
+                                backgroundColor:
+                                    colorScheme.primary.withAlpha(20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
+                        showArrow: false,
                       ),
-                      _buildInfoItem(
-                        context,
-                        '昵称',
-                        _nickname,
-                        trailing: Icon(
-                          Icons.chevron_right_rounded,
-                          size: 20,
-                          color: colorScheme.onSurfaceVariant,
+                      ListCell(
+                        title: '昵称',
+                        trailing: Text(
+                          _nickname,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                         ),
                         onTap: _handleEditNickname,
                       ),
-                      _buildInfoItem(
-                        context,
-                        '天历服务',
-                        '剩余 365 天',
-                        valueColor: colorScheme.primary,
+                      ListCell(
+                        title: '天历服务',
+                        trailing: Text(
+                          '剩余 365 天',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                        showArrow: false,
                       ),
                     ],
                   ),
-                  // 绑定信息
-                  _buildSection(
-                    context,
-                    '绑定信息',
-                    [
-                      _buildInfoItem(
-                        context,
-                        '手机号',
-                        '138****0000',
-                        trailing: Icon(
-                          Icons.chevron_right_rounded,
-                          size: 20,
-                          color: colorScheme.onSurfaceVariant,
+                  ListGroup(
+                    title: '绑定信息',
+                    children: [
+                      ListCell(
+                        icon: Icons.phone_outlined,
+                        title: '手机号',
+                        trailing: Text(
+                          '138****0000',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                         ),
                         onTap: () {
                           Navigator.push(
@@ -153,23 +172,55 @@ class _AccountPageState extends State<AccountPage> {
                           );
                         },
                       ),
-                      _buildInfoItem(
-                        context,
-                        '微信号',
-                        '未绑定',
-                        trailing: Icon(
-                          Icons.chevron_right_rounded,
-                          size: 20,
-                          color: colorScheme.onSurfaceVariant,
+                      ListCell(
+                        icon: Icons.wechat_outlined,
+                        title: '微信号',
+                        trailing: Text(
+                          '未绑定',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                         ),
                         onTap: () {
-                          // TODO: 跳转到微信绑定页面
+                          // TODO: 处理微信绑定
                         },
                       ),
-                      _buildInfoItem(
-                        context,
-                        '推荐人ID',
-                        '138****0000',
+                      ListCell(
+                        icon: Icons.account_balance_wallet_outlined,
+                        title: '我的银行卡',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const BankCardPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      ListCell(
+                        icon: Icons.qr_code_rounded,
+                        title: '推荐人ID',
+                        trailing: Text(
+                          '138****0000',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        showArrow: false,
+                      ),
+                      ListCell(
+                        icon: Icons.security_outlined,
+                        title: '账户安全',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SecurityPage(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -210,101 +261,5 @@ class _AccountPageState extends State<AccountPage> {
         ],
       ),
     );
-  }
-
-  Widget _buildSection(
-    BuildContext context,
-    String title,
-    List<Widget> children,
-  ) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.primary,
-            ),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: colorScheme.outlineVariant.withAlpha(50),
-            ),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            children: children,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoItem(
-    BuildContext context,
-    String label,
-    String value, {
-    Widget? trailing,
-    Color? valueColor,
-    VoidCallback? onTap,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final content = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: colorScheme.outlineVariant.withAlpha(50),
-          ),
-        ),
-      ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 15,
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 15,
-                color: valueColor ?? colorScheme.onSurface,
-              ),
-            ),
-          ),
-          if (trailing != null) trailing,
-        ],
-      ),
-    );
-
-    if (onTap != null) {
-      return Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          child: content,
-        ),
-      );
-    }
-
-    return content;
   }
 }
