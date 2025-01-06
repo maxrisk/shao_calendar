@@ -7,6 +7,7 @@ import 'bank_card_page.dart';
 import '../../widgets/list/list_cell.dart';
 import '../../widgets/list/list_group.dart';
 import 'security_page.dart';
+import 'calendar_service_page.dart';
 
 /// 账户中心页面
 class AccountPage extends StatefulWidget {
@@ -144,7 +145,14 @@ class _AccountPageState extends State<AccountPage> {
                             color: colorScheme.primary,
                           ),
                         ),
-                        showArrow: false,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CalendarServicePage(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

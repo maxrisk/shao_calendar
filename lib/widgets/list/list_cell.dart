@@ -7,6 +7,7 @@ class ListCell extends StatelessWidget {
     super.key,
     required this.title,
     this.icon,
+    this.iconColor,
     this.subtitle,
     this.trailing,
     this.showArrow = true,
@@ -18,6 +19,9 @@ class ListCell extends StatelessWidget {
 
   /// 图标
   final IconData? icon;
+
+  /// 图标颜色
+  final Color? iconColor;
 
   /// 副标题
   final String? subtitle;
@@ -57,7 +61,7 @@ class ListCell extends StatelessWidget {
                 Icon(
                   icon,
                   size: 20,
-                  color: colorScheme.onSurfaceVariant,
+                  color: iconColor ?? colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 12),
               ],

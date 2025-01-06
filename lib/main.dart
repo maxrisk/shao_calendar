@@ -110,6 +110,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ? AppBar(
                 elevation: 0,
                 title: Text(widget.title),
+                titleTextStyle: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                ),
                 flexibleSpace: Container(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
@@ -122,8 +127,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 centerTitle: false,
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.qr_code_scanner),
+                    icon: const Icon(Icons.qr_code_scanner_rounded),
                     onPressed: _onScanPressed,
+                    color: Colors.white,
                   ),
                 ],
               )
