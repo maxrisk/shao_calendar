@@ -121,6 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       // TODO: 处理按钮点击
                     },
                   ),
+                  const SizedBox(height: 16),
                   ListGroup(
                     children: [
                       ListCell(
@@ -156,6 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 16),
                 ],
               ),
             )
