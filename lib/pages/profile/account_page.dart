@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'edit_nickname_page.dart';
 import '../../widgets/dialogs/index.dart';
+import 'change_phone_page.dart';
 
 /// 账户中心页面
 class AccountPage extends StatefulWidget {
@@ -142,7 +143,14 @@ class _AccountPageState extends State<AccountPage> {
                           color: colorScheme.onSurfaceVariant,
                         ),
                         onTap: () {
-                          // TODO: 跳转到手机号绑定页面
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ChangePhonePage(
+                                phone: '138****0000',
+                              ),
+                            ),
+                          );
                         },
                       ),
                       _buildInfoItem(
