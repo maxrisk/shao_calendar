@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/list/list_cell.dart';
 import '../../widgets/list/list_group.dart';
+import '../../pages/profile/verify_phone_page.dart';
 
 /// 账户安全页面
 class SecurityPage extends StatelessWidget {
@@ -39,7 +40,12 @@ class SecurityPage extends StatelessWidget {
                   title: '支付密码',
                   subtitle: '用于账户支付',
                   onTap: () {
-                    // TODO: 跳转设置支付密码页面
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const VerifyPhonePage(),
+                      ),
+                    );
                   },
                 ),
                 // ListCell(

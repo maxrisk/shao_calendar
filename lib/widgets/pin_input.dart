@@ -11,6 +11,7 @@ class PinInput extends StatefulWidget {
     this.autofocus = false,
     this.onCompleted,
     this.onChanged,
+    this.controller,
   }) : assert(length > 0 && length <= 6, 'PIN码长度必须在1-6之间');
 
   /// 长度
@@ -28,17 +29,21 @@ class PinInput extends StatefulWidget {
   /// 输入框改变回调
   final ValueChanged<String>? onChanged;
 
+  /// 输入控制器
+  final TextEditingController? controller;
+
   @override
   State<PinInput> createState() => _PinInputState();
 }
 
 class _PinInputState extends State<PinInput> {
-  final _controller = TextEditingController();
+  late final TextEditingController _controller;
   final _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
+    _controller = widget.controller ?? TextEditingController();
     _controller.addListener(_handleChange);
     if (widget.autofocus) {
       _focusNode.requestFocus();
@@ -47,7 +52,9 @@ class _PinInputState extends State<PinInput> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
     _focusNode.dispose();
     super.dispose();
   }

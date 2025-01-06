@@ -20,6 +20,7 @@ class VerifyCodeInput extends StatefulWidget {
     this.codeLength = 4,
     this.obscureText = false,
     this.autoFocus = false,
+    this.controller,
   });
 
   /// 标题
@@ -54,6 +55,9 @@ class VerifyCodeInput extends StatefulWidget {
 
   /// 验证码长度
   final int codeLength;
+
+  /// 输入控制器
+  final TextEditingController? controller;
 
   @override
   State<VerifyCodeInput> createState() => _VerifyCodeInputState();
@@ -113,7 +117,7 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
   void _onChanged(String value) {
     setState(() {
       _code = value;
-      _isValid = value.length == 4;
+      _isValid = value.length == widget.codeLength;
     });
   }
 
@@ -175,6 +179,7 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                                 autofocus: widget.autoFocus,
                                 onChanged: _onChanged,
                                 obscureText: widget.obscureText,
+                                controller: widget.controller,
                               ),
                         ],
                       ),
