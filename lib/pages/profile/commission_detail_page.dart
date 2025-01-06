@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'widgets/statistic_card.dart';
 import 'widgets/commission_record_cell.dart';
+import '../../models/commission_order.dart';
+import 'commission_order_page.dart';
 
 /// 提成明细页面
 class CommissionDetailPage extends StatelessWidget {
@@ -50,12 +52,38 @@ class CommissionDetailPage extends StatelessWidget {
               itemCount: 20,
               itemBuilder: (context, index) {
                 return CommissionRecordCell(
-                  type: index % 2 == 0
-                      ? CommissionType.direct
-                      : CommissionType.indirect,
+                  type: index % 3 == 0
+                      ? CommissionOrderType.withdraw
+                      : index % 2 == 0
+                          ? CommissionOrderType.direct
+                          : CommissionOrderType.indirect,
                   orderNo: 'NO.${index.toString().padLeft(8, '0')}',
                   dateTime: '2024-03-${index.toString().padLeft(2, '0')} 12:00',
                   amount: index % 3 == 0 ? -10.0 : 50.0,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CommissionOrderPage(
+                          order: CommissionOrder(
+                            type: index % 3 == 0
+                                ? CommissionOrderType.withdraw
+                                : index % 2 == 0
+                                    ? CommissionOrderType.direct
+                                    : CommissionOrderType.indirect,
+                            amount: index % 3 == 0 ? -10.0 : 50.0,
+                            orderNo: 'NO.${index.toString().padLeft(8, '0')}',
+                            dateTime:
+                                '2024-03-${index.toString().padLeft(2, '0')} 12:00',
+                            description:
+                                index % 3 == 0 ? '提现到银行卡' : '推荐用户购买会员服务',
+                            cardNo:
+                                index % 3 == 0 ? '6222************1234' : null,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
