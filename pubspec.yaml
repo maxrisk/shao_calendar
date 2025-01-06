@@ -74,7 +74,6 @@ flutter:
     - assets/images/signet.png
     - assets/images/yao_bg.png
     - assets/images/label_bg.png
-    - assets/images/wechat.png
     - assets/images/icon_qrcode.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -137,10 +137,15 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () {
                             // TODO: 处理微信登录
                           },
-                          icon: Image.asset(
-                            'assets/images/wechat.png',
-                            width: 32,
-                            height: 32,
+                          style: IconButton.styleFrom(
+                            backgroundColor: const Color(0xFF07C160),
+                            padding: const EdgeInsets.all(8),
+                            shape: const CircleBorder(),
+                          ),
+                          icon: const Icon(
+                            Icons.wechat_rounded,
+                            size: 35,
+                            color: Colors.white, // 微信绿色
                           ),
                         ),
                       ),
