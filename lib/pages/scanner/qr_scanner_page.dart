@@ -11,9 +11,10 @@ class QRScannerPage extends StatefulWidget {
 }
 
 class _QRScannerPageState extends State<QRScannerPage>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   late MobileScannerController controller;
   bool _isFlashOn = false;
+  late AnimationController _animationController;
 
   @override
   void initState() {
@@ -23,12 +24,17 @@ class _QRScannerPageState extends State<QRScannerPage>
       facing: CameraFacing.back,
       torchEnabled: false,
     );
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat();
   }
 
   @override
   void dispose() {
     controller.stop();
     controller.dispose();
+    _animationController.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -38,10 +44,12 @@ class _QRScannerPageState extends State<QRScannerPage>
     switch (state) {
       case AppLifecycleState.resumed:
         controller.start();
+        _animationController.repeat();
         break;
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
         controller.stop();
+        _animationController.stop();
         break;
       case AppLifecycleState.detached:
         controller.dispose();
@@ -60,7 +68,10 @@ class _QRScannerPageState extends State<QRScannerPage>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('闪光灯控制失败')),
+          const SnackBar(
+            content: Text('闪光灯控制失败'),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
     }
@@ -68,14 +79,33 @@ class _QRScannerPageState extends State<QRScannerPage>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('扫描二维码'),
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(_isFlashOn ? Icons.flash_on : Icons.flash_off),
+            icon: Icon(
+              _isFlashOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+              color: _isFlashOn
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+            ),
+            style: IconButton.styleFrom(
+              padding: const EdgeInsets.all(8),
+              minimumSize: const Size(44, 44),
+            ),
             onPressed: _toggleFlash,
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: Stack(
@@ -97,40 +127,127 @@ class _QRScannerPageState extends State<QRScannerPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.error,
-                      color: Colors.red,
+                    Icon(
+                      Icons.error_outline_rounded,
+                      color: colorScheme.error,
                       size: 48,
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      '相机初始化失败: ${error.errorCode}',
-                      style: const TextStyle(color: Colors.red),
+                      '相机初始化失败',
+                      style: TextStyle(
+                        color: colorScheme.error,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '错误代码: ${error.errorCode}',
+                      style: TextStyle(
+                        color: colorScheme.onSurfaceVariant,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
               );
             },
           ),
-          SizedBox.expand(
-            child: CustomPaint(
-              painter: ScannerOverlay(
-                borderColor: Theme.of(context).primaryColor,
-                overlayColor: Colors.black54,
-                scannerSize: MediaQuery.of(context).size.width * 0.8,
-              ),
-            ),
+          // 扫描动画
+          AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) {
+              final screenWidth = MediaQuery.of(context).size.width;
+              return Positioned(
+                top: MediaQuery.of(context).size.height *
+                        _animationController.value -
+                    300,
+                left: -screenWidth * 0.2,
+                right: -screenWidth * 0.2,
+                child: Column(
+                  children: [
+                    // 拖影效果
+                    Container(
+                      height: 300,
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          center: const Alignment(0.0, 0.95),
+                          radius: 0.9,
+                          colors: [
+                            colorScheme.primary.withAlpha(102),
+                            colorScheme.primary.withAlpha(76),
+                            colorScheme.primary.withAlpha(38),
+                            colorScheme.primary.withAlpha(13),
+                            Colors.transparent,
+                          ],
+                          stops: const [0.0, 0.3, 0.5, 0.7, 1.0],
+                        ),
+                      ),
+                    ),
+                    // 扫描线
+                    Container(
+                      height: 2,
+                      margin:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.2),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorScheme.primary.withAlpha(76),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                            colorScheme.primary.withAlpha(0),
+                            colorScheme.primary,
+                            colorScheme.primary,
+                            colorScheme.primary.withAlpha(0),
+                          ],
+                          stops: const [0.0, 0.45, 0.55, 1.0],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
+          // 提示文本
           Positioned(
-            bottom: 60,
-            left: 0,
-            right: 0,
-            child: const Text(
-              '将二维码放入框内，即可自动扫描',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 14,
+            bottom: MediaQuery.of(context).padding.bottom + 32,
+            left: 32,
+            right: 32,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 16,
+              ),
+              decoration: BoxDecoration(
+                color: (isDark ? Colors.white : Colors.black).withAlpha(153),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 20,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      '将二维码对准屏幕，即可自动扫描',
+                      style: TextStyle(
+                        color: isDark ? Colors.black : Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -138,124 +255,4 @@ class _QRScannerPageState extends State<QRScannerPage>
       ),
     );
   }
-}
-
-/// 扫描框绘制
-class ScannerOverlay extends CustomPainter {
-  ScannerOverlay({
-    required this.borderColor,
-    required this.overlayColor,
-    required this.scannerSize,
-  });
-
-  final Color borderColor;
-  final Color overlayColor;
-  final double scannerSize;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final double scanAreaLeft = (size.width - scannerSize) / 2;
-    final double scanAreaTop = (size.height - scannerSize) / 2;
-
-    final Paint overlayPaint = Paint()..color = overlayColor;
-    final Paint borderPaint = Paint()
-      ..color = borderColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0;
-
-    // 绘制遮罩
-    canvas.drawPath(
-      Path.combine(
-        PathOperation.difference,
-        Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height)),
-        Path()
-          ..addRRect(
-            RRect.fromRectAndRadius(
-              Rect.fromLTWH(
-                scanAreaLeft,
-                scanAreaTop,
-                scannerSize,
-                scannerSize,
-              ),
-              const Radius.circular(12),
-            ),
-          ),
-      ),
-      overlayPaint,
-    );
-
-    // 绘制边框
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-          scanAreaLeft,
-          scanAreaTop,
-          scannerSize,
-          scannerSize,
-        ),
-        const Radius.circular(12),
-      ),
-      borderPaint,
-    );
-
-    // 绘制四角
-    final double cornerSize = 20;
-    final Paint cornerPaint = Paint()
-      ..color = borderColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 5.0;
-
-    // 左上角
-    canvas.drawLine(
-      Offset(scanAreaLeft, scanAreaTop + cornerSize),
-      Offset(scanAreaLeft, scanAreaTop),
-      cornerPaint,
-    );
-    canvas.drawLine(
-      Offset(scanAreaLeft, scanAreaTop),
-      Offset(scanAreaLeft + cornerSize, scanAreaTop),
-      cornerPaint,
-    );
-
-    // 右上角
-    canvas.drawLine(
-      Offset(scanAreaLeft + scannerSize - cornerSize, scanAreaTop),
-      Offset(scanAreaLeft + scannerSize, scanAreaTop),
-      cornerPaint,
-    );
-    canvas.drawLine(
-      Offset(scanAreaLeft + scannerSize, scanAreaTop),
-      Offset(scanAreaLeft + scannerSize, scanAreaTop + cornerSize),
-      cornerPaint,
-    );
-
-    // 右下角
-    canvas.drawLine(
-      Offset(
-          scanAreaLeft + scannerSize, scanAreaTop + scannerSize - cornerSize),
-      Offset(scanAreaLeft + scannerSize, scanAreaTop + scannerSize),
-      cornerPaint,
-    );
-    canvas.drawLine(
-      Offset(scanAreaLeft + scannerSize, scanAreaTop + scannerSize),
-      Offset(
-          scanAreaLeft + scannerSize - cornerSize, scanAreaTop + scannerSize),
-      cornerPaint,
-    );
-
-    // 左下角
-    canvas.drawLine(
-      Offset(scanAreaLeft, scanAreaTop + scannerSize - cornerSize),
-      Offset(scanAreaLeft, scanAreaTop + scannerSize),
-      cornerPaint,
-    );
-    canvas.drawLine(
-      Offset(scanAreaLeft, scanAreaTop + scannerSize),
-      Offset(scanAreaLeft + cornerSize, scanAreaTop + scannerSize),
-      cornerPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
