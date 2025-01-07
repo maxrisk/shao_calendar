@@ -8,6 +8,7 @@ import '../../widgets/list/list_cell.dart';
 import '../../widgets/list/list_group.dart';
 import 'invite_page.dart';
 import 'account_page.dart';
+import 'about_page.dart';
 
 /// 个人中心页面
 class ProfilePage extends StatefulWidget {
@@ -20,7 +21,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   // TODO: 这里应该从用户状态管理中获取
-  bool _isLoggedIn = true;
+  final bool _isLoggedIn = true;
 
   void _handleLogin() {
     Navigator.of(context).push(
@@ -152,7 +153,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         icon: Icons.info_outline,
                         title: '关于我们',
                         onTap: () {
-                          // TODO: 处理点击
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AboutPage(),
+                            ),
+                          );
                         },
                       ),
                     ],

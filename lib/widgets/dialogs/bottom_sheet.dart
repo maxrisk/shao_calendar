@@ -50,7 +50,7 @@ class BottomSheet extends StatelessWidget {
         ),
       ),
     ).then((result) {
-      // 关闭时清除焦点
+      if (!context.mounted) return result;
       FocusScope.of(context).unfocus();
       return result;
     });

@@ -48,6 +48,7 @@ class _BindNewPhonePageState extends State<BindNewPhonePage> {
     );
     // 延迟一下再返回，让用户看到提示
     Future.delayed(const Duration(seconds: 1), () {
+      if (!context.mounted) return;
       // 返回到账户页面（移除验证旧手机号和绑定新手机号两个页面）
       Navigator.of(context)
         ..pop() // 移除绑定新手机号页面

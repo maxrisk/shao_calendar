@@ -101,7 +101,8 @@ class MemberInfoCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: paymentStatus == PaymentStatus.paid
                                 ? colorScheme.primary.withAlpha(20)
-                                : colorScheme.surfaceVariant.withOpacity(0.3),
+                                : colorScheme.surfaceContainerHighest
+                                    .withAlpha(77),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(

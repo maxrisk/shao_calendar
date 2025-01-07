@@ -58,7 +58,7 @@ class CalendarServicePage extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withOpacity(0.1),
+                      color: colorScheme.primary.withAlpha(25),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(

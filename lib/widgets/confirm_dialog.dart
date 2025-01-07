@@ -85,7 +85,7 @@ class ConfirmDialog extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  backgroundColor: colorScheme.surfaceVariant,
+                  backgroundColor: colorScheme.surfaceContainerHighest,
                 ),
                 child: Text(
                   cancelText,

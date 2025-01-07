@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 /// 昵称编辑页面
 class EditNicknamePage extends StatefulWidget {
