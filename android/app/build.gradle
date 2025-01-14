@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.flutter_calendar"
+    namespace = "com.cdjs.hjjs"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
