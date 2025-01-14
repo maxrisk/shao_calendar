@@ -167,6 +167,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
                               const SizedBox(width: 4),
                               Expanded(
                                 child: TextField(
+                                  autofocus: true,
                                   controller: _amountController,
                                   style: TextStyle(
                                     fontSize: 32,

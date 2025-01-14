@@ -76,6 +76,7 @@ flutter:
     - assets/images/yao_bg.png
     - assets/images/label_bg.png
     - assets/images/icon_qrcode.png
+    - assets/images/logo.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

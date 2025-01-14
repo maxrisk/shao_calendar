@@ -5,6 +5,7 @@ import 'widgets/decorated_title.dart';
 import 'widgets/fortune_display.dart';
 import 'widgets/fortune_interpretation.dart';
 import 'widgets/fortune_purchase_card.dart';
+import '../../pages/profile/calendar_service_page.dart';
 
 /// 个人运势页面
 class FortunePage extends StatefulWidget {
@@ -75,7 +76,12 @@ class _FortunePageState extends State<FortunePage> {
                 // 购买卡片
                 FortunePurchaseCard(
                   onPurchase: () {
-                    // TODO: 处理购买逻辑
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CalendarServicePage(),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(height: 16),
