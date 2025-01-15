@@ -26,6 +26,16 @@ class VerifyCodePage extends StatefulWidget {
 class _VerifyCodePageState extends State<VerifyCodePage> {
   bool _isSubmitting = false;
 
+  void showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
+      ),
+    );
+  }
+
   Future<bool> _sendVerifyCode() async {
     try {
       if (_isSubmitting) return false;
@@ -39,16 +49,12 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
       if (!mounted) return false;
 
       if (!success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('发送验证码失败，请重试')),
-        );
+        showMessage('发送验证码失败，请重试');
       }
       return success;
     } catch (e) {
       if (!mounted) return false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('发送验证码失败，请重试')),
-      );
+      showMessage('发送验证码失败，请重试');
       return false;
     } finally {
       if (mounted) {
@@ -82,15 +88,11 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
           Navigator.pop(context);
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('验证码错误或已过期')),
-        );
+        showMessage('验证码错误或已过期');
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('验证失败，请重试')),
-      );
+      showMessage('验证失败，请重试');
     } finally {
       if (mounted) {
         setState(() {

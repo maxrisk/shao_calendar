@@ -80,8 +80,8 @@ class _PinInputState extends State<PinInput> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     // 计算每个输入框的大小
-    final minSpacing = 5.0; // 输入框之间的最小间距
-    final horizontalPadding = 32.0; // 两侧留白
+    const minSpacing = 5.0; // 输入框之间的最小间距
+    const horizontalPadding = 32.0; // 两侧留白
     final totalSpacing = (widget.length - 1) * minSpacing; // 所有间距的总和
     final availableWidth =
         screenWidth - totalSpacing - horizontalPadding * 2; // 可用宽度
