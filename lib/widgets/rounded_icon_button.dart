@@ -7,6 +7,7 @@ class RoundedIconButton extends StatelessWidget {
     super.key,
     required this.icon,
     this.onPressed,
+    this.isSubmitting = false,
   });
 
   /// 图标
@@ -14,6 +15,9 @@ class RoundedIconButton extends StatelessWidget {
 
   /// 点击回调
   final VoidCallback? onPressed;
+
+  /// 是否正在提交
+  final bool isSubmitting;
 
   @override
   Widget build(BuildContext context) {
@@ -27,22 +31,24 @@ class RoundedIconButton extends StatelessWidget {
           color: colorScheme.outlineVariant,
         ),
       ),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: icon,
-        visualDensity: VisualDensity.compact,
-        constraints: const BoxConstraints(
-          minWidth: 48,
-          minHeight: 48,
-        ),
-        style: ButtonStyle(
-          shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+      child: isSubmitting
+          ? const CircularProgressIndicator()
+          : IconButton(
+              onPressed: onPressed,
+              icon: icon,
+              visualDensity: VisualDensity.compact,
+              constraints: const BoxConstraints(
+                minWidth: 48,
+                minHeight: 48,
+              ),
+              style: ButtonStyle(
+                shape: WidgetStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

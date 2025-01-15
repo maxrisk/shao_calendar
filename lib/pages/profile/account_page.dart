@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import '../../services/user_service.dart';
 import 'edit_nickname_page.dart';
 import '../../widgets/dialogs/index.dart';
 import 'change_phone_page.dart';
@@ -47,8 +49,11 @@ class _AccountPageState extends State<AccountPage> {
     );
 
     if (confirmed == true && mounted) {
-      // TODO: 处理退出登录
-      Navigator.pop(context);
+      final userService = context.read<UserService>();
+      await userService.logout();
+      if (mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 

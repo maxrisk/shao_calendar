@@ -11,6 +11,7 @@ class VerifyCodeInput extends StatefulWidget {
     super.key,
     required this.title,
     required this.subtitle,
+    this.onSend,
     this.customContent,
     this.showVerifyCodeButton = true,
     this.submitEnabled = false,
@@ -21,6 +22,7 @@ class VerifyCodeInput extends StatefulWidget {
     this.obscureText = false,
     this.autoFocus = false,
     this.controller,
+    this.isSubmitting = false,
   });
 
   /// 标题
@@ -59,6 +61,12 @@ class VerifyCodeInput extends StatefulWidget {
   /// 输入控制器
   final TextEditingController? controller;
 
+  /// 发送验证码回调
+  final Future<bool> Function()? onSend;
+
+  /// 是否正在提交
+  final bool isSubmitting;
+
   @override
   State<VerifyCodeInput> createState() => _VerifyCodeInputState();
 }
@@ -68,6 +76,7 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
   String _code = '';
   int _countdown = 0;
   Timer? _timer;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -97,9 +106,17 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
     });
   }
 
-  void _handleResend() {
+  void _handleSend() {
     if (_countdown == 0) {
-      // TODO: 处理重新发送验证码
+      setState(() {
+        _isLoading = true;
+      });
+      print('发送验证码 method, ${widget.onSend}');
+      widget.onSend?.call().then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
       _startCountdown();
     }
   }
@@ -225,7 +242,8 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                                       ),
                                     )
                                   : MaterialButton(
-                                      onPressed: _handleResend,
+                                      onPressed:
+                                          _isLoading ? null : _handleSend,
                                       color: colorScheme.primary,
                                       minWidth: 180,
                                       height: 44,
@@ -233,16 +251,19 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: Text(
-                                        '获取验证码',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          color: colorScheme.onPrimary,
-                                        ),
-                                      ),
+                                      child: _isLoading
+                                          ? const CircularProgressIndicator()
+                                          : Text(
+                                              '获取验证码',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: colorScheme.onPrimary,
+                                              ),
+                                            ),
                                     ),
                             if (widget.showVerifyCodeButton) const Spacer(),
                             RoundedIconButton(
+                              isSubmitting: widget.isSubmitting,
                               icon: Icon(
                                 Icons.check,
                                 color: (isVerifyCodeInput

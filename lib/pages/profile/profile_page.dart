@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../profile/login_page.dart';
 import 'widgets/login_prompt.dart';
 import 'widgets/user_info_card.dart';
@@ -6,6 +7,7 @@ import 'widgets/interpretation_card.dart';
 import '../../widgets/glowing_hexagram.dart';
 import '../../widgets/list/list_cell.dart';
 import '../../widgets/list/list_group.dart';
+import '../../services/user_service.dart';
 import 'invite_page.dart';
 import 'account_page.dart';
 import 'about_page.dart';
@@ -20,9 +22,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // TODO: 这里应该从用户状态管理中获取
-  final bool _isLoggedIn = true;
-
   void _handleLogin() {
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -63,6 +62,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final userService = context.watch<UserService>();
+    final userInfo = userService.userInfo?.userInfo;
 
     return Scaffold(
       appBar: AppBar(
@@ -71,41 +72,56 @@ class _ProfilePageState extends State<ProfilePage> {
         foregroundColor: colorScheme.onSurface,
         elevation: 0,
       ),
-      body: _isLoggedIn
+      body: userInfo != null
           ? SingleChildScrollView(
               child: Column(
                 children: [
                   UserInfoCard(
-                    birthTime: '1990年8月1日 12:00',
-                    userId: '138****0000',
+                    birthTime: userInfo.birthDate != null
+                        ? '${userInfo.birthDate} ${_getBirthTimeText(userInfo.birthTime)}'
+                        : '未设置',
+                    userId: userInfo.phone?.length == 11
+                        ? userInfo.phone!.replaceRange(3, 7, '****')
+                        : '未绑定手机号',
                     onInviteTap: _handleInvite,
                   ),
                   InterpretationCard(
                     title: '邵氏解读：剥离剥夺，分化瓦解',
                     type: InterpretationType.tianShi,
-                    hexagramText: '剥',
+                    hexagramText:
+                        userService.userInfo?.weatherDivination.name ?? '',
                     hexagramType: HexagramBgType.orange,
-                    guaCi: '剥：不利于有攸往。',
-                    xiangZhuan: '山附于地，剥；上以厚下，安宅。',
-                    tuanZhuan: '剥，剥也，柔变刚也。不利有攸往，小人长也。顺而止之，观象也。君子尚消息盈虚，天行也。',
+                    guaCi: userService.userInfo?.weatherDivination.words ?? '',
+                    xiangZhuan:
+                        userService.userInfo?.weatherDivination.xiangChuan ??
+                            '',
+                    tuanZhuan:
+                        userService.userInfo?.weatherDivination.tuanChuan ?? '',
                   ),
                   InterpretationCard(
                     title: '邵氏解读：剥离剥夺，分化瓦解',
                     type: InterpretationType.diShi,
-                    hexagramText: '剥',
+                    hexagramText:
+                        userService.userInfo?.terrainDivination.name ?? '',
                     hexagramType: HexagramBgType.orange,
-                    guaCi: '剥：不利于有攸往。',
-                    xiangZhuan: '山附于地，剥；上以厚下，安宅。',
-                    tuanZhuan: '剥，剥也，柔变刚也。不利有攸往，小人长也。顺而止之，观象也。君子尚消息盈虚，天行也。',
+                    guaCi: userService.userInfo?.terrainDivination.words ?? '',
+                    xiangZhuan:
+                        userService.userInfo?.terrainDivination.xiangChuan ??
+                            '',
+                    tuanZhuan:
+                        userService.userInfo?.terrainDivination.tuanChuan ?? '',
                   ),
                   InterpretationCard(
                     title: '邵氏解读：剥离剥夺，分化瓦解',
                     type: InterpretationType.shengLi,
-                    hexagramText: '剥',
+                    hexagramText:
+                        userService.userInfo?.birthDivination.name ?? '',
                     hexagramType: HexagramBgType.orange,
-                    guaCi: '剥：不利于有攸往。',
-                    xiangZhuan: '山附于地，剥；上以厚下，安宅。',
-                    tuanZhuan: '剥，剥也，柔变刚也。不利有攸往，小人长也。顺而止之，观象也。君子尚消息盈虚，天行也。',
+                    guaCi: userService.userInfo?.birthDivination.words ?? '',
+                    xiangZhuan:
+                        userService.userInfo?.birthDivination.xiangChuan ?? '',
+                    tuanZhuan:
+                        userService.userInfo?.birthDivination.tuanChuan ?? '',
                     onPressed: () {
                       // TODO: 处理按钮点击
                     },
@@ -113,11 +129,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   InterpretationCard(
                     title: '邵氏解读：剥离剥夺，分化瓦解',
                     type: InterpretationType.siJie,
-                    hexagramText: '剥',
+                    hexagramText:
+                        userService.userInfo?.knotDivination.name ?? '',
                     hexagramType: HexagramBgType.orange,
-                    guaCi: '剥：不利于有攸往。',
-                    xiangZhuan: '山附于地，剥；上以厚下，安宅。',
-                    tuanZhuan: '剥，剥也，柔变刚也。不利有攸往，小人长也。顺而止之，观象也。君子尚消息盈虚，天行也。',
+                    guaCi: userService.userInfo?.knotDivination.words ?? '',
+                    xiangZhuan:
+                        userService.userInfo?.knotDivination.xiangChuan ?? '',
+                    tuanZhuan:
+                        userService.userInfo?.knotDivination.tuanChuan ?? '',
                     onPressed: () {
                       // TODO: 处理按钮点击
                     },
@@ -169,5 +188,24 @@ class _ProfilePageState extends State<ProfilePage> {
             )
           : LoginPrompt(onLogin: _handleLogin),
     );
+  }
+
+  String _getBirthTimeText(int? birthTime) {
+    switch (birthTime) {
+      case 1:
+        return '00:00-04:00';
+      case 2:
+        return '04:00-08:00';
+      case 3:
+        return '08:00-12:00';
+      case 4:
+        return '12:00-16:00';
+      case 5:
+        return '16:00-20:00';
+      case 6:
+        return '20:00-24:00';
+      default:
+        return '';
+    }
   }
 }

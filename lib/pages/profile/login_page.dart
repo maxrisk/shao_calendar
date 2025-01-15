@@ -3,6 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import '../../../widgets/rounded_icon_button.dart';
 import 'verify_code_page.dart';
+import 'user_agreement_page.dart';
+import 'privacy_policy_page.dart';
 
 /// 登录页面
 class LoginPage extends StatefulWidget {
@@ -47,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
         MaterialPageRoute(
           builder: (context) => VerifyCodePage(
             phone: _phoneController.text,
+            autoStart: true,
           ),
         ),
       );
@@ -54,11 +57,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleAgreement() {
-    // TODO: 跳转到用户协议页面
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const UserAgreementPage(),
+      ),
+    );
   }
 
   void _handlePrivacy() {
-    // TODO: 跳转到隐私政策页面
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const PrivacyPolicyPage(),
+      ),
+    );
   }
 
   @override
