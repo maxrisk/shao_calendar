@@ -34,6 +34,7 @@ jobs:
             echo "DART_DEFINES=APP_ENV=production" >> $GITHUB_ENV
           else
             echo "DART_DEFINES=APP_ENV=development" >> $GITHUB_ENV
+          fi
 
       # 4. 安装项目依赖
       - name: Install dependencies
