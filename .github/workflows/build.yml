@@ -1,0 +1,51 @@
+name: Flutter Build
+
+on:
+  push:
+    branches:
+      #- main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    runs-on: macos-latest # 必须使用 macOS 支持 iOS 构建
+
+    steps:
+      # 1. 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. 安装 Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
+      # 3. 设置环境变量（根据分支区分）
+      - name: Set Environment Variables
+        id: set-env
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "DART_DEFINES=APP_ENV=production" >> $GITHUB_ENV
+          else
+            echo "DART_DEFINES=APP_ENV=development" >> $GITHUB_ENV
+
+      # 4. 安装项目依赖
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 运行测试
+      #- name: Run tests
+      #  run: flutter test
+
+      # 5. 构建 Android APK
+      - name: Build Android APK
+        run: flutter build apk --release --dart-define=${{ env.DART_DEFINES }}
+
+      # 6. 构建 iOS
+      #- name: Build iOS
+      #  run: flutter build ios --release --dart-define=${{ env.DART_DEFINES }}
