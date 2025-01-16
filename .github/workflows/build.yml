@@ -48,6 +48,13 @@ jobs:
       - name: Build Android APK
         run: flutter build apk --release --dart-define=${{ env.DART_DEFINES }}
 
+      # 上传 APK 文件
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
       # 6. 构建 iOS
       #- name: Build iOS
       #  run: flutter build ios --release --dart-define=${{ env.DART_DEFINES }}
