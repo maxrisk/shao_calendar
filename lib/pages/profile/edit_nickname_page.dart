@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../services/user_service.dart';
 
 /// 昵称编辑页面
 class EditNicknamePage extends StatefulWidget {
@@ -18,6 +20,7 @@ class EditNicknamePage extends StatefulWidget {
 class _EditNicknamePageState extends State<EditNicknamePage> {
   late final TextEditingController _controller;
   bool _isValid = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -41,7 +44,7 @@ class _EditNicknamePageState extends State<EditNicknamePage> {
     });
   }
 
-  void _handleSave() {
+  Future<void> _handleSave() async {
     final value = _controller.text.trim();
     if (value.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -52,7 +55,41 @@ class _EditNicknamePageState extends State<EditNicknamePage> {
       );
       return;
     }
-    Navigator.pop(context, value);
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final userService = context.read<UserService>();
+      final success = await userService.updateNickname(value);
+
+      if (success && mounted) {
+        Navigator.pop(context, value);
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('修改昵称失败，请重试'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('修改昵称失败，请重试'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -70,18 +107,29 @@ class _EditNicknamePageState extends State<EditNicknamePage> {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: _isValid ? _handleSave : null,
+            onPressed: _isLoading || !_isValid ? null : _handleSave,
             style: TextButton.styleFrom(
               foregroundColor: colorScheme.primary,
               disabledForegroundColor: colorScheme.onSurfaceVariant,
             ),
-            child: const Text(
-              '保存',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            child: _isLoading
+                ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        colorScheme.primary,
+                      ),
+                    ),
+                  )
+                : const Text(
+                    '保存',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
           ),
         ],
       ),
@@ -100,6 +148,7 @@ class _EditNicknamePageState extends State<EditNicknamePage> {
               ),
               child: TextField(
                 controller: _controller,
+                enabled: !_isLoading,
                 style: const TextStyle(
                   fontSize: 15,
                   height: 1.2,
@@ -119,7 +168,7 @@ class _EditNicknamePageState extends State<EditNicknamePage> {
                 maxLength: 20,
                 textInputAction: TextInputAction.done,
                 onSubmitted: (value) {
-                  if (_isValid) {
+                  if (_isValid && !_isLoading) {
                     _handleSave();
                   }
                 },

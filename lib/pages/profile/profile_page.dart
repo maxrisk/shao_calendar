@@ -79,9 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     birthTime: userInfo.birthDate != null
                         ? '${userInfo.birthDate} ${_getBirthTimeText(userInfo.birthTime)}'
                         : '未设置',
-                    userId: userInfo.phone?.length == 11
-                        ? userInfo.phone!.replaceRange(3, 7, '****')
-                        : '未绑定手机号',
+                    userId: userInfo.id?.toString() ?? '-',
                     onInviteTap: _handleInvite,
                   ),
                   InterpretationCard(

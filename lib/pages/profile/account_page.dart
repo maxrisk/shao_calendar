@@ -21,58 +21,11 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  String _nickname = '未设置';
-
-  Future<void> _handleEditNickname() async {
-    final result = await Navigator.push<String>(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditNicknamePage(
-          initialValue: _nickname == '未设置' ? null : _nickname,
-        ),
-      ),
-    );
-
-    if (result != null && result.isNotEmpty && mounted) {
-      setState(() {
-        _nickname = result;
-      });
-    }
-  }
-
-  void _handleLogout() async {
-    final confirmed = await ConfirmDialog.show(
-      context: context,
-      title: '退出登录',
-      content: '确定要退出登录吗？',
-      isDanger: true,
-    );
-
-    if (confirmed == true && mounted) {
-      final userService = context.read<UserService>();
-      await userService.logout();
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    }
-  }
-
-  Future<void> _copyToClipboard(BuildContext context, String text) async {
-    await Clipboard.setData(ClipboardData(text: text));
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('已复制到剪贴板'),
-          duration: Duration(seconds: 1),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final userService = context.watch<UserService>();
+    final userInfo = userService.userInfo?.userInfo;
 
     return Scaffold(
       appBar: AppBar(
@@ -101,7 +54,7 @@ class _AccountPageState extends State<AccountPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '138****0000',
+                              userInfo?.id?.toString() ?? '-',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: colorScheme.onSurfaceVariant,
@@ -109,8 +62,8 @@ class _AccountPageState extends State<AccountPage> {
                             ),
                             const SizedBox(width: 8),
                             IconButton(
-                              onPressed: () =>
-                                  _copyToClipboard(context, '138****0000'),
+                              onPressed: () => _copyToClipboard(
+                                  context, userInfo?.id?.toString() ?? ''),
                               icon: Icon(
                                 Icons.copy_rounded,
                                 size: 16,
@@ -133,18 +86,20 @@ class _AccountPageState extends State<AccountPage> {
                       ListCell(
                         title: '昵称',
                         trailing: Text(
-                          _nickname,
+                          userInfo?.nickName ?? '未设置',
                           style: TextStyle(
                             fontSize: 15,
                             color: colorScheme.onSurfaceVariant,
                           ),
                         ),
-                        onTap: _handleEditNickname,
+                        onTap: () => _handleEditNickname(userInfo?.nickName),
                       ),
                       ListCell(
                         title: '天历服务',
                         trailing: Text(
-                          '剩余 365 天',
+                          userInfo?.isVip == true
+                              ? '剩余 ${_getRemainingDays(userInfo!.expirationTime!)} 天'
+                              : '未开通',
                           style: TextStyle(
                             fontSize: 15,
                             color: colorScheme.primary,
@@ -168,7 +123,7 @@ class _AccountPageState extends State<AccountPage> {
                         icon: Icons.phone_outlined,
                         title: '手机号',
                         trailing: Text(
-                          '138****0000',
+                          _formatPhone(userInfo?.phone),
                           style: TextStyle(
                             fontSize: 15,
                             color: colorScheme.onSurfaceVariant,
@@ -178,8 +133,8 @@ class _AccountPageState extends State<AccountPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const ChangePhonePage(
-                                phone: '138****0000',
+                              builder: (context) => ChangePhonePage(
+                                phone: userInfo?.phone ?? '',
                               ),
                             ),
                           );
@@ -189,7 +144,7 @@ class _AccountPageState extends State<AccountPage> {
                         icon: Icons.wechat_outlined,
                         title: '微信号',
                         trailing: Text(
-                          '未绑定',
+                          userInfo?.openId != null ? '已绑定' : '未绑定',
                           style: TextStyle(
                             fontSize: 15,
                             color: colorScheme.onSurfaceVariant,
@@ -215,7 +170,7 @@ class _AccountPageState extends State<AccountPage> {
                         icon: Icons.qr_code_rounded,
                         title: '推荐人ID',
                         trailing: Text(
-                          '138****0000',
+                          userInfo?.firstCode ?? '-',
                           style: TextStyle(
                             fontSize: 15,
                             color: colorScheme.onSurfaceVariant,
@@ -274,5 +229,67 @@ class _AccountPageState extends State<AccountPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleEditNickname(String? initialNickname) async {
+    final result = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditNicknamePage(
+          initialValue: initialNickname,
+        ),
+      ),
+    );
+
+    if (result != null && result.isNotEmpty && mounted) {
+      final userService = context.read<UserService>();
+      await userService.updateNickname(result);
+    }
+  }
+
+  String _formatPhone(String? phone) {
+    if (phone == null || phone.isEmpty) {
+      return '未绑定';
+    }
+    if (phone.length != 11) {
+      return phone;
+    }
+    return '${phone.substring(0, 3)}****${phone.substring(7)}';
+  }
+
+  int _getRemainingDays(String expirationTime) {
+    final expiration = DateTime.parse(expirationTime);
+    final now = DateTime.now();
+    return expiration.difference(now).inDays;
+  }
+
+  void _handleLogout() async {
+    final confirmed = await ConfirmDialog.show(
+      context: context,
+      title: '退出登录',
+      content: '确定要退出登录吗？',
+      isDanger: true,
+    );
+
+    if (confirmed == true && mounted) {
+      final userService = context.read<UserService>();
+      await userService.logout();
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  Future<void> _copyToClipboard(BuildContext context, String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('已复制到剪贴板'),
+          duration: Duration(seconds: 1),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 }
