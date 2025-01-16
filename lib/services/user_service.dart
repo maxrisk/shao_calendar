@@ -21,13 +21,18 @@ class UserService extends ChangeNotifier {
   }
 
   // 获取用户信息
-  Future<UserInfoResponse?> getUserInfo() async {
+  Future<UserInfoResponse?> getUserInfo({bool persist = true}) async {
     try {
       final response = await _dio.get('/app/user');
       if (response.data['code'] == 0 && response.data['data'] != null) {
-        _userInfo = UserInfoResponse.fromJson(response.data['data']);
-        notifyListeners();
-        return _userInfo;
+        final data = response.data['data'];
+        if (data['userInfo'] != null) {
+          _userInfo = UserInfoResponse.fromJson(data);
+          if (persist) {
+            notifyListeners();
+          }
+          return _userInfo;
+        }
       }
       return null;
     } catch (e) {
@@ -55,7 +60,7 @@ class UserService extends ChangeNotifier {
         if (token != null) {
           await _prefs.setString('token', token);
           // 获取用户信息
-          return await getUserInfo();
+          return await getUserInfo(persist: false);
         }
       }
       return null;
@@ -107,6 +112,31 @@ class UserService extends ChangeNotifier {
       return false;
     } catch (e) {
       print('设置生日信息失败: $e');
+      return false;
+    }
+  }
+
+  // 开启流年运势
+  Future<bool> openFortune(String birthDate, int birthTime,
+      {String? code}) async {
+    try {
+      final response = await _dio.put(
+        '/app/user/birthDate/$birthDate/$birthTime',
+        queryParameters: code != null ? {'code': code} : null,
+      );
+      print('response fortune: ${response.data}');
+      if (response.data['code'] == 0) {
+        final token = await _prefs.getString('token');
+        if (token != null) {
+          // 获取用户信息
+          await getUserInfo();
+          return true;
+        }
+        return false;
+      }
+      return false;
+    } catch (e) {
+      print('开启流年运势失败: $e');
       return false;
     }
   }

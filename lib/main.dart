@@ -65,6 +65,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '邵氏先天历',
+      navigatorKey: HttpClient.navigatorKey,
       theme: AppTheme.themeData.copyWith(
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
