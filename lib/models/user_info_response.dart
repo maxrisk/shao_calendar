@@ -7,17 +7,17 @@ part 'user_info_response.g.dart';
 @JsonSerializable()
 class UserInfoResponse {
   final User userInfo;
-  final Divination terrainDivination;
-  final Divination knotDivination;
-  final Divination birthDivination;
-  final Divination weatherDivination;
+  final Divination? terrainDivination;
+  final Divination? knotDivination;
+  final Divination? birthDivination;
+  final Divination? weatherDivination;
 
   const UserInfoResponse({
     required this.userInfo,
-    required this.terrainDivination,
-    required this.knotDivination,
-    required this.birthDivination,
-    required this.weatherDivination,
+    this.terrainDivination,
+    this.knotDivination,
+    this.birthDivination,
+    this.weatherDivination,
   });
 
   factory UserInfoResponse.fromJson(Map<String, dynamic> json) =>

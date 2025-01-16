@@ -9,14 +9,21 @@ part of 'user_info_response.dart';
 UserInfoResponse _$UserInfoResponseFromJson(Map<String, dynamic> json) =>
     UserInfoResponse(
       userInfo: User.fromJson(json['userInfo'] as Map<String, dynamic>),
-      terrainDivination: Divination.fromJson(
-          json['terrainDivination'] as Map<String, dynamic>),
-      knotDivination:
-          Divination.fromJson(json['knotDivination'] as Map<String, dynamic>),
-      birthDivination:
-          Divination.fromJson(json['birthDivination'] as Map<String, dynamic>),
-      weatherDivination: Divination.fromJson(
-          json['weatherDivination'] as Map<String, dynamic>),
+      terrainDivination: json['terrainDivination'] == null
+          ? null
+          : Divination.fromJson(
+              json['terrainDivination'] as Map<String, dynamic>),
+      knotDivination: json['knotDivination'] == null
+          ? null
+          : Divination.fromJson(json['knotDivination'] as Map<String, dynamic>),
+      birthDivination: json['birthDivination'] == null
+          ? null
+          : Divination.fromJson(
+              json['birthDivination'] as Map<String, dynamic>),
+      weatherDivination: json['weatherDivination'] == null
+          ? null
+          : Divination.fromJson(
+              json['weatherDivination'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$UserInfoResponseToJson(UserInfoResponse instance) =>
