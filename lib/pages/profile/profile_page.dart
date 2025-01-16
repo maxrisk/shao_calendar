@@ -83,7 +83,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     onInviteTap: _handleInvite,
                   ),
                   InterpretationCard(
-                    title: '天气卦',
+                    title:
+                        '邵氏解读：${userService.userInfo?.weatherDivination?.luck ?? ''}',
                     type: InterpretationType.tianShi,
                     hexagramText:
                         userService.userInfo?.weatherDivination?.name ?? '',
@@ -96,7 +97,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             '',
                   ),
                   InterpretationCard(
-                    title: '地势卦',
+                    title:
+                        '邵氏解读：${userService.userInfo?.terrainDivination?.luck ?? ''}',
                     type: InterpretationType.diShi,
                     hexagramText:
                         userService.userInfo?.terrainDivination?.name ?? '',
@@ -109,7 +111,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             '',
                   ),
                   InterpretationCard(
-                    title: '生辰卦',
+                    title:
+                        '邵氏解读：${userService.userInfo?.birthDivination?.luck ?? ''}',
                     type: InterpretationType.shengLi,
                     hexagramText:
                         userService.userInfo?.birthDivination?.name ?? '',
@@ -123,7 +126,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                   ),
                   InterpretationCard(
-                    title: '节气卦',
+                    title:
+                        '邵氏解读：${userService.userInfo?.knotDivination?.luck ?? ''}',
                     type: InterpretationType.siJie,
                     hexagramText:
                         userService.userInfo?.knotDivination?.name ?? '',
@@ -151,11 +155,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                         },
                       ),
-                      ListCell(
-                        icon: Icons.share_outlined,
-                        title: '推荐邀请',
-                        onTap: _handleInvite,
-                      ),
+                      if ((userInfo.promotion ?? 0) > 0)
+                        ListCell(
+                          icon: Icons.share_outlined,
+                          title: '推荐邀请',
+                          onTap: _handleInvite,
+                        ),
                       ListCell(
                         icon: Icons.headset_mic_outlined,
                         title: '在线客服',

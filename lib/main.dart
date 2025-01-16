@@ -6,6 +6,7 @@ import 'services/user_service.dart';
 import 'package:provider/provider.dart';
 import 'services/http_client.dart';
 import 'pages/home/home_page.dart';
+import 'pages/profile/complete_info_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,7 +55,19 @@ class _AppState extends State<App> {
     if (token != null) {
       // 有token就尝试获取用户信息
       final userInfo = await userService.getUserInfo();
-      if (userInfo == null) {
+      if (userInfo != null) {
+        // 检查是否需要补充信息
+        if (mounted &&
+            (userInfo.userInfo.birthDate == null ||
+                userInfo.userInfo.birthTime == null)) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CompleteInfoPage(),
+            ),
+          );
+        }
+      } else {
         // 获取失败，可能是token过期，清除token
         await userService.logout();
       }

@@ -32,9 +32,7 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
   String? get _birthTime =>
       _birthTimeIndex != null ? _timeList[_birthTimeIndex!] : null;
 
-  bool get _isValid =>
-      _birthDate != null &&
-      _birthTimeIndex != null;
+  bool get _isValid => _birthDate != null && _birthTimeIndex != null;
 
   @override
   void dispose() {
@@ -108,88 +106,90 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('补充信息'),
-        backgroundColor: colorScheme.surface,
-        foregroundColor: colorScheme.onSurface,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        centerTitle: true,
-      ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        behavior: HitTestBehavior.translucent,
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FormItem(
-                      label: '推荐码（选填）',
-                      hint: '请输入推荐码',
-                      icon: Icons.qr_code_rounded,
-                      controller: _referralController,
-                      onChanged: (_) => setState(() {}),
-                    ),
-                    const SizedBox(height: 16),
-                    FormItem(
-                      label: '出生日期',
-                      hint: '请选择出生日期',
-                      description: '请输入您的阳历出生年月日',
-                      icon: Icons.calendar_today_outlined,
-                      type: FormFieldType.select,
-                      value: _birthDate == null
-                          ? null
-                          : '${_birthDate!.year}年${_birthDate!.month}月${_birthDate!.day}日',
-                      onTap: () => _selectDate(context),
-                    ),
-                    const SizedBox(height: 16),
-                    FormItem(
-                      label: '出生时辰',
-                      hint: '请选择出生时辰',
-                      description: '您的出生时间将用于个人天时/地势/生历进行核算',
-                      icon: Icons.schedule_outlined,
-                      type: FormFieldType.select,
-                      value: _birthTime,
-                      onTap: () => _selectTime(context),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // 底部按钮
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                16,
-                0,
-                16,
-                16 + MediaQuery.of(context).padding.bottom,
-              ),
-              child: FilledButton(
-                onPressed: _isValid
-                    ? _handleSubmit
-                    : null,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(44),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  '开启流年运势',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
+    return PopScope(
+      canPop: false, // 禁止返回
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('补充信息'),
+          backgroundColor: colorScheme.surface,
+          foregroundColor: colorScheme.onSurface,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
+          centerTitle: true,
+          automaticallyImplyLeading: false, // 不显示返回按钮
+        ),
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          behavior: HitTestBehavior.translucent,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FormItem(
+                        label: '推荐码（选填）',
+                        hint: '请输入推荐码',
+                        icon: Icons.qr_code_rounded,
+                        controller: _referralController,
+                        onChanged: (_) => setState(() {}),
+                      ),
+                      const SizedBox(height: 16),
+                      FormItem(
+                        label: '出生日期',
+                        hint: '请选择出生日期',
+                        description: '请输入您的阳历出生年月日',
+                        icon: Icons.calendar_today_outlined,
+                        type: FormFieldType.select,
+                        value: _birthDate == null
+                            ? null
+                            : '${_birthDate!.year}年${_birthDate!.month}月${_birthDate!.day}日',
+                        onTap: () => _selectDate(context),
+                      ),
+                      const SizedBox(height: 16),
+                      FormItem(
+                        label: '出生时辰',
+                        hint: '请选择出生时辰',
+                        description: '您的出生时间将用于个人天时/地势/生历进行核算',
+                        icon: Icons.schedule_outlined,
+                        type: FormFieldType.select,
+                        value: _birthTime,
+                        onTap: () => _selectTime(context),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-          ],
+              // 底部按钮
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  0,
+                  16,
+                  16 + MediaQuery.of(context).padding.bottom,
+                ),
+                child: FilledButton(
+                  onPressed: _isValid ? _handleSubmit : null,
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(44),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text(
+                    '开启流年运势',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

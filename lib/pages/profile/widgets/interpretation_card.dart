@@ -4,16 +4,28 @@ import '../../../widgets/glowing_hexagram.dart';
 /// 解读类型
 enum InterpretationType {
   /// 天时
-  tianShi(label: '天时', color: Color(0xFFD59E00), hexagramBgType: HexagramBgType.normal),
+  tianShi(
+      label: '天时',
+      color: Color(0xFFD59E00),
+      hexagramBgType: HexagramBgType.normal),
 
   /// 地势
-  diShi(label: '地势', color: Color(0xFFFEA85C), hexagramBgType: HexagramBgType.orange),
+  diShi(
+      label: '地势',
+      color: Color(0xFFFEA85C),
+      hexagramBgType: HexagramBgType.orange),
 
   /// 生历
-  shengLi(label: '生历', color: Color(0xFF40A922), hexagramBgType: HexagramBgType.green),
+  shengLi(
+      label: '生历',
+      color: Color(0xFF40A922),
+      hexagramBgType: HexagramBgType.green),
 
   /// 死结
-  siJie(label: '死结', color: Color(0xFF91DBD7), hexagramBgType: HexagramBgType.purple);
+  siJie(
+      label: '死结',
+      color: Color(0xFF91DBD7),
+      hexagramBgType: HexagramBgType.purple);
 
   /// 创建解读类型
   const InterpretationType({
@@ -113,7 +125,7 @@ class InterpretationCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: type.color,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(15),
                         bottomLeft: Radius.circular(15),
                       ),
@@ -160,11 +172,11 @@ class InterpretationCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildInterpretationItem('卦辞', guaCi),
+                        _buildInterpretationItem('⊙卦辞:', guaCi),
                         const SizedBox(height: 14),
-                        _buildInterpretationItem('象传', xiangZhuan),
+                        _buildInterpretationItem('⊙象传:', xiangZhuan),
                         const SizedBox(height: 14),
-                        _buildInterpretationItem('彖传', tuanZhuan),
+                        _buildInterpretationItem('⊙彖传:', tuanZhuan),
                       ],
                     ),
                   ),
@@ -220,14 +232,14 @@ class InterpretationCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 42,
+          width: 55,
           child: Text(
             title,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 15,
               color: Colors.grey[600],
               fontWeight: FontWeight.w500,
-              height: 1.4,
+              height: 1.6,
             ),
           ),
         ),
@@ -235,9 +247,8 @@ class InterpretationCard extends StatelessWidget {
           child: Text(
             content,
             style: const TextStyle(
-              fontSize: 13,
+              fontSize: 15,
               height: 1.6,
-              letterSpacing: 0.2,
             ),
           ),
         ),

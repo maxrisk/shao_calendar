@@ -21,16 +21,14 @@ class UserService extends ChangeNotifier {
   }
 
   // 获取用户信息
-  Future<UserInfoResponse?> getUserInfo({bool persist = true}) async {
+  Future<UserInfoResponse?> getUserInfo() async {
     try {
       final response = await _dio.get('/app/user');
       if (response.data['code'] == 0 && response.data['data'] != null) {
         final data = response.data['data'];
         if (data['userInfo'] != null) {
           _userInfo = UserInfoResponse.fromJson(data);
-          if (persist) {
-            notifyListeners();
-          }
+          notifyListeners();
           return _userInfo;
         }
       }
@@ -60,7 +58,7 @@ class UserService extends ChangeNotifier {
         if (token != null) {
           await _prefs.setString('token', token);
           // 获取用户信息
-          return await getUserInfo(persist: false);
+          return await getUserInfo();
         }
       }
       return null;

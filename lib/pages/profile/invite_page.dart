@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:provider/provider.dart';
+import '../../services/user_service.dart';
 import 'widgets/statistic_card.dart';
 import 'invite_detail_page.dart';
 import 'commission_detail_page.dart';
@@ -60,6 +62,8 @@ class InvitePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final userService = context.watch<UserService>();
+    final userInfo = userService.userInfo?.userInfo;
 
     return Scaffold(
       appBar: AppBar(
@@ -81,7 +85,7 @@ class InvitePage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: StatisticCard(
-                      value: '123.00',
+                      value: userInfo?.amount?.toStringAsFixed(2) ?? '0.00',
                       label: '已获提成（元）',
                       onTap: () {
                         Navigator.push(
@@ -96,7 +100,7 @@ class InvitePage extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: StatisticCard(
-                      value: '0',
+                      value: userInfo?.promotion?.toString() ?? '0',
                       label: '总邀请（人）',
                       onTap: () {
                         Navigator.push(
@@ -138,14 +142,14 @@ class InvitePage extends StatelessWidget {
                     ),
                     _buildQRCode(
                       context,
-                      'https://example.com/invite?code=138****0000',
+                      'https://example.com/invite?code=${userInfo?.id?.toString() ?? ''}',
                     ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'ID: 138****0000',
+                          'ID: ${userInfo?.id?.toString() ?? '-'}',
                           style: TextStyle(
                             fontSize: 15,
                             color: colorScheme.onSurfaceVariant,
@@ -153,8 +157,8 @@ class InvitePage extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          onPressed: () =>
-                              _copyToClipboard(context, '138****0000'),
+                          onPressed: () => _copyToClipboard(
+                              context, userInfo?.id?.toString() ?? ''),
                           icon: Icon(
                             Icons.copy_rounded,
                             size: 16,
@@ -187,7 +191,7 @@ class InvitePage extends StatelessWidget {
                             child: _buildStatItem(
                               context,
                               '分享给好友',
-                              '0',
+                              '第一步',
                             ),
                           ),
                           Container(
@@ -199,7 +203,7 @@ class InvitePage extends StatelessWidget {
                             child: _buildStatItem(
                               context,
                               '输入邀请码/扫码',
-                              '0',
+                              '第二步',
                             ),
                           ),
                           Container(
@@ -211,7 +215,7 @@ class InvitePage extends StatelessWidget {
                             child: _buildStatItem(
                               context,
                               '用户付费提现到账',
-                              '0',
+                              '第三步',
                             ),
                           ),
                         ],
