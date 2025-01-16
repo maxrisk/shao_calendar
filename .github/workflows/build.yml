@@ -19,6 +19,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 设置时区为上海
+      - name: Set timezone to Asia/Shanghai
+        run: |
+          sudo systemsetup -settimezone "Asia/Shanghai"
+
       # 2. 安装 Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -31,10 +36,25 @@ jobs:
         id: set-env
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "BUILD_ENV=production" >> $GITHUB_ENV
+            echo "BUILD_NAME=正式版" >> $GITHUB_ENV
             echo "DART_DEFINES=APP_ENV=production" >> $GITHUB_ENV
+            echo "PP_PROFILE=${{ secrets.IOS_PRODUCTION_PROFILE_BASE64 }}" >> $GITHUB_ENV
+            echo "EXPORT_METHOD=app-store" >> $GITHUB_ENV
           else
+            echo "BUILD_ENV=development" >> $GITHUB_ENV
+            echo "BUILD_NAME=测试版" >> $GITHUB_ENV
             echo "DART_DEFINES=APP_ENV=development" >> $GITHUB_ENV
+            echo "PP_PROFILE=${{ secrets.IOS_DEVELOPMENT_PROFILE_BASE64 }}" >> $GITHUB_ENV
+            echo "EXPORT_METHOD=development" >> $GITHUB_ENV
           fi
+          
+          # 获取版本号
+          VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          # 生成构建号：MMDDHHMM 格式
+          BUILD_NUMBER=$(date +'%m%d%H%M')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
 
       # 4. 安装项目依赖
       - name: Install dependencies
@@ -56,53 +76,116 @@ jobs:
 
       # 6. 构建 Android APK
       - name: Build Android APK
-        run: flutter build apk --release --dart-define=${{ env.DART_DEFINES }}
+        run: flutter build apk --release --dart-define=${{ env.DART_DEFINES }} --build-name=${{ env.VERSION }} --build-number=${{ env.BUILD_NUMBER }}
 
       # 上传 APK 文件
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
+          name: app-${{ env.BUILD_ENV }}-${{ env.VERSION }}+${{ env.BUILD_NUMBER }}-android
           path: build/app/outputs/flutter-apk/app-release.apk
 
-      # 7. 安装 iOS 证书和配置文件
-      - name: Install iOS certificates
+      # 7. 准备 iOS 证书和配置文件
+      - name: Prepare iOS certificates and profiles
         if: github.event_name != 'pull_request'
         env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
-          P12_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
-          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}
+          BUILD_CERTIFICATE_BASE64: ${{ github.ref == 'refs/heads/main' && secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 || secrets.IOS_DEVELOPMENT_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ github.ref == 'refs/heads/main' && secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD || secrets.IOS_DEVELOPMENT_CERTIFICATE_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ env.PP_PROFILE }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          SIGNING_CERTIFICATE: ${{ github.ref == 'refs/heads/main' && 'Apple Distribution' || 'Apple Development' }}
         run: |
+          # 检查必要的环境变量
+          if [ -z "$BUILD_CERTIFICATE_BASE64" ]; then
+            echo "错误: 证书内容为空"
+            exit 1
+          fi
+          if [ -z "$P12_PASSWORD" ]; then
+            echo "错误: 证书密码为空"
+            exit 1
+          fi
+          if [ -z "$BUILD_PROVISION_PROFILE_BASE64" ]; then
+            echo "错误: Provisioning Profile 为空"
+            exit 1
+          fi
+
           # 创建临时文件
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
           # 导入证书和配置文件
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode > $CERTIFICATE_PATH
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode > $PP_PATH
 
-          # 创建临时 keychain
+          # 检查文件是否创建成功
+          if [ ! -f "$CERTIFICATE_PATH" ]; then
+            echo "错误: 证书文件未创建成功"
+            exit 1
+          fi
+          if [ ! -f "$PP_PATH" ]; then
+            echo "错误: Provisioning Profile 文件未创建成功"
+            exit 1
+          fi
+
+          # 删除可能存在的旧 keychain
+          security delete-keychain $KEYCHAIN_PATH || true
+
+          # 创建新的 keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
 
           # 导入证书到 keychain
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
 
           # 导入配置文件
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
+
+          # 更新 exportOptions.plist
+          cat > ios/exportOptions.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>${{ env.EXPORT_METHOD }}</string>
+              <key>teamID</key>
+              <string>${{ secrets.APPLE_TEAM_ID }}</string>
+              <key>signingStyle</key>
+              <string>manual</string>
+              <key>provisioningProfiles</key>
+              <dict>
+                  <key>com.cdjs.calendar</key>
+                  <string>$(basename "${PP_PATH}".mobileprovision)</string>
+              </dict>
+              <key>signingCertificate</key>
+              <string>${SIGNING_CERTIFICATE}</string>
+          </dict>
+          </plist>
+          EOF
+
+          # 显示一些调试信息
+          echo "证书和配置文件设置完成"
+          security find-identity -v -p codesigning
 
       # 8. 构建 iOS
       - name: Build iOS
         if: github.event_name != 'pull_request'
         run: |
-          flutter build ios --release --no-codesign --dart-define=${{ env.DART_DEFINES }}
+          # 更新项目配置
           cd ios
-          xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath build/Runner.xcarchive archive
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ env.BUILD_NUMBER }}" Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ env.VERSION }}" Runner/Info.plist
+          cd ..
+
+          # 构建
+          flutter build ios --release --dart-define=${{ env.DART_DEFINES }} --build-name=${{ env.VERSION }} --build-number=${{ env.BUILD_NUMBER }}
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath build/Runner.xcarchive archive CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER="$(basename "$PP_PATH" .mobileprovision)" DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}"
           xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportOptionsPlist exportOptions.plist -exportPath build/ios
 
       # 9. 上传 iOS 构建产物
@@ -110,5 +193,5 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: ios-build
+          name: app-${{ env.BUILD_ENV }}-${{ env.VERSION }}+${{ env.BUILD_NUMBER }}-ios
           path: ios/build/ios/
