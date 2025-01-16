@@ -4,7 +4,6 @@ import '../profile/login_page.dart';
 import 'widgets/login_prompt.dart';
 import 'widgets/user_info_card.dart';
 import 'widgets/interpretation_card.dart';
-import '../../widgets/glowing_hexagram.dart';
 import '../../widgets/list/list_cell.dart';
 import '../../widgets/list/list_group.dart';
 import '../../services/user_service.dart';
@@ -86,57 +85,55 @@ class _ProfilePageState extends State<ProfilePage> {
                     onInviteTap: _handleInvite,
                   ),
                   InterpretationCard(
-                    title: '邵氏解读：剥离剥夺，分化瓦解',
+                    title: '天气卦',
                     type: InterpretationType.tianShi,
                     hexagramText:
-                        userService.userInfo?.weatherDivination.name ?? '',
-                    hexagramType: HexagramBgType.orange,
-                    guaCi: userService.userInfo?.weatherDivination.words ?? '',
+                        userService.userInfo?.weatherDivination?.name ?? '',
+                    guaCi: userService.userInfo?.weatherDivination?.words ?? '',
                     xiangZhuan:
-                        userService.userInfo?.weatherDivination.xiangChuan ??
+                        userService.userInfo?.weatherDivination?.xiangChuan ??
                             '',
                     tuanZhuan:
-                        userService.userInfo?.weatherDivination.tuanChuan ?? '',
+                        userService.userInfo?.weatherDivination?.tuanChuan ??
+                            '',
                   ),
                   InterpretationCard(
-                    title: '邵氏解读：剥离剥夺，分化瓦解',
+                    title: '地势卦',
                     type: InterpretationType.diShi,
                     hexagramText:
-                        userService.userInfo?.terrainDivination.name ?? '',
-                    hexagramType: HexagramBgType.orange,
-                    guaCi: userService.userInfo?.terrainDivination.words ?? '',
+                        userService.userInfo?.terrainDivination?.name ?? '',
+                    guaCi: userService.userInfo?.terrainDivination?.words ?? '',
                     xiangZhuan:
-                        userService.userInfo?.terrainDivination.xiangChuan ??
+                        userService.userInfo?.terrainDivination?.xiangChuan ??
                             '',
                     tuanZhuan:
-                        userService.userInfo?.terrainDivination.tuanChuan ?? '',
+                        userService.userInfo?.terrainDivination?.tuanChuan ??
+                            '',
                   ),
                   InterpretationCard(
-                    title: '邵氏解读：剥离剥夺，分化瓦解',
+                    title: '生辰卦',
                     type: InterpretationType.shengLi,
                     hexagramText:
-                        userService.userInfo?.birthDivination.name ?? '',
-                    hexagramType: HexagramBgType.orange,
-                    guaCi: userService.userInfo?.birthDivination.words ?? '',
+                        userService.userInfo?.birthDivination?.name ?? '',
+                    guaCi: userService.userInfo?.birthDivination?.words ?? '',
                     xiangZhuan:
-                        userService.userInfo?.birthDivination.xiangChuan ?? '',
+                        userService.userInfo?.birthDivination?.xiangChuan ?? '',
                     tuanZhuan:
-                        userService.userInfo?.birthDivination.tuanChuan ?? '',
+                        userService.userInfo?.birthDivination?.tuanChuan ?? '',
                     onPressed: () {
                       // TODO: 处理按钮点击
                     },
                   ),
                   InterpretationCard(
-                    title: '邵氏解读：剥离剥夺，分化瓦解',
+                    title: '节气卦',
                     type: InterpretationType.siJie,
                     hexagramText:
-                        userService.userInfo?.knotDivination.name ?? '',
-                    hexagramType: HexagramBgType.orange,
-                    guaCi: userService.userInfo?.knotDivination.words ?? '',
+                        userService.userInfo?.knotDivination?.name ?? '',
+                    guaCi: userService.userInfo?.knotDivination?.words ?? '',
                     xiangZhuan:
-                        userService.userInfo?.knotDivination.xiangChuan ?? '',
+                        userService.userInfo?.knotDivination?.xiangChuan ?? '',
                     tuanZhuan:
-                        userService.userInfo?.knotDivination.tuanChuan ?? '',
+                        userService.userInfo?.knotDivination?.tuanChuan ?? '',
                     onPressed: () {
                       // TODO: 处理按钮点击
                     },

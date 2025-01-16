@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../services/user_service.dart';
 import '../../widgets/dialogs/index.dart' as custom;
 import '../../widgets/form/form_field.dart';
 import '../../widgets/dialogs/bottom_sheet_item.dart';
@@ -15,28 +17,24 @@ class CompleteInfoPage extends StatefulWidget {
 class _CompleteInfoPageState extends State<CompleteInfoPage> {
   final _referralController = TextEditingController();
   DateTime? _birthDate;
-  String? _birthTime;
+  int? _birthTimeIndex;
 
   // 时辰列表
   final _timeList = const [
-    '子时 (23:00-1:00)',
-    '丑时 (1:00-3:00)',
-    '寅时 (3:00-5:00)',
-    '卯时 (5:00-7:00)',
-    '辰时 (7:00-9:00)',
-    '巳时 (9:00-11:00)',
-    '午时 (11:00-13:00)',
-    '未时 (13:00-15:00)',
-    '申时 (15:00-17:00)',
-    '酉时 (17:00-19:00)',
-    '戌时 (19:00-21:00)',
-    '亥时 (21:00-23:00)',
+    '0-4点',
+    '4-8点',
+    '8-12点',
+    '12-16点',
+    '16-20点',
+    '20-24点',
   ];
 
+  String? get _birthTime =>
+      _birthTimeIndex != null ? _timeList[_birthTimeIndex!] : null;
+
   bool get _isValid =>
-      _referralController.text.isNotEmpty &&
       _birthDate != null &&
-      _birthTime != null;
+      _birthTimeIndex != null;
 
   @override
   void dispose() {
@@ -75,7 +73,7 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
             title: time,
             onTap: () {
               setState(() {
-                _birthTime = time;
+                _birthTimeIndex = index;
               });
               Navigator.pop(context);
             },
@@ -83,6 +81,27 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
         },
       ),
     );
+  }
+
+  Future<void> _handleSubmit() async {
+    final userService = context.read<UserService>();
+    final success = await userService.openFortune(
+      '${_birthDate!.year}-${_birthDate!.month}-${_birthDate!.day}',
+      _birthTimeIndex! + 1,
+      code: _referralController.text,
+    );
+    if (success) {
+      Navigator.pop(context);
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('开启流年运势失败，请重试'),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(bottom: 80, left: 16, right: 16),
+        ),
+      );
+    }
   }
 
   @override
@@ -111,7 +130,7 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FormItem(
-                      label: '推荐码',
+                      label: '推荐码（选填）',
                       hint: '请输入推荐码',
                       icon: Icons.qr_code_rounded,
                       controller: _referralController,
@@ -153,10 +172,7 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
               ),
               child: FilledButton(
                 onPressed: _isValid
-                    ? () {
-                        // TODO: 处理提交
-                        Navigator.pop(context);
-                      }
+                    ? _handleSubmit
                     : null,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(44),

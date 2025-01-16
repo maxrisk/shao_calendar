@@ -69,12 +69,13 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
     try {
       final userService = context.read<UserService>();
       final userInfo = await userService.login(widget.phone, code);
+      print('userInfo: $userInfo');
 
       if (!mounted) return;
 
       if (userInfo != null) {
         // 登录成功，判断是否需要完善信息
-        if (userInfo.userInfo.birthDate == null) {
+        if (userInfo.userInfo.birthDate?.isEmpty ?? true) {
           // 需要完善生日信息
           Navigator.pushReplacement(
             context,
@@ -118,7 +119,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
     return VerifyCodeInput(
       title: '验证手机号',
       autoStart: widget.autoStart,
-      codeLength: 6,
+      codeLength: 4,
       subtitle: TextSpan(
         text: '获取 ',
         children: [
