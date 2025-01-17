@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
     <key>method</key>
-    <string>app-store</string>
-    <key>teamID</key>
-    <string>YOUR_TEAM_ID</string>
+    <string>${{ env.EXPORT_METHOD }}</string>
     <key>signingStyle</key>
     <string>manual</string>
     <key>provisioningProfiles</key>
     <dict>
         <key>com.cdjs.calendar</key>
-        <string>Calendar Distribution Profile</string>
+        <string>${{ env.PROFILE_UUID }}</string>
     </dict>
+    <key>teamID</key>
+    <string>${{ secrets.APPLE_TEAM_ID }}</string>
     <key>signingCertificate</key>
-    <string>Apple Distribution</string>
+    <string>${{ env.SIGNING_CERTIFICATE }}</string>
 </dict>
 </plist> 
