@@ -42,7 +42,7 @@ jobs:
             echo "BUILD_NAME=正式版" >> $GITHUB_ENV
             echo "DART_DEFINES=APP_ENV=production" >> $GITHUB_ENV
             echo "PP_PROFILE=${{ secrets.IOS_PRODUCTION_PROFILE_BASE64 }}" >> $GITHUB_ENV
-            echo "EXPORT_METHOD=app-store" >> $GITHUB_ENV
+            echo "EXPORT_METHOD=app-store-connect" >> $GITHUB_ENV
             echo "SIGNING_CERTIFICATE=Apple Distribution" >> $GITHUB_ENV
             echo "BUILD_CERTIFICATE=${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}" >> $GITHUB_ENV
             echo "CERTIFICATE_PASSWORD=${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
@@ -51,7 +51,7 @@ jobs:
             echo "BUILD_NAME=测试版" >> $GITHUB_ENV
             echo "DART_DEFINES=APP_ENV=development" >> $GITHUB_ENV
             echo "PP_PROFILE=${{ secrets.IOS_DEVELOPMENT_PROFILE_BASE64 }}" >> $GITHUB_ENV
-            echo "EXPORT_METHOD=ad-hoc" >> $GITHUB_ENV
+            echo "EXPORT_METHOD=development" >> $GITHUB_ENV
             echo "SIGNING_CERTIFICATE=Apple Development" >> $GITHUB_ENV
             echo "BUILD_CERTIFICATE=${{ secrets.IOS_DEVELOPMENT_CERTIFICATE_BASE64 }}" >> $GITHUB_ENV
             echo "CERTIFICATE_PASSWORD=${{ secrets.IOS_DEVELOPMENT_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
@@ -152,11 +152,11 @@ jobs:
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ env.BUILD_NUMBER }}" Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ env.VERSION }}" Runner/Info.plist
           
-          # 替换 export options plist 中的变量
-          sed -i '' "s/{{env.EXPORT_METHOD}}/${{ env.EXPORT_METHOD }}/g" GithubActionsExportOptions.plist
-          sed -i '' "s/{{env.PROFILE_UUID}}/${{ env.PROFILE_UUID }}/g" GithubActionsExportOptions.plist
-          sed -i '' "s/{{secrets.APPLE_TEAM_ID}}/${{ secrets.APPLE_TEAM_ID }}/g" GithubActionsExportOptions.plist
-          sed -i '' "s/{{env.SIGNING_CERTIFICATE}}/${{ env.SIGNING_CERTIFICATE }}/g" GithubActionsExportOptions.plist
+          # 使用 PlistBuddy 更新 export options
+          /usr/libexec/PlistBuddy -c "Set :method ${{ env.EXPORT_METHOD }}" GithubActionsExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Set :provisioningProfiles:com.cdjs.calendar ${{ env.PROFILE_UUID }}" GithubActionsExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Set :teamID ${{ secrets.APPLE_TEAM_ID }}" GithubActionsExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Set :signingCertificate ${{ env.SIGNING_CERTIFICATE }}" GithubActionsExportOptions.plist
           
           cd ..
 

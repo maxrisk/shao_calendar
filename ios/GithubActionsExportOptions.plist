@@ -3,17 +3,23 @@
 <plist version="1.0">
 <dict>
     <key>method</key>
-    <string>${{ env.EXPORT_METHOD }}</string>
+    <string>ad-hoc</string>
     <key>signingStyle</key>
     <string>manual</string>
     <key>provisioningProfiles</key>
     <dict>
         <key>com.cdjs.calendar</key>
-        <string>${{ env.PROFILE_UUID }}</string>
+        <string></string>
     </dict>
     <key>teamID</key>
-    <string>${{ secrets.APPLE_TEAM_ID }}</string>
+    <string></string>
     <key>signingCertificate</key>
-    <string>${{ env.SIGNING_CERTIFICATE }}</string>
+    <string></string>
+    <key>compileBitcode</key>
+    <false/>
+    <key>stripSwiftSymbols</key>
+    <true/>
+    <key>thinning</key>
+    <string>&lt;none&gt;</string>
 </dict>
 </plist> 
