@@ -168,9 +168,15 @@ jobs:
             --build-number=${{ env.BUILD_NUMBER }} \
             --export-options-plist=ios/GithubActionsExportOptions.plist
 
+      # 11.5 显示 IPA 文件位置
+      - name: Show IPA Location
+        run: |
+          echo "查找 IPA 文件..."
+          find build/ios -name "*.ipa"
+          
       # 12. 上传 iOS 构建产物
       - name: Upload iOS Build
         uses: actions/upload-artifact@v4
         with:
           name: app-${{ env.BUILD_ENV }}-${{ env.VERSION }}+${{ env.BUILD_NUMBER }}-ios
-          path: build/ios/ipa/*.ipa
+          path: build/ios/ipa/flutter_calendar.ipa
