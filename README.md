@@ -9,6 +9,13 @@
 - iOS: 12.0+
 - Android: minSdkVersion 21
 
+## 开发设置
+
+1. 复制 `.vscode/launch.json.example` 到 `.vscode/launch.json`
+2. 在 `launch.json` 中更新以下配置：
+   - `deviceId`: 您的设备 ID
+   - `API_BASE_URL`: 对应环境的 API 地址
+
 ## 打包说明
 
 ### 环境区分

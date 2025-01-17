@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Development",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "YOUR_DEVICE_ID",
+      "args": ["--dart-define=API_BASE_URL=YOUR_API_URL"]
+    },
+    {
+      "name": "Profile Mode",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "Release Mode",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    }
+  ]
+} 
