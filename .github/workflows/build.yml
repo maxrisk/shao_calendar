@@ -162,7 +162,7 @@ jobs:
 
           # 构建 IPA
           flutter build ipa \
-            --release \
+            --${{ env.BUILD_ENV == 'production' && 'release' || 'profile' }} \
             --dart-define=${{ env.DART_DEFINES }} \
             --build-name=${{ env.VERSION }} \
             --build-number=${{ env.BUILD_NUMBER }} \
