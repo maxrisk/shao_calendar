@@ -3,11 +3,15 @@ import '../../../widgets/info_card.dart';
 import '../../../widgets/label.dart';
 import '../../../widgets/yao_selector.dart';
 import '../../../widgets/glowing_hexagram.dart';
+import '../../../models/fortune.dart';
 
 /// 运势解读组件
 class FortuneInterpretation extends StatefulWidget {
   /// 创建运势解读组件
-  const FortuneInterpretation({super.key});
+  const FortuneInterpretation({super.key, this.yaos});
+
+  /// 卦象
+  final List<Yao>? yaos;
 
   @override
   State<FortuneInterpretation> createState() => _FortuneInterpretationState();
@@ -18,6 +22,12 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.yaos == null) {
+      return const SizedBox.shrink();
+    }
+
+    Yao yao = widget.yaos![_selectedYao];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -35,14 +45,14 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
           ),
           // 解读内容
           InfoCardGroup(
-            cards: const [
+            cards: [
               InfoCard(
-                title: '爻辞',
-                content: '潜龙勿用',
+                content: '时效: ${yao.times}',
+                centered: true,
               ),
               InfoCard(
-                title: '卦辞',
-                content: '勿用取女',
+                content: yao.words,
+                centered: true,
               ),
             ],
           ),
@@ -50,10 +60,10 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
           const SizedBox(height: 5),
           // 使用 SizedBox.expand 或 Row 包裹全宽卡片
           Row(
-            children: const [
+            children: [
               Expanded(
                 child: InfoCard(
-                  content: '运势平平，宜静不宜动',
+                  content: yao.changeWords,
                   centered: true,
                 ),
               ),
@@ -63,10 +73,10 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
           const Label(text: '应对策略'),
           const SizedBox(height: 5),
           Row(
-            children: const [
+            children: [
               Expanded(
                 child: InfoCard(
-                  content: '运势平平，宜静不宜动',
+                  content: yao.changeInterpret,
                   centered: true,
                 ),
               ),
@@ -89,9 +99,9 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
               ),
             ),
             child: Column(
-              children: const [
+              children: [
                 GlowingHexagram(
-                  text: '坤',
+                  text: yao.change,
                   enableAnimation: false,
                   bgType: HexagramBgType.purple,
                 ),

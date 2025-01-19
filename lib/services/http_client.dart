@@ -35,14 +35,15 @@ class HttpClient {
         }
         if (!AppConfig.isProduction) {
           print(
-              '${options.method}:${options.path} request: ${options.data}, header: ${options.headers}');
+              '${options.method}:${options.path} \n request: ${options.data}, header: ${options.headers}');
         }
         return handler.next(options);
       },
       onResponse: (response, handler) {
         if (!AppConfig.isProduction) {
+          print('response headers: ${response.headers}');
           print(
-              '${response.requestOptions.method}:${response.requestOptions.path} response: ${response.data}');
+              '${response.requestOptions.method}:${response.requestOptions.path} \n response: ${response.data}');
         }
         return handler.next(response);
       },

@@ -7,9 +7,11 @@ class LunarCalendar extends StatefulWidget {
   const LunarCalendar({
     super.key,
     this.onDaySelected,
+    this.onPageChanged,
   });
 
   final void Function(DateTime selectedDay, DateTime focusedDay)? onDaySelected;
+  final void Function(DateTime focusedDay)? onPageChanged;
 
   @override
   State<LunarCalendar> createState() => _LunarCalendarState();
@@ -109,6 +111,7 @@ class _LunarCalendarState extends State<LunarCalendar> {
               locale: 'zh_CN',
               daysOfWeekHeight: 32,
               onPageChanged: (focusedDay) {
+                widget.onPageChanged?.call(focusedDay);
                 // 处理页面切换事件
                 setState(() {
                   _focusedDay = focusedDay;
@@ -119,11 +122,11 @@ class _LunarCalendarState extends State<LunarCalendar> {
                 weekdayStyle: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
-                weekendStyle: TextStyle(
+                weekendStyle: const TextStyle(
                   color: AppTheme.primaryColor,
                 ),
               ),
-              calendarStyle: CalendarStyle(
+              calendarStyle: const CalendarStyle(
                 outsideDaysVisible: false,
               ),
               selectedDayPredicate: (day) {
@@ -152,7 +155,7 @@ class _LunarCalendarState extends State<LunarCalendar> {
                 selectedBuilder: (context, day, focusedDay) {
                   return Container(
                     margin: const EdgeInsets.all(4.0),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppTheme.primaryColor,
                       shape: BoxShape.circle,
                     ),

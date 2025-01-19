@@ -4,6 +4,8 @@ import '../../widgets/bottom_nav_bar.dart';
 import '../../pages/pages.dart';
 import '../../pages/scanner/qr_scanner_page.dart';
 import '../../theme/app_theme.dart';
+import '../../services/fortune_service.dart';
+import '../../models/fortune.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -16,6 +18,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  final _fortuneService = FortuneService();
+  FortuneResponse? _fortuneData;
+  FortuneResponse? _userFortuneData;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFortuneData();
+  }
 
   // 获取状态栏和AppBar的总高度
   double get _topPadding =>
@@ -29,6 +41,41 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<void> _loadFortuneData() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final today = DateTime.now();
+      final dateStr =
+          '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+
+      final fortuneData = await _fortuneService.getFortune(dateStr);
+      final userFortuneData = await _fortuneService.getUserFortune(dateStr);
+
+      if (mounted) {
+        setState(() {
+          _fortuneData = fortuneData;
+          _userFortuneData = userFortuneData;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('获取运势数据失败: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('获取运势数据失败')),
+        );
+      }
+    }
+  }
+
   Future<void> _onScanPressed() async {
     final result = await Navigator.push<String>(
       context,
@@ -37,7 +84,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 
-    if (!mounted) return; // 确保在使用 context 前检查 mounted
+    if (!mounted) return;
 
     if (result != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -132,14 +179,16 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             SafeArea(
-              child: IndexedStack(
-                index: _selectedIndex,
-                children: const [
-                  CalendarPage(),
-                  FortunePage(),
-                  ProfilePage(),
-                ],
-              ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : IndexedStack(
+                      index: _selectedIndex,
+                      children: [
+                        CalendarPage(fortuneData: _fortuneData?.data),
+                        FortunePage(fortuneData: _userFortuneData?.data),
+                        const ProfilePage(),
+                      ],
+                    ),
             ),
           ],
         ),

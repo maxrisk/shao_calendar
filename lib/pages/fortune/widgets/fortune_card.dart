@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../widgets/glowing_hexagram.dart';
+import '../../../models/fortune.dart';
 
 /// 运势卡片组件
 class FortuneCard extends StatelessWidget {
@@ -8,7 +9,7 @@ class FortuneCard extends StatelessWidget {
     super.key,
     required this.text,
     required this.bgType,
-    this.yearRange = '1984-2043',
+    required this.yearRange,
   });
 
   /// 卦象文字
@@ -53,25 +54,34 @@ class FortuneCard extends StatelessWidget {
 /// 运势卡片组
 class FortuneCardGroup extends StatelessWidget {
   /// 创建运势卡片组
-  const FortuneCardGroup({super.key});
+  const FortuneCardGroup({super.key, this.fortuneData});
+
+  /// 个人运势数据
+  final FortuneData? fortuneData;
 
   @override
   Widget build(BuildContext context) {
+    if (fortuneData == null) {
+      return const SizedBox.shrink();
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
-        children: const [
+        children: [
           Expanded(
             child: FortuneCard(
-              text: '乾',
+              text: fortuneData!.decadeName,
               bgType: HexagramBgType.green,
+              yearRange: fortuneData!.decadeYears,
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Expanded(
             child: FortuneCard(
-              text: '坤',
+              text: fortuneData!.thisName,
               bgType: HexagramBgType.orange,
+              yearRange: '${fortuneData!.thisYears}年',
             ),
           ),
         ],

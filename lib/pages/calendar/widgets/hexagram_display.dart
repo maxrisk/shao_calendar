@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../widgets/glowing_hexagram.dart';
+import '../../../models/divination.dart';
 
 /// 卦象展示组件
 class HexagramDisplay extends StatelessWidget {
@@ -7,10 +8,14 @@ class HexagramDisplay extends StatelessWidget {
   const HexagramDisplay({
     super.key,
     required this.date,
+    required this.divination,
   });
 
   /// 日期
   final DateTime date;
+
+  /// 卦象
+  final Divination? divination;
 
   double calcWidth(BuildContext context, int width) {
     return MediaQuery.of(context).size.width * width / 375;
@@ -54,13 +59,13 @@ class HexagramDisplay extends StatelessWidget {
           ),
           // 中间卦象
           GlowingHexagram(
-            text: '坤',
+            text: divination?.name ?? '',
             size: calcWidth(context, 80),
           ),
           // 底部描述
-          const Text(
-            '乾卦：元亨利贞',
-            style: TextStyle(
+          Text(
+            divination?.words ?? '',
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.white,
             ),

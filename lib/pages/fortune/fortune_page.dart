@@ -6,11 +6,16 @@ import 'widgets/fortune_display.dart';
 import 'widgets/fortune_interpretation.dart';
 import 'widgets/fortune_purchase_card.dart';
 import '../../pages/profile/calendar_service_page.dart';
+import '../../models/fortune.dart';
+import '../../services/fortune_service.dart';
 
 /// 个人运势页面
 class FortunePage extends StatefulWidget {
   /// 创建个人运势页面
-  const FortunePage({super.key});
+  const FortunePage({super.key, this.fortuneData});
+
+  /// 个人运势数据
+  final FortuneData? fortuneData;
 
   @override
   State<FortunePage> createState() => _FortunePageState();
@@ -18,6 +23,49 @@ class FortunePage extends StatefulWidget {
 
 class _FortunePageState extends State<FortunePage> {
   DateTime _selectedDate = DateTime.now();
+  final _fortuneService = FortuneService();
+  FortuneResponse? _fortuneData;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fortuneData = widget.fortuneData != null
+        ? FortuneResponse(code: 0, data: widget.fortuneData)
+        : null;
+    if (_fortuneData == null) {
+      _loadFortuneData(_selectedDate);
+    }
+  }
+
+  Future<void> _loadFortuneData(DateTime date) async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final dateStr =
+          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      final response = await _fortuneService.getUserFortune(dateStr);
+      if (mounted) {
+        setState(() {
+          _fortuneData = response;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('获取个人运势数据失败')),
+        );
+      }
+    }
+  }
 
   Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
@@ -30,19 +78,24 @@ class _FortunePageState extends State<FortunePage> {
       setState(() {
         _selectedDate = picked;
       });
+      _loadFortuneData(picked);
     }
   }
 
   void _previousDay() {
+    final previousDate = _selectedDate.subtract(const Duration(days: 1));
     setState(() {
-      _selectedDate = _selectedDate.subtract(const Duration(days: 1));
+      _selectedDate = previousDate;
     });
+    _loadFortuneData(previousDate);
   }
 
   void _nextDay() {
+    final nextDate = _selectedDate.add(const Duration(days: 1));
     setState(() {
-      _selectedDate = _selectedDate.add(const Duration(days: 1));
+      _selectedDate = nextDate;
     });
+    _loadFortuneData(nextDate);
   }
 
   @override
@@ -58,7 +111,7 @@ class _FortunePageState extends State<FortunePage> {
             child: Column(
               children: [
                 // 顶部卡片区域
-                const FortuneCardGroup(),
+                FortuneCardGroup(fortuneData: _fortuneData?.data),
                 // 革年标题
                 const DecoratedTitle(title: '革年'),
                 // 日期选择按钮
@@ -86,7 +139,9 @@ class _FortunePageState extends State<FortunePage> {
                 ),
                 const SizedBox(height: 16),
                 // 运势解读
-                const FortuneInterpretation(),
+                FortuneInterpretation(
+                  yaos: _fortuneData?.data?.yaos,
+                ),
               ],
             ),
           ),
