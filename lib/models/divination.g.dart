@@ -16,6 +16,9 @@ Divination _$DivinationFromJson(Map<String, dynamic> json) => Divination(
       tuanChuan: json['tuanChuan'] as String,
       luck: json['luck'] as String,
       fierce: json['fierce'] as String?,
+      baziInterpretation: json['baziInterpretation'] as String?,
+      lifeInterpretation: json['lifeInterpretation'] as String?,
+      deathInterpretation: json['deathInterpretation'] as String?,
     );
 
 Map<String, dynamic> _$DivinationToJson(Divination instance) =>
@@ -29,4 +32,7 @@ Map<String, dynamic> _$DivinationToJson(Divination instance) =>
       'tuanChuan': instance.tuanChuan,
       'luck': instance.luck,
       'fierce': instance.fierce,
+      'baziInterpretation': instance.baziInterpretation,
+      'lifeInterpretation': instance.lifeInterpretation,
+      'deathInterpretation': instance.deathInterpretation,
     };

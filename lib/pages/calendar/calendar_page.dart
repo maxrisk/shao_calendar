@@ -90,6 +90,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 HexagramDisplay(
                   date: _selectedDay ?? _focusedDay,
                   divination: _fortuneData?.dayDivinationInfo,
+                  isLoading: _isLoading,
                 ),
                 HexagramDetail(
                   yaos: _fortuneData?.yaos,

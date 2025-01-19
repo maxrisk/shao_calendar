@@ -124,6 +124,8 @@ class _FortunePageState extends State<FortunePage> {
                   date: _selectedDate,
                   onPrevious: _previousDay,
                   onNext: _nextDay,
+                  divination: _fortuneData?.data?.dayDivinationInfo,
+                  isLoading: _isLoading,
                 ),
                 const SizedBox(height: 16),
                 // 购买卡片

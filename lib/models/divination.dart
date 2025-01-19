@@ -13,6 +13,9 @@ class Divination {
   final String tuanChuan;
   final String luck;
   final String? fierce;
+  final String? baziInterpretation;
+  final String? lifeInterpretation;
+  final String? deathInterpretation;
 
   const Divination({
     this.id,
@@ -24,6 +27,9 @@ class Divination {
     required this.tuanChuan,
     required this.luck,
     this.fierce,
+    this.baziInterpretation,
+    this.lifeInterpretation,
+    this.deathInterpretation,
   });
 
   factory Divination.fromJson(Map<String, dynamic> json) =>

@@ -71,7 +71,7 @@ class FortuneCardGroup extends StatelessWidget {
         children: [
           Expanded(
             child: FortuneCard(
-              text: fortuneData!.decadeName,
+              text: fortuneData!.baseName,
               bgType: HexagramBgType.green,
               yearRange: fortuneData!.decadeYears,
             ),
@@ -79,9 +79,9 @@ class FortuneCardGroup extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: FortuneCard(
-              text: fortuneData!.thisName,
+              text: fortuneData!.decadeName,
               bgType: HexagramBgType.orange,
-              yearRange: '${fortuneData!.thisYears}年',
+              yearRange: fortuneData!.decadeYears,
             ),
           ),
         ],

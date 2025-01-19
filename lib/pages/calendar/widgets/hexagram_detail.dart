@@ -70,11 +70,11 @@ class _HexagramDetailState extends State<HexagramDetail> {
           InfoCardGroup(
             cards: [
               InfoCard(
-                content: yao.changeWords,
+                content: yao.words,
                 centered: true,
               ),
               InfoCard(
-                content: yao.changeInterpret,
+                content: yao.changeWords,
                 centered: true,
               ),
             ],
@@ -83,7 +83,7 @@ class _HexagramDetailState extends State<HexagramDetail> {
           InfoCardGroup(
             cards: [
               InfoCard(
-                content: yao.changeWords,
+                content: yao.interpret,
                 centered: true,
               ),
               InfoCard(
@@ -109,7 +109,7 @@ class _HexagramDetailState extends State<HexagramDetail> {
             child: Column(
               children: [
                 GlowingHexagram(
-                  text: yao.change,
+                  text: yao.determine,
                   enableAnimation: false,
                   bgType: HexagramBgType.purple,
                 ),
