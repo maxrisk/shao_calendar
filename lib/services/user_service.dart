@@ -12,6 +12,8 @@ class UserService extends ChangeNotifier {
 
   UserInfoResponse? get userInfo => _userInfo;
 
+  bool get isVip => _userInfo?.userInfo.isVip ?? false;
+
   factory UserService() {
     return _instance;
   }

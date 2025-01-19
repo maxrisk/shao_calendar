@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../services/user_service.dart';
+import '../profile/widgets/login_prompt.dart';
 import 'widgets/fortune_card.dart';
 import 'widgets/date_picker_button.dart';
 import 'widgets/decorated_title.dart';
@@ -8,6 +11,7 @@ import 'widgets/fortune_purchase_card.dart';
 import '../../pages/profile/calendar_service_page.dart';
 import '../../models/fortune.dart';
 import '../../services/fortune_service.dart';
+import '../../pages/profile/login_page.dart';
 
 /// 个人运势页面
 class FortunePage extends StatefulWidget {
@@ -100,6 +104,22 @@ class _FortunePageState extends State<FortunePage> {
 
   @override
   Widget build(BuildContext context) {
+    final userService = context.watch<UserService>();
+    final isLoggedIn = userService.userInfo != null;
+
+    if (!isLoggedIn) {
+      return LoginPrompt(
+        onLogin: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const LoginPage(),
+            ),
+          );
+        },
+      );
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -129,16 +149,17 @@ class _FortunePageState extends State<FortunePage> {
                 ),
                 const SizedBox(height: 16),
                 // 购买卡片
-                FortunePurchaseCard(
-                  onPurchase: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CalendarServicePage(),
-                      ),
-                    );
-                  },
-                ),
+                if (!userService.isVip)
+                  FortunePurchaseCard(
+                    onPurchase: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CalendarServicePage(),
+                        ),
+                      );
+                    },
+                  ),
                 const SizedBox(height: 16),
                 // 运势解读
                 FortuneInterpretation(

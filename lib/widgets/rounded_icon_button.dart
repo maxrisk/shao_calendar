@@ -32,7 +32,19 @@ class RoundedIconButton extends StatelessWidget {
         ),
       ),
       child: isSubmitting
-          ? const CircularProgressIndicator()
+          ? const SizedBox(
+              width: 40,
+              height: 40,
+              child: Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
+            )
           : IconButton(
               onPressed: onPressed,
               icon: icon,
@@ -42,7 +54,7 @@ class RoundedIconButton extends StatelessWidget {
                 minHeight: 48,
               ),
               style: ButtonStyle(
-                shape: WidgetStateProperty.all(
+                shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),

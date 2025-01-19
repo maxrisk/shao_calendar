@@ -15,14 +15,13 @@ class VerifyCodeInput extends StatefulWidget {
     this.customContent,
     this.showVerifyCodeButton = true,
     this.submitEnabled = false,
-    this.onSubmit,
-    this.onCancel,
+    required this.onSubmit,
+    required this.onCancel,
     this.autoStart = false,
     this.codeLength = 4,
     this.obscureText = false,
     this.autoFocus = false,
     this.controller,
-    this.isSubmitting = false,
   });
 
   /// 标题
@@ -41,10 +40,10 @@ class VerifyCodeInput extends StatefulWidget {
   final bool submitEnabled;
 
   /// 提交回调
-  final ValueChanged<String>? onSubmit;
+  final FutureOr<void> Function(String) onSubmit;
 
   /// 取消回调
-  final VoidCallback? onCancel;
+  final VoidCallback onCancel;
 
   /// 是否自动开始倒计时
   final bool autoStart;
@@ -64,19 +63,16 @@ class VerifyCodeInput extends StatefulWidget {
   /// 发送验证码回调
   final Future<bool> Function()? onSend;
 
-  /// 是否正在提交
-  final bool isSubmitting;
-
   @override
   State<VerifyCodeInput> createState() => _VerifyCodeInputState();
 }
 
 class _VerifyCodeInputState extends State<VerifyCodeInput> {
-  bool _isValid = false;
-  String _code = '';
-  int _countdown = 0;
+  final _controller = TextEditingController();
+  final _focusNode = FocusNode();
   Timer? _timer;
-  bool _isLoading = false;
+  int _countdown = 0;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -88,13 +84,16 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
 
   @override
   void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
     _timer?.cancel();
     super.dispose();
   }
 
   void _startCountdown() {
-    _countdown = 60;
-    _timer?.cancel();
+    setState(() {
+      _countdown = 60;
+    });
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_countdown > 0) {
@@ -106,35 +105,45 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
     });
   }
 
+  void _handleSubmit() async {
+    if (_isSubmitting) return;
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final result = widget.onSubmit(_controller.text);
+      if (result is Future) {
+        await result;
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
+  }
+
   void _handleSend() {
     if (_countdown == 0) {
       setState(() {
-        _isLoading = true;
+        _isSubmitting = true;
       });
       print('发送验证码 method, ${widget.onSend}');
       widget.onSend?.call().then((value) {
         setState(() {
-          _isLoading = false;
+          _isSubmitting = false;
         });
       });
       _startCountdown();
     }
   }
 
-  void _handleSubmit() {
-    if (widget.customContent == null) {
-      if (_isValid) {
-        widget.onSubmit?.call(_code);
-      }
-    } else {
-      widget.onSubmit?.call(''); // 当有自定义内容时，直接调用回调
-    }
-  }
-
   void _onChanged(String value) {
     setState(() {
-      _code = value;
-      _isValid = value.length == widget.codeLength;
+      _controller.text = value;
     });
   }
 
@@ -196,7 +205,7 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                                 autofocus: widget.autoFocus,
                                 onChanged: _onChanged,
                                 obscureText: widget.obscureText,
-                                controller: widget.controller,
+                                controller: _controller,
                               ),
                         ],
                       ),
@@ -243,7 +252,7 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                                     )
                                   : MaterialButton(
                                       onPressed:
-                                          _isLoading ? null : _handleSend,
+                                          _isSubmitting ? null : _handleSend,
                                       color: colorScheme.primary,
                                       minWidth: 180,
                                       height: 44,
@@ -251,7 +260,7 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      child: _isLoading
+                                      child: _isSubmitting
                                           ? const CircularProgressIndicator()
                                           : Text(
                                               '获取验证码',
@@ -263,18 +272,20 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                                     ),
                             if (widget.showVerifyCodeButton) const Spacer(),
                             RoundedIconButton(
-                              isSubmitting: widget.isSubmitting,
+                              isSubmitting: _isSubmitting,
                               icon: Icon(
                                 Icons.check,
                                 color: (isVerifyCodeInput
-                                        ? _isValid
+                                        ? _controller.text.length ==
+                                            widget.codeLength
                                         : widget.submitEnabled)
                                     ? colorScheme.primary
                                     : colorScheme.onSurfaceVariant
                                         .withAlpha(120),
                               ),
                               onPressed: (isVerifyCodeInput
-                                      ? _isValid
+                                      ? _controller.text.length ==
+                                          widget.codeLength
                                       : widget.submitEnabled)
                                   ? _handleSubmit
                                   : null,
