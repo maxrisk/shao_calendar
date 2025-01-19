@@ -727,6 +727,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  tobias:
+    dependency: "direct main"
+    description:
+      name: tobias
+      sha256: b6946c1125b806bd03dd8b79fdb531214f2bbb19518465adbc6bf5d3d20b2676
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.1"
   typed_data:
     dependency: transitive
     description:

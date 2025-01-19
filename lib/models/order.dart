@@ -6,38 +6,16 @@ part 'order.g.dart';
 class OrderResponse {
   final int code;
   final String? msg;
-  final OrderData? data;
+  @JsonKey(name: 'data')
+  final String? payUrl;
 
   OrderResponse({
     required this.code,
     this.msg,
-    this.data,
+    this.payUrl,
   });
 
   factory OrderResponse.fromJson(Map<String, dynamic> json) =>
       _$OrderResponseFromJson(json);
   Map<String, dynamic> toJson() => _$OrderResponseToJson(this);
-}
-
-@JsonSerializable()
-class OrderData {
-  final String orderId;
-  final String payUrl;
-  final int amount;
-  final String productName;
-  final int days;
-  final String payType;
-
-  OrderData({
-    required this.orderId,
-    required this.payUrl,
-    required this.amount,
-    required this.productName,
-    required this.days,
-    required this.payType,
-  });
-
-  factory OrderData.fromJson(Map<String, dynamic> json) =>
-      _$OrderDataFromJson(json);
-  Map<String, dynamic> toJson() => _$OrderDataToJson(this);
 }
