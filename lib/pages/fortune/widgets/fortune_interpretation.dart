@@ -22,11 +22,9 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.yaos == null) {
-      return const SizedBox.shrink();
-    }
-
-    Yao yao = widget.yaos![_selectedYao];
+    Yao? yao = widget.yaos != null && _selectedYao < (widget.yaos?.length ?? 0)
+        ? widget.yaos![_selectedYao]
+        : null;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -47,11 +45,11 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
           InfoCardGroup(
             cards: [
               InfoCard(
-                content: '时效: ${yao.times}',
+                content: '时效: ${yao?.times ?? ''}',
                 centered: true,
               ),
               InfoCard(
-                content: yao.words,
+                content: yao?.words,
                 centered: true,
               ),
             ],
@@ -63,7 +61,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
             children: [
               Expanded(
                 child: InfoCard(
-                  content: yao.changeWords,
+                  content: yao?.changeWords,
                   centered: true,
                 ),
               ),
@@ -76,7 +74,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
             children: [
               Expanded(
                 child: InfoCard(
-                  content: yao.changeInterpret,
+                  content: yao?.changeInterpret,
                   centered: true,
                 ),
               ),
@@ -101,7 +99,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
             child: Column(
               children: [
                 GlowingHexagram(
-                  text: yao.change,
+                  text: yao?.change ?? '付费解锁',
                   enableAnimation: false,
                   bgType: HexagramBgType.purple,
                 ),

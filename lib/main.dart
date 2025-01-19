@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'services/http_client.dart';
 import 'pages/home/home_page.dart';
 import 'pages/profile/complete_info_page.dart';
+import 'services/fortune_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,8 @@ void main() async {
     runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider.value(value: userService),
+          ChangeNotifierProvider(create: (_) => userService),
+          Provider(create: (_) => FortuneService()),
         ],
         child: const App(),
       ),

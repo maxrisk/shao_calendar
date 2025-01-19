@@ -31,10 +31,6 @@ class _HexagramDetailState extends State<HexagramDetail> {
         ? widget.yaos![_selectedYao]
         : null;
 
-    if (yao == null) {
-      return const SizedBox.shrink();
-    }
-
     return Container(
       margin: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -56,11 +52,11 @@ class _HexagramDetailState extends State<HexagramDetail> {
           InfoCardGroup(
             cards: [
               InfoCard(
-                content: '时效：${yao.times}',
+                content: '时效：${yao?.times ?? ''}',
                 centered: true,
               ),
               InfoCard(
-                content: '${yao.change}卦',
+                content: yao?.change != null ? '${yao!.change}卦' : null,
                 centered: true,
               ),
             ],
@@ -70,11 +66,11 @@ class _HexagramDetailState extends State<HexagramDetail> {
           InfoCardGroup(
             cards: [
               InfoCard(
-                content: yao.words,
+                content: yao?.words,
                 centered: true,
               ),
               InfoCard(
-                content: yao.changeWords,
+                content: yao?.changeWords,
                 centered: true,
               ),
             ],
@@ -83,11 +79,11 @@ class _HexagramDetailState extends State<HexagramDetail> {
           InfoCardGroup(
             cards: [
               InfoCard(
-                content: yao.interpret,
+                content: yao?.interpret,
                 centered: true,
               ),
               InfoCard(
-                content: yao.changeInterpret,
+                content: yao?.changeInterpret,
                 centered: true,
               ),
             ],
@@ -109,7 +105,7 @@ class _HexagramDetailState extends State<HexagramDetail> {
             child: Column(
               children: [
                 GlowingHexagram(
-                  text: yao.determine,
+                  text: yao?.determine ?? '',
                   enableAnimation: false,
                   bgType: HexagramBgType.purple,
                 ),

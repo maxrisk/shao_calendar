@@ -14,7 +14,7 @@ class InfoCard extends StatelessWidget {
   final String? title;
 
   /// 内容
-  final String content;
+  final String? content;
 
   /// 是否居中显示
   final bool centered;
@@ -22,44 +22,64 @@ class InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 5, bottom: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12.0),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: Column(
-        mainAxisAlignment:
-            centered ? MainAxisAlignment.center : MainAxisAlignment.start,
-        crossAxisAlignment:
-            centered ? CrossAxisAlignment.center : CrossAxisAlignment.start,
-        children: [
-          RichText(
-            textAlign: centered ? TextAlign.center : TextAlign.left,
-            text: TextSpan(
+      child: content != null
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (title != null)
-                  TextSpan(
-                    text: '$title：',
-                    style: TextStyle(
-                      fontSize: 14,
-                      height: 1.4,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                RichText(
+                  textAlign: centered ? TextAlign.center : TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      if (title != null)
+                        TextSpan(
+                          text: '$title：',
+                          style: TextStyle(
+                            fontSize: 14,
+                            height: 1.4,
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      TextSpan(
+                        text: content!,
+                        style: TextStyle(
+                          fontSize: 14,
+                          height: 1.4,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ],
                   ),
-                TextSpan(
-                  text: content,
+                ),
+              ],
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  '付费解锁',
                   style: TextStyle(
                     fontSize: 14,
-                    height: 1.4,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: Colors.black54,
+                  ),
+                ),
+                Text(
+                  '?',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

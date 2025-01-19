@@ -144,6 +144,7 @@ class _FortunePageState extends State<FortunePage> {
                 FortuneInterpretation(
                   yaos: _fortuneData?.data?.yaos,
                 ),
+                const SizedBox(height: 16),
               ],
             ),
           ),

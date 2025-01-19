@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../services/user_service.dart';
+import '../../services/fortune_service.dart';
 import 'edit_nickname_page.dart';
 import '../../widgets/dialogs/index.dart';
 import 'change_phone_page.dart';
@@ -10,6 +11,7 @@ import '../../widgets/list/list_cell.dart';
 import '../../widgets/list/list_group.dart';
 import 'security_page.dart';
 import 'calendar_service_page.dart';
+import 'login_page.dart';
 
 /// 账户中心页面
 class AccountPage extends StatefulWidget {
@@ -207,7 +209,28 @@ class _AccountPageState extends State<AccountPage> {
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: _handleLogout,
+                onPressed: () async {
+                  final confirmed = await ConfirmDialog.show(
+                    context: context,
+                    title: '退出登录',
+                    content: '确定要退出登录吗？',
+                    isDanger: true,
+                  );
+
+                  if (confirmed == true && mounted) {
+                    // 退出登录
+                    final userService = context.read<UserService>();
+                    await userService.logout();
+                    // 清理运势数据
+                    final fortuneService =
+                        Provider.of<FortuneService>(context, listen: false);
+                    fortuneService.clearFortuneData();
+                    // 返回到首页
+                    if (context.mounted) {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    }
+                  }
+                },
                 style: FilledButton.styleFrom(
                   backgroundColor: colorScheme.primary,
                   foregroundColor: colorScheme.onPrimary,
@@ -261,23 +284,6 @@ class _AccountPageState extends State<AccountPage> {
     final expiration = DateTime.parse(expirationTime);
     final now = DateTime.now();
     return expiration.difference(now).inDays;
-  }
-
-  void _handleLogout() async {
-    final confirmed = await ConfirmDialog.show(
-      context: context,
-      title: '退出登录',
-      content: '确定要退出登录吗？',
-      isDanger: true,
-    );
-
-    if (confirmed == true && mounted) {
-      final userService = context.read<UserService>();
-      await userService.logout();
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    }
   }
 
   Future<void> _copyToClipboard(BuildContext context, String text) async {

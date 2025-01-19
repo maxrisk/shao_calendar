@@ -165,7 +165,7 @@ class _FortuneDisplayState extends State<FortuneDisplay>
                             curve: Curves.easeInOut,
                           )),
                           child: GlowingHexagram(
-                            text: _currentDivination?.name ?? '',
+                            text: _currentDivination?.name ?? '付费解锁',
                             size: calcWidth(context, 80),
                             bgType: HexagramBgType.purple,
                           ),
@@ -189,7 +189,7 @@ class _FortuneDisplayState extends State<FortuneDisplay>
                             curve: Curves.easeInOut,
                           )),
                           child: GlowingHexagram(
-                            text: _nextDivination?.name ?? '',
+                            text: _nextDivination?.name ?? '付费解锁',
                             size: calcWidth(context, 80),
                             bgType: HexagramBgType.purple,
                           ),
