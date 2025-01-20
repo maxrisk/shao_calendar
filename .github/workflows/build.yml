@@ -144,6 +144,14 @@ jobs:
       - name: List Provisioning Profiles
         run: cd ~/Library/MobileDevice/Provisioning\ Profiles && ls
 
+      - name: Update Xcode Project Settings
+        run: |
+          cd ios
+          # 修改签名设置
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Development"/CODE_SIGN_IDENTITY = "iPhone Distribution"/' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Developer"/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution"/' Runner.xcodeproj/project.pbxproj
+          cd ..
+
       # 11. 构建 iOS
       - name: Build iOS
         run: |
