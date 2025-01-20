@@ -40,7 +40,7 @@ jobs:
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "BUILD_ENV=production" >> $GITHUB_ENV
             echo "BUILD_NAME=正式版" >> $GITHUB_ENV
-            echo "DART_DEFINES=APP_ENV=production" >> $GITHUB_ENV
+            echo "DART_DEFINES=APP_ENV=production,API_BASE_URL=${{ secrets.API_BASE_URL_PROD }}" >> $GITHUB_ENV
             echo "PP_PROFILE=${{ secrets.IOS_PRODUCTION_PROFILE_BASE64 }}" >> $GITHUB_ENV
             echo "EXPORT_METHOD=app-store-connect" >> $GITHUB_ENV
             echo "SIGNING_CERTIFICATE=Apple Distribution" >> $GITHUB_ENV
@@ -49,7 +49,7 @@ jobs:
           else
             echo "BUILD_ENV=development" >> $GITHUB_ENV
             echo "BUILD_NAME=测试版" >> $GITHUB_ENV
-            echo "DART_DEFINES=APP_ENV=development" >> $GITHUB_ENV
+            echo "DART_DEFINES=APP_ENV=development,API_BASE_URL=${{ secrets.API_BASE_URL_DEV }}" >> $GITHUB_ENV
             echo "PP_PROFILE=${{ secrets.IOS_DEVELOPMENT_PROFILE_BASE64 }}" >> $GITHUB_ENV
             echo "EXPORT_METHOD=development" >> $GITHUB_ENV
             echo "SIGNING_CERTIFICATE=Apple Development" >> $GITHUB_ENV
