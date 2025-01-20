@@ -51,7 +51,7 @@ jobs:
             echo "BUILD_NAME=测试版" >> $GITHUB_ENV
             echo "DART_DEFINES=APP_ENV=development,API_BASE_URL=${{ secrets.API_BASE_URL_DEV }}" >> $GITHUB_ENV
             echo "PP_PROFILE=${{ secrets.IOS_DEVELOPMENT_PROFILE_BASE64 }}" >> $GITHUB_ENV
-            echo "EXPORT_METHOD=development" >> $GITHUB_ENV
+            echo "EXPORT_METHOD=ad-hoc" >> $GITHUB_ENV
             echo "SIGNING_CERTIFICATE=Apple Development" >> $GITHUB_ENV
             echo "BUILD_CERTIFICATE=${{ secrets.IOS_DEVELOPMENT_CERTIFICATE_BASE64 }}" >> $GITHUB_ENV
             echo "CERTIFICATE_PASSWORD=${{ secrets.IOS_DEVELOPMENT_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
@@ -162,7 +162,7 @@ jobs:
 
           # 构建 IPA
           flutter build ipa \
-            --${{ env.BUILD_ENV == 'production' && 'release' || 'profile' }} \
+            --release \
             --dart-define=${{ env.DART_DEFINES }} \
             --build-name=${{ env.VERSION }} \
             --build-number=${{ env.BUILD_NUMBER }} \
