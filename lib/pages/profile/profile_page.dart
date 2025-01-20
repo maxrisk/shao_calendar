@@ -9,6 +9,7 @@ import '../../widgets/list/list_group.dart';
 import '../../services/user_service.dart';
 import 'invite_page.dart';
 import 'account_page.dart';
+import '../../utils/route_animations.dart';
 import 'about_page.dart';
 
 /// 个人中心页面
@@ -23,28 +24,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   void _handleLogin() {
     Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0.0, 1.0),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-              reverseCurve: Curves.easeInCubic,
-            )),
-            child: FadeTransition(
-              opacity: animation,
-              child: const LoginPage(),
-            ),
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 400),
-        reverseTransitionDuration: const Duration(milliseconds: 400),
-        fullscreenDialog: true,
-        opaque: false,
-        barrierColor: Colors.black.withAlpha(100),
+      RouteAnimations.slideUp(
+        page: const LoginPage(),
       ),
     );
   }

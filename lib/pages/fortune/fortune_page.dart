@@ -12,6 +12,7 @@ import '../../pages/profile/calendar_service_page.dart';
 import '../../models/fortune.dart';
 import '../../services/fortune_service.dart';
 import '../../pages/profile/login_page.dart';
+import '../../utils/route_animations.dart';
 
 /// 个人运势页面
 class FortunePage extends StatefulWidget {
@@ -112,8 +113,8 @@ class _FortunePageState extends State<FortunePage> {
         onLogin: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const LoginPage(),
+            RouteAnimations.slideUp(
+              page: const LoginPage(),
             ),
           );
         },
