@@ -52,9 +52,9 @@ jobs:
             echo "DART_DEFINES=APP_ENV=development,API_BASE_URL=${{ secrets.API_BASE_URL_DEV }}" >> $GITHUB_ENV
             echo "PP_PROFILE=${{ secrets.IOS_DEVELOPMENT_PROFILE_BASE64 }}" >> $GITHUB_ENV
             echo "EXPORT_METHOD=ad-hoc" >> $GITHUB_ENV
-            echo "SIGNING_CERTIFICATE=Apple Development" >> $GITHUB_ENV
-            echo "BUILD_CERTIFICATE=${{ secrets.IOS_DEVELOPMENT_CERTIFICATE_BASE64 }}" >> $GITHUB_ENV
-            echo "CERTIFICATE_PASSWORD=${{ secrets.IOS_DEVELOPMENT_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
+            echo "SIGNING_CERTIFICATE=Apple Distribution" >> $GITHUB_ENV
+            echo "BUILD_CERTIFICATE=${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}" >> $GITHUB_ENV
+            echo "CERTIFICATE_PASSWORD=${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
           fi
           
           # 获取版本号
