@@ -65,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   InterpretationCard(
                     title:
-                        '邵氏解读：${userService.userInfo?.weatherDivination?.luck ?? ''}',
+                        '邵氏解读：${userService.userInfo?.weatherDivination?.baziInterpretation ?? ''}',
                     type: InterpretationType.tianShi,
                     hexagramText:
                         userService.userInfo?.weatherDivination?.name ?? '',
@@ -79,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   InterpretationCard(
                     title:
-                        '邵氏解读：${userService.userInfo?.terrainDivination?.luck ?? ''}',
+                        '邵氏解读：${userService.userInfo?.terrainDivination?.baziInterpretation ?? ''}',
                     type: InterpretationType.diShi,
                     hexagramText:
                         userService.userInfo?.terrainDivination?.name ?? '',
@@ -93,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   InterpretationCard(
                     title:
-                        '邵氏解读：${userService.userInfo?.birthDivination?.luck ?? ''}',
+                        '邵氏解读：${userService.userInfo?.birthDivination?.baziInterpretation ?? ''}',
                     type: InterpretationType.shengLi,
                     hexagramText:
                         userService.userInfo?.birthDivination?.name ?? '',
@@ -108,7 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   InterpretationCard(
                     title:
-                        '邵氏解读：${userService.userInfo?.knotDivination?.luck ?? ''}',
+                        '邵氏解读：${userService.userInfo?.knotDivination?.baziInterpretation ?? ''}',
                     type: InterpretationType.siJie,
                     hexagramText:
                         userService.userInfo?.knotDivination?.name ?? '',
