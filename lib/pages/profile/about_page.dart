@@ -25,10 +25,13 @@ class AboutPage extends StatelessWidget {
             const SizedBox(height: 40),
 
             /// App Logo
-            Image.asset(
-              'assets/images/logo.jpg', // 请确保添加logo图片资源
-              width: 120,
-              height: 120,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                'assets/images/logo.png', // 请确保添加logo图片资源
+                width: 120,
+                height: 120,
+              ),
             ),
             const SizedBox(height: 16),
             const Text(
