@@ -27,7 +27,7 @@ class FortuneData {
   final Divination decade;
   final String baseYears;
   final String decadeSymbol;
-  final int thisYears;
+  final String thisYears;
   final BaseYear baseYear;
   final String thisSymbol;
   final String baseSymbol;
@@ -39,7 +39,7 @@ class FortuneData {
   final String baseName;
   final String thisName;
 
-  FortuneData({
+  const FortuneData({
     required this.decadeYears,
     required this.thisYear,
     required this.decade,
@@ -60,6 +60,7 @@ class FortuneData {
 
   factory FortuneData.fromJson(Map<String, dynamic> json) =>
       _$FortuneDataFromJson(json);
+
   Map<String, dynamic> toJson() => _$FortuneDataToJson(this);
 }
 

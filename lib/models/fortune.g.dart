@@ -28,7 +28,7 @@ FortuneData _$FortuneDataFromJson(Map<String, dynamic> json) => FortuneData(
       decade: Divination.fromJson(json['decade'] as Map<String, dynamic>),
       baseYears: json['baseYears'] as String,
       decadeSymbol: json['decadeSymbol'] as String,
-      thisYears: (json['thisYears'] as num).toInt(),
+      thisYears: json['thisYears'] as String,
       baseYear: BaseYear.fromJson(json['baseYear'] as Map<String, dynamic>),
       thisSymbol: json['thisSymbol'] as String,
       baseSymbol: json['baseSymbol'] as String,
