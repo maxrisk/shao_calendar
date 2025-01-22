@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_info_response.dart';
 import 'http_client.dart';
+import 'fortune_service.dart';
 
 class UserService extends ChangeNotifier {
   static final UserService _instance = UserService._internal();
@@ -45,12 +46,15 @@ class UserService extends ChangeNotifier {
   Future<UserInfoResponse?> login(String phone, String code,
       {String? openid, String? unionid}) async {
     try {
-      final response = await _dio.post('/app/user', data: {
-        'phone': phone,
-        'code': code,
-        if (openid != null) 'openid': openid,
-        if (unionid != null) 'unionid': unionid,
-      });
+      final response = await _dio.post(
+        '/app/user',
+        data: {
+          'phone': phone,
+          'code': code,
+          if (openid != null) 'openid': openid,
+          if (unionid != null) 'unionid': unionid,
+        },
+      );
 
       print('response11: ${response.data}');
       if (response.data['code'] == 0) {
@@ -60,7 +64,12 @@ class UserService extends ChangeNotifier {
         if (token != null) {
           await _prefs.setString('token', token);
           // 获取用户信息
-          return await getUserInfo();
+          final userInfo = await getUserInfo();
+          if (userInfo != null) {
+            // 重新加载运势数据
+            await FortuneService().reloadAllData();
+            return userInfo;
+          }
         }
       }
       return null;
