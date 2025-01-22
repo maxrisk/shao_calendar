@@ -71,7 +71,6 @@ class _HexagramDetailState extends State<HexagramDetail> {
               ),
               InfoCard(
                 content: yao?.changeWords,
-                centered: true,
               ),
             ],
           ),
@@ -80,11 +79,9 @@ class _HexagramDetailState extends State<HexagramDetail> {
             cards: [
               InfoCard(
                 content: yao?.interpret,
-                centered: true,
               ),
               InfoCard(
                 content: yao?.changeInterpret,
-                centered: true,
               ),
             ],
           ),

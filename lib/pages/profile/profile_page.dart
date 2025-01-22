@@ -60,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     birthTime: userInfo.birthDate != null
                         ? '${userInfo.birthDate} ${_getBirthTimeText(userInfo.birthTime)}'
                         : '未设置',
-                    userId: userInfo.id?.toString() ?? '-',
+                    userId: userInfo.referralCode?.toString() ?? '-',
                     onInviteTap: _handleInvite,
                   ),
                   InterpretationCard(

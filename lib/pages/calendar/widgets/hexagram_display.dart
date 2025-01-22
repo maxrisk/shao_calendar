@@ -65,7 +65,7 @@ class HexagramDisplay extends StatelessWidget {
               ),
               // 中间卦象
               GlowingHexagram(
-                text: divination?.name ?? '',
+                text: divination?.name ?? '付费解锁',
                 size: calcWidth(context, 80),
               ),
               // 底部描述

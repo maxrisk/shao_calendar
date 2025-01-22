@@ -232,7 +232,7 @@ class InterpretationCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 55,
+          width: 65,
           child: Text(
             title,
             style: TextStyle(
@@ -241,6 +241,8 @@ class InterpretationCard extends StatelessWidget {
               fontWeight: FontWeight.w500,
               height: 1.6,
             ),
+            softWrap: false,
+            overflow: TextOverflow.clip,
           ),
         ),
         Expanded(

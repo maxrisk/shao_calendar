@@ -24,6 +24,8 @@ class User {
   final bool? isVip;
   final String? phone;
   final String? wxSessionKey;
+  final int referralCount;
+  final String? referralCode;
   final String? nickName;
   final String? firstCode;
   final String? secondCode;
@@ -48,6 +50,8 @@ class User {
     this.isVip,
     this.phone,
     this.wxSessionKey,
+    this.referralCount = 0,
+    this.referralCode,
     this.nickName,
     this.firstCode,
     this.secondCode,
@@ -77,6 +81,8 @@ class User {
     bool? isVip,
     String? phone,
     String? wxSessionKey,
+    int? referralCount,
+    String? referralCode,
     String? nickName,
     String? firstCode,
     String? secondCode,

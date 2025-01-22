@@ -56,7 +56,7 @@ class _AccountPageState extends State<AccountPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              userInfo?.id?.toString() ?? '-',
+                              userInfo?.referralCode?.toString() ?? '-',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: colorScheme.onSurfaceVariant,

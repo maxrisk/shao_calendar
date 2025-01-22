@@ -142,14 +142,14 @@ class InvitePage extends StatelessWidget {
                     ),
                     _buildQRCode(
                       context,
-                      'https://example.com/invite?code=${userInfo?.id?.toString() ?? ''}',
+                      'https://example.com/invite?code=${userInfo?.referralCode?.toString() ?? ''}',
                     ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'ID: ${userInfo?.id?.toString() ?? '-'}',
+                          'ID: ${userInfo?.referralCode?.toString() ?? '-'}',
                           style: TextStyle(
                             fontSize: 15,
                             color: colorScheme.onSurfaceVariant,
@@ -157,8 +157,8 @@ class InvitePage extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          onPressed: () => _copyToClipboard(
-                              context, userInfo?.id?.toString() ?? ''),
+                          onPressed: () => _copyToClipboard(context,
+                              userInfo?.referralCode?.toString() ?? ''),
                           icon: Icon(
                             Icons.copy_rounded,
                             size: 16,
