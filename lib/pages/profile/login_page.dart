@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../widgets/rounded_icon_button.dart';
 import 'verify_code_page.dart';
-import 'user_agreement_page.dart';
-import 'privacy_policy_page.dart';
+import '../../config/urls.dart';
 
 /// 登录页面
 class LoginPage extends StatefulWidget {
@@ -56,22 +56,30 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> _openUrl(String url) async {
+    try {
+      if (!await launchUrl(Uri.parse(url))) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('无法打开链接')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('打开链接失败')),
+        );
+      }
+    }
+  }
+
   void _handleAgreement() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const UserAgreementPage(),
-      ),
-    );
+    _openUrl(URLs.userAgreement);
   }
 
   void _handlePrivacy() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const PrivacyPolicyPage(),
-      ),
-    );
+    _openUrl(URLs.privacyPolicy);
   }
 
   @override

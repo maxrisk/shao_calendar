@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../widgets/list/list_group.dart';
 import '../../widgets/list/list_cell.dart';
-import 'user_agreement_page.dart';
-import 'privacy_policy_page.dart';
+import '../../config/urls.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
+
+  Future<void> _openUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      print('无法打开链接: $url');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,25 +63,11 @@ class AboutPage extends StatelessWidget {
               children: [
                 ListCell(
                   title: '用户协议',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UserAgreementPage(),
-                      ),
-                    );
-                  },
+                  onTap: () => _openUrl(URLs.userAgreement),
                 ),
                 ListCell(
                   title: '隐私政策',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const PrivacyPolicyPage(),
-                      ),
-                    );
-                  },
+                  onTap: () => _openUrl(URLs.privacyPolicy),
                 ),
               ],
             ),
