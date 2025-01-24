@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/verify_code_input.dart';
 import '../../widgets/form/form_field.dart';
+import '../../services/user_service.dart';
 import 'set_pay_password_page.dart';
 
 /// 验证手机号页面
@@ -25,6 +26,7 @@ class VerifyPhonePage extends StatefulWidget {
 class _VerifyPhonePageState extends State<VerifyPhonePage> {
   final _phoneController = TextEditingController();
   bool _isValid = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -32,26 +34,43 @@ class _VerifyPhonePageState extends State<VerifyPhonePage> {
     super.dispose();
   }
 
-  void _handleSubmit(String code) {
+  Future<void> _handleSubmit(String code) async {
     if (widget.isVerifyCode) {
       // 验证码验证成功后跳转到设置支付密码页面
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const SetPayPasswordPage(),
+          builder: (context) => SetPayPasswordPage(verificationCode: code),
         ),
       );
     } else {
-      // 手机号验证成功后跳转到验证码页面
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerifyPhonePage(
-            phone: _phoneController.text,
-            isVerifyCode: true,
-          ),
-        ),
-      );
+      // 发送支付密码验证码
+      setState(() => _isLoading = true);
+      try {
+        final success = await UserService().getPayPasswordCode();
+        if (mounted) {
+          if (success) {
+            // 手机号验证成功后跳转到验证码页面
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => VerifyPhonePage(
+                  phone: _phoneController.text,
+                  isVerifyCode: true,
+                ),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('获取验证码失败，请重试')),
+            );
+          }
+        }
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
     }
   }
 
@@ -87,7 +106,7 @@ class _VerifyPhonePageState extends State<VerifyPhonePage> {
         onChanged: _onPhoneChanged,
       ),
       showVerifyCodeButton: false,
-      submitEnabled: _isValid,
+      submitEnabled: _isValid && !_isLoading,
       onSubmit: _handleSubmit,
       onCancel: () => Navigator.pop(context),
     );

@@ -162,5 +162,38 @@ class UserService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 获取修改支付密码的验证码
+  Future<bool> getPayPasswordCode() async {
+    try {
+      final response = await _dio.get('/app/sendChangePassCode');
+      return response.data['code'] == 0;
+    } on DioException catch (e) {
+      print('获取修改支付密码验证码失败: ${e.message}');
+      return false;
+    } catch (e) {
+      print('获取修改支付密码验证码失败: $e');
+      return false;
+    }
+  }
+
+  /// 修改支付密码
+  Future<bool> updatePayPassword({
+    required String code,
+    required String password,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/app/payPass/$password/$code',
+      );
+      return response.data['code'] == 0;
+    } on DioException catch (e) {
+      print('修改支付密码失败: ${e.message}');
+      return false;
+    } catch (e) {
+      print('修改支付密码失败: $e');
+      return false;
+    }
+  }
+
   UserService._internal();
 }
