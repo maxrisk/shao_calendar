@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/pages/profile/calendar_service_page.dart';
 import 'package:provider/provider.dart';
 import '../profile/login_page.dart';
 import 'widgets/login_prompt.dart';
@@ -11,6 +12,7 @@ import 'invite_page.dart';
 import 'account_page.dart';
 import '../../utils/route_animations.dart';
 import 'about_page.dart';
+import '../../widgets/dialogs/interpretation_dialog.dart';
 
 /// 个人中心页面
 class ProfilePage extends StatefulWidget {
@@ -51,6 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
         elevation: 0,
+        scrolledUnderElevation: 0,
       ),
       body: userInfo != null
           ? SingleChildScrollView(
@@ -103,7 +106,29 @@ class _ProfilePageState extends State<ProfilePage> {
                     tuanZhuan:
                         userService.userInfo?.birthDivination?.tuanChuan ?? '',
                     onPressed: () {
-                      // TODO: 处理按钮点击
+                      if (!userService.isVip) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CalendarServicePage(),
+                          ),
+                        );
+                      } else {
+                        showInterpretationDialog(
+                          context,
+                          title: '邵氏解读',
+                          items: [
+                            if (userService.userInfo?.birthDivination
+                                    ?.lifeInterpretation?.isNotEmpty ==
+                                true)
+                              (
+                                title: '生历',
+                                content: userService.userInfo!.birthDivination!
+                                    .lifeInterpretation!,
+                              ),
+                          ],
+                        );
+                      }
                     },
                   ),
                   InterpretationCard(
@@ -118,7 +143,29 @@ class _ProfilePageState extends State<ProfilePage> {
                     tuanZhuan:
                         userService.userInfo?.knotDivination?.tuanChuan ?? '',
                     onPressed: () {
-                      // TODO: 处理按钮点击
+                      if (!userService.isVip) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CalendarServicePage(),
+                          ),
+                        );
+                      } else {
+                        showInterpretationDialog(
+                          context,
+                          title: '邵氏死结解读',
+                          items: [
+                            if (userService.userInfo?.knotDivination
+                                    ?.deathInterpretation?.isNotEmpty ==
+                                true)
+                              (
+                                title: '死结',
+                                content: userService.userInfo!.knotDivination!
+                                    .deathInterpretation!,
+                              ),
+                          ],
+                        );
+                      }
                     },
                   ),
                   const SizedBox(height: 16),
