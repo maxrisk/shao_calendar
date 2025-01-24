@@ -11,7 +11,6 @@ import '../../widgets/list/list_cell.dart';
 import '../../widgets/list/list_group.dart';
 import 'security_page.dart';
 import 'calendar_service_page.dart';
-import 'login_page.dart';
 
 /// 账户中心页面
 class AccountPage extends StatefulWidget {

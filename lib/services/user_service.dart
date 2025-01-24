@@ -195,5 +195,53 @@ class UserService extends ChangeNotifier {
     }
   }
 
+  /// 获取旧手机号验证码
+  Future<bool> getOldPhoneCode() async {
+    try {
+      final response = await _dio.get('/app/oldPhoneCode');
+      return response.data['code'] == 0;
+    } on DioException catch (e) {
+      print('获取旧手机号验证码失败: ${e.message}');
+      return false;
+    } catch (e) {
+      print('获取旧手机号验证码失败: $e');
+      return false;
+    }
+  }
+
+  /// 获取新手机号验证码
+  Future<bool> getNewPhoneCode(String phone, String oldPhoneCode) async {
+    try {
+      final response =
+          await _dio.get('/app/changePhoneCheck/$phone/$oldPhoneCode');
+      return response.data['code'] == 0;
+    } on DioException catch (e) {
+      print('获取新手机号验证码失败: ${e.message}');
+      return false;
+    } catch (e) {
+      print('获取新手机号验证码失败: $e');
+      return false;
+    }
+  }
+
+  /// 更改手机号
+  Future<(bool, String?)> updatePhone(String newPhone, String code) async {
+    try {
+      final response = await _dio.put('/app/updatePhone/$newPhone/$code');
+      if (response.data['code'] == 0) {
+        await getUserInfo(); // 更新用户信息
+        return (true, null);
+      }
+      final msg = response.data['msg'];
+      return (false, msg is String ? msg : '更改手机号失败');
+    } on DioException catch (e) {
+      print('更改手机号失败: ${e.message}');
+      return (false, e.message ?? '网络请求失败');
+    } catch (e) {
+      print('更改手机号失败: $e');
+      return (false, '更改手机号失败');
+    }
+  }
+
   UserService._internal();
 }

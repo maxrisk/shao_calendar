@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../services/user_service.dart';
 import '../../widgets/verify_code_input.dart';
 
 /// 绑定新手机号页面
 class BindNewPhonePage extends StatefulWidget {
   /// 创建绑定新手机号页面
-  const BindNewPhonePage({super.key});
+  const BindNewPhonePage({super.key, required this.verificationCode});
+
+  /// 验证码
+  final String verificationCode;
 
   @override
   State<BindNewPhonePage> createState() => _BindNewPhonePageState();
@@ -29,23 +33,48 @@ class _BindNewPhonePageState extends State<BindNewPhonePage> {
     });
   }
 
-  void _handleNext() {
+  void _handleNext() async {
     if (_isValid) {
-      setState(() {
-        _phone = _phoneController.text;
-        _showVerifyCode = true;
-      });
+      final success = await UserService().getNewPhoneCode(
+        _phoneController.text,
+        widget.verificationCode,
+      );
+      if (success) {
+        setState(() {
+          _phone = _phoneController.text;
+          _showVerifyCode = true;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('获取验证码失败')),
+        );
+      }
     }
   }
 
-  void _handleSuccess(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('手机号修改成功'),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
-      ),
+  void _handleSuccess(BuildContext context, String code) async {
+    final (success, errorMsg) = await UserService().updatePhone(
+      _phoneController.text,
+      code,
     );
+    if (success && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('手机号修改成功'),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+    if (errorMsg != null && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMsg),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
     // 延迟一下再返回，让用户看到提示
     Future.delayed(const Duration(seconds: 1), () {
       if (!context.mounted) return;
@@ -77,10 +106,21 @@ class _BindNewPhonePageState extends State<BindNewPhonePage> {
           ],
         ),
         onSubmit: (code) {
-          // TODO: 处理验证码提交
-          _handleSuccess(context);
+          _handleSuccess(context, code);
         },
         onCancel: () => Navigator.pop(context),
+        onSend: () async {
+          final success = await UserService().getNewPhoneCode(
+            _phoneController.text,
+            widget.verificationCode,
+          );
+          if (!success && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('获取验证码失败')),
+            );
+          }
+          return success;
+        },
       );
     }
 
