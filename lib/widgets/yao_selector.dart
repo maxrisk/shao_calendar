@@ -16,7 +16,7 @@ class YaoSelector extends StatelessWidget {
   final ValueChanged<int> onSelected;
 
   /// 爻位名称列表
-  static const _yaoNames = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
+  static const _yaoNames = ['初爻', '二爻', '三爻', '四爻', '五爻', '六爻'];
 
   @override
   Widget build(BuildContext context) {
