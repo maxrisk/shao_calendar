@@ -243,5 +243,19 @@ class UserService extends ChangeNotifier {
     }
   }
 
+  /// 验证支付密码验证码
+  Future<bool> validatePayCode(String code) async {
+    try {
+      final response = await _dio.get('/app/validPayCode/$code');
+      return response.data['code'] == 0;
+    } on DioException catch (e) {
+      print('验证支付密码验证码失败: ${e.message}');
+      return false;
+    } catch (e) {
+      print('验证支付密码验证码失败: $e');
+      return false;
+    }
+  }
+
   UserService._internal();
 }

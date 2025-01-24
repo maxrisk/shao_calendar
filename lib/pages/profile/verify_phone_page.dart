@@ -33,12 +33,21 @@ class _VerifyPhonePageState extends State<VerifyPhonePage> {
   }
 
   Future<void> _handleSubmit(String code) async {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SetPayPasswordPage(verificationCode: code),
-      ),
-    );
+    final success = await UserService().validatePayCode(code);
+    if (success && context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SetPayPasswordPage(verificationCode: code),
+        ),
+      );
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('验证码错误，请重试')),
+        );
+      }
+    }
   }
 
   Future<bool> _handleSend() async {
