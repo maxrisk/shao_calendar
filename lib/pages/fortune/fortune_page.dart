@@ -72,21 +72,6 @@ class _FortunePageState extends State<FortunePage> {
     }
   }
 
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-      _loadFortuneData(picked);
-    }
-  }
-
   void _previousDay() {
     final previousDate = _selectedDate.subtract(const Duration(days: 1));
     setState(() {
@@ -138,7 +123,12 @@ class _FortunePageState extends State<FortunePage> {
                 // 日期选择按钮
                 DatePickerButton(
                   date: _selectedDate,
-                  onPressed: _selectDate,
+                  onDateChanged: (date) {
+                    setState(() {
+                      _selectedDate = date;
+                    });
+                    _loadFortuneData(date);
+                  },
                 ),
                 // 运势展示卡片
                 FortuneDisplay(
