@@ -31,7 +31,7 @@ class HexagramDisplay extends StatelessWidget {
       children: [
         Container(
           height: calcWidth(context, 197),
-          margin: const EdgeInsets.all(16.0),
+          margin: const EdgeInsets.symmetric(horizontal: 16.0),
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             color: Theme.of(context).primaryColor,
