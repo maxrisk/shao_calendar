@@ -105,8 +105,8 @@ class _LunarCalendarState extends State<LunarCalendar> {
             child: TableCalendar(
               headerVisible: false,
               availableGestures: AvailableGestures.horizontalSwipe,
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
+              firstDay: DateTime.utc(1901, 1, 1),
+              lastDay: DateTime.utc(2100, 12, 31),
               focusedDay: _focusedDay,
               locale: 'zh_CN',
               daysOfWeekHeight: 32,
