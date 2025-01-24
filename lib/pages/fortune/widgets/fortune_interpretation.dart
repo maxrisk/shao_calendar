@@ -99,9 +99,10 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
             child: Column(
               children: [
                 GlowingHexagram(
-                  text: yao?.change ?? '付费解锁',
-                  enableAnimation: false,
-                  bgType: HexagramBgType.purple,
+                  text: yao?.personalSummary ?? '付费解锁',
+                  bgType: yao?.personalSummary == '难'
+                      ? HexagramBgType.orange
+                      : HexagramBgType.purple,
                 ),
               ],
             ),

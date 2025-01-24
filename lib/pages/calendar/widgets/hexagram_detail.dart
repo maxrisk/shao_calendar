@@ -103,8 +103,9 @@ class _HexagramDetailState extends State<HexagramDetail> {
               children: [
                 GlowingHexagram(
                   text: yao?.determine ?? '付费解锁',
-                  enableAnimation: false,
-                  bgType: HexagramBgType.purple,
+                  bgType: yao?.determine == '凶'
+                      ? HexagramBgType.orange
+                      : HexagramBgType.purple,
                 ),
               ],
             ),

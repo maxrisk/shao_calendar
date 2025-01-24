@@ -128,6 +128,7 @@ class Yao {
   final int wealth;
   final int emotion;
   final int population;
+  final String personalSummary;
 
   Yao({
     this.id,
@@ -145,6 +146,7 @@ class Yao {
     required this.wealth,
     required this.emotion,
     required this.population,
+    required this.personalSummary,
   });
 
   factory Yao.fromJson(Map<String, dynamic> json) => _$YaoFromJson(json);

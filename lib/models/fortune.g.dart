@@ -123,6 +123,7 @@ Yao _$YaoFromJson(Map<String, dynamic> json) => Yao(
       wealth: (json['wealth'] as num).toInt(),
       emotion: (json['emotion'] as num).toInt(),
       population: (json['population'] as num).toInt(),
+      personalSummary: json['personalSummary'] as String,
     );
 
 Map<String, dynamic> _$YaoToJson(Yao instance) => <String, dynamic>{
@@ -141,6 +142,7 @@ Map<String, dynamic> _$YaoToJson(Yao instance) => <String, dynamic>{
       'wealth': instance.wealth,
       'emotion': instance.emotion,
       'population': instance.population,
+      'personalSummary': instance.personalSummary,
     };
 
 SolarTerms _$SolarTermsFromJson(Map<String, dynamic> json) => SolarTerms(
