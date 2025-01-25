@@ -124,6 +124,9 @@ Yao _$YaoFromJson(Map<String, dynamic> json) => Yao(
       emotion: (json['emotion'] as num).toInt(),
       population: (json['population'] as num).toInt(),
       personalSummary: json['personalSummary'] as String,
+      personalTheme: json['personalTheme'] as String,
+      personalComment: json['personalComment'] as String,
+      personalStrategy: json['personalStrategy'] as String,
     );
 
 Map<String, dynamic> _$YaoToJson(Yao instance) => <String, dynamic>{
@@ -137,6 +140,9 @@ Map<String, dynamic> _$YaoToJson(Yao instance) => <String, dynamic>{
       'changeWords': instance.changeWords,
       'changeInterpret': instance.changeInterpret,
       'determine': instance.determine,
+      'personalTheme': instance.personalTheme,
+      'personalComment': instance.personalComment,
+      'personalStrategy': instance.personalStrategy,
       'career': instance.career,
       'health': instance.health,
       'wealth': instance.wealth,

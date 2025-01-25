@@ -123,6 +123,9 @@ class Yao {
   final String changeWords;
   final String changeInterpret;
   final String determine;
+  final String personalTheme;
+  final String personalComment;
+  final String personalStrategy;
   final int career;
   final int health;
   final int wealth;
@@ -147,6 +150,9 @@ class Yao {
     required this.emotion,
     required this.population,
     required this.personalSummary,
+    required this.personalTheme,
+    required this.personalComment,
+    required this.personalStrategy,
   });
 
   factory Yao.fromJson(Map<String, dynamic> json) => _$YaoFromJson(json);

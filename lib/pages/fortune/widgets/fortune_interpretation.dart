@@ -49,7 +49,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
                 centered: true,
               ),
               InfoCard(
-                content: yao?.words,
+                content: yao?.personalTheme,
                 centered: true,
               ),
             ],
@@ -61,7 +61,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
             children: [
               Expanded(
                 child: InfoCard(
-                  content: yao?.changeWords,
+                  content: yao?.personalComment,
                   centered: true,
                 ),
               ),
@@ -74,7 +74,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
             children: [
               Expanded(
                 child: InfoCard(
-                  content: yao?.changeInterpret,
+                  content: yao?.personalStrategy,
                   centered: true,
                 ),
               ),
