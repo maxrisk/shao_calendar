@@ -83,7 +83,7 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
 
   Future<void> _handleSubmit() async {
     final userService = context.read<UserService>();
-    final success = await userService.openFortune(
+    final (success, errorMsg) = await userService.openFortune(
       '${_birthDate!.year}-${_birthDate!.month}-${_birthDate!.day}',
       _birthTimeIndex! + 1,
       code: _referralController.text,
@@ -93,10 +93,10 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('开启流年运势失败，请重试'),
+        SnackBar(
+          content: Text(errorMsg ?? '开启流年运势失败，请重试'),
           behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.only(bottom: 80, left: 16, right: 16),
+          margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
         ),
       );
     }

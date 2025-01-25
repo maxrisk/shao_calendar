@@ -128,7 +128,7 @@ class UserService extends ChangeNotifier {
   }
 
   // 开启流年运势
-  Future<bool> openFortune(String birthDate, int birthTime,
+  Future<(bool, String?)> openFortune(String birthDate, int birthTime,
       {String? code}) async {
     try {
       final response = await _dio.put(
@@ -137,18 +137,22 @@ class UserService extends ChangeNotifier {
       );
       print('response fortune: ${response.data}');
       if (response.data['code'] == 0) {
-        final token = await _prefs.getString('token');
+        final token = _prefs.getString('token');
         if (token != null) {
           // 获取用户信息
           await getUserInfo();
-          return true;
+          return (true, null);
         }
-        return false;
+        return (false, '登录状态已失效');
       }
-      return false;
+      final msg = response.data['msg'];
+      return (false, msg is String ? msg : '开启流年运势失败');
+    } on DioException catch (e) {
+      print('开启流年运势失败: ${e.message}');
+      return (false, e.message ?? '网络请求失败');
     } catch (e) {
       print('开启流年运势失败: $e');
-      return false;
+      return (false, '开启流年运势失败');
     }
   }
 
