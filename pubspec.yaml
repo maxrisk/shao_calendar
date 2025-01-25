@@ -36,7 +36,7 @@ dependencies:
   lunar: ^1.6.1
   mobile_scanner: ^3.5.6
   qr_flutter: ^4.1.0
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
   cupertino_icons: ^1.0.2
   font_awesome_flutter: ^10.8.0
   dio: ^5.4.0
