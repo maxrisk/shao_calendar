@@ -3,6 +3,8 @@ import '../../services/order_service.dart';
 import '../../models/product.dart';
 import '../../models/order_list.dart';
 import 'payment_page.dart';
+import '../../services/user_service.dart';
+import 'package:provider/provider.dart';
 
 /// 天历服务页面
 class CalendarServicePage extends StatefulWidget {
@@ -66,6 +68,7 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final userService = context.watch<UserService>();
 
     return Scaffold(
       appBar: AppBar(
@@ -118,7 +121,7 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
                         Row(
                           children: [
                             Text(
-                              '${_product?.days ?? 0}',
+                              '${userService.remainingDays}',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,

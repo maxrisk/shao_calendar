@@ -99,7 +99,7 @@ class _AccountPageState extends State<AccountPage> {
                         title: '天历服务',
                         trailing: Text(
                           userInfo?.isVip == true
-                              ? '剩余 ${_getRemainingDays(userInfo!.expirationTime!)} 天'
+                              ? '剩余 ${userService.remainingDays} 天'
                               : '未开通',
                           style: TextStyle(
                             fontSize: 15,
@@ -277,12 +277,6 @@ class _AccountPageState extends State<AccountPage> {
       return phone;
     }
     return '${phone.substring(0, 3)}****${phone.substring(7)}';
-  }
-
-  int _getRemainingDays(String expirationTime) {
-    final expiration = DateTime.parse(expirationTime);
-    final now = DateTime.now();
-    return expiration.difference(now).inDays;
   }
 
   Future<void> _copyToClipboard(BuildContext context, String text) async {

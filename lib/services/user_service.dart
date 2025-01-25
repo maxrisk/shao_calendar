@@ -94,14 +94,16 @@ class UserService extends ChangeNotifier {
   // 修改昵称
   Future<bool> updateNickname(String nickname) async {
     try {
-      final response = await _dio.put('/app/user/nickName/$nickname');
+      final response = await _dio.put('/app/user/nickname', data: {
+        'nickname': nickname,
+      });
       if (response.data['code'] == 0) {
-        await getUserInfo(); // 更新用户信息
+        await getUserInfo();
         return true;
       }
       return false;
     } catch (e) {
-      print('修改昵称失败: $e');
+      print('更新昵称失败: $e');
       return false;
     }
   }
@@ -255,6 +257,15 @@ class UserService extends ChangeNotifier {
       print('验证支付密码验证码失败: $e');
       return false;
     }
+  }
+
+  /// 获取服务剩余天数
+  int get remainingDays {
+    if (userInfo?.userInfo.expirationTime == null) return 0;
+    final expiration = DateTime.parse(userInfo!.userInfo.expirationTime!);
+    final now = DateTime.now();
+    final days = expiration.difference(now).inDays;
+    return days < 0 ? 0 : days;
   }
 
   UserService._internal();
