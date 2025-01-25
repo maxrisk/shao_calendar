@@ -81,7 +81,7 @@ class HexagramDisplay extends StatelessWidget {
         ),
         if (isLoading)
           Positioned(
-            top: 16.0,
+            top: 0,
             left: 16.0,
             right: 16.0,
             height: calcWidth(context, 197),
