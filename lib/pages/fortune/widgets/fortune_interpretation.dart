@@ -31,7 +31,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
       child: Column(
         children: [
           const Label(text: '运势解读'),
-          const SizedBox(height: 5),
+          const SizedBox(height: 10),
           // 爻选择器
           YaoSelector(
             selectedIndex: _selectedYao,

@@ -138,7 +138,6 @@ class _FortunePageState extends State<FortunePage> {
                   divination: _fortuneData?.data?.dayDivinationInfo,
                   isLoading: _isLoading,
                 ),
-                const SizedBox(height: 16),
                 // 购买卡片
                 if (!userService.isVip)
                   FortunePurchaseCard(
@@ -151,7 +150,6 @@ class _FortunePageState extends State<FortunePage> {
                       );
                     },
                   ),
-                const SizedBox(height: 16),
                 // 运势解读
                 FortuneInterpretation(
                   yaos: _fortuneData?.data?.yaos,
