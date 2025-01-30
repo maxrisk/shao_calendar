@@ -100,7 +100,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
               children: [
                 GlowingHexagram(
                   text: yao?.personalSummary ?? '付费解锁',
-                  bgType: yao?.personalSummary == '难'
+                  bgType: yao?.personalSummary.contains('难') ?? false
                       ? HexagramBgType.orange
                       : HexagramBgType.purple,
                 ),

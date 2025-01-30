@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import '../../../models/fortune.dart';
 import '../../../widgets/yao_selector.dart';
@@ -103,7 +101,7 @@ class _HexagramDetailState extends State<HexagramDetail> {
               children: [
                 GlowingHexagram(
                   text: yao?.determine ?? '付费解锁',
-                  bgType: yao?.determine == '凶'
+                  bgType: yao?.determine.contains('凶') ?? false
                       ? HexagramBgType.orange
                       : HexagramBgType.purple,
                 ),

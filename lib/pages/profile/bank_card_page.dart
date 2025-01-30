@@ -4,7 +4,6 @@ import '../../widgets/dialogs/index.dart' as custom;
 import '../../widgets/form/form_field.dart';
 import '../../widgets/dialogs/bottom_sheet_item.dart';
 import '../../services/bank_card_service.dart';
-import '../../models/bank_card.dart';
 
 /// 银行卡信息
 class BankCard {
