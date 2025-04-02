@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:ui';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../services/user_service.dart';
@@ -12,14 +13,14 @@ class InvitePage extends StatelessWidget {
   /// 创建推荐邀请页面
   const InvitePage({super.key});
 
-  Widget _buildQRCode(BuildContext context, String data) {
+  Widget _buildQRCode(BuildContext context, String data,
+      {bool isBlurred = false}) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: 160,
       height: 160,
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark
             ? colorScheme.surfaceContainerHighest.withAlpha(50)
@@ -29,19 +30,44 @@ class InvitePage extends StatelessWidget {
           color: colorScheme.outlineVariant.withAlpha(50),
         ),
       ),
-      child: QrImageView(
-        data: data,
-        version: QrVersions.auto,
-        size: 160,
-        eyeStyle: QrEyeStyle(
-          eyeShape: QrEyeShape.square,
-          color: colorScheme.primary,
-        ),
-        dataModuleStyle: QrDataModuleStyle(
-          dataModuleShape: QrDataModuleShape.square,
-          color: colorScheme.primary.withAlpha(204),
-        ),
-        padding: EdgeInsets.zero,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          QrImageView(
+            data: data,
+            version: QrVersions.auto,
+            size: 160,
+            eyeStyle: QrEyeStyle(
+              eyeShape: QrEyeShape.square,
+              color: colorScheme.primary,
+            ),
+            dataModuleStyle: QrDataModuleStyle(
+              dataModuleShape: QrDataModuleShape.square,
+              color: colorScheme.primary.withAlpha(204),
+            ),
+            padding: const EdgeInsets.all(16),
+          ),
+          if (isBlurred)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: Container(
+                  color: colorScheme.surface.withAlpha(120),
+                  child: Center(
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.lock_outline_rounded,
+                        color: colorScheme.primary,
+                        size: 32,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -143,6 +169,7 @@ class InvitePage extends StatelessWidget {
                     _buildQRCode(
                       context,
                       'https://example.com/invite?code=${userInfo?.referralCode?.toString() ?? ''}',
+                      isBlurred: false,
                     ),
                     const SizedBox(height: 20),
                     Row(
