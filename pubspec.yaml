@@ -87,6 +87,7 @@ flutter:
     - assets/images/label_bg.png
     - assets/images/icon_qrcode.png
     - assets/images/logo.png
+    - assets/images/fortune_card_bg.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

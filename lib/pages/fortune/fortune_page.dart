@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/user_service.dart';
 import '../profile/widgets/login_prompt.dart';
-import 'widgets/fortune_card.dart';
+import '../../widgets/fortune_card_group.dart';
 import 'widgets/date_picker_button.dart';
 import 'widgets/decorated_title.dart';
 import 'widgets/fortune_display.dart';
@@ -117,7 +117,18 @@ class _FortunePageState extends State<FortunePage> {
             child: Column(
               children: [
                 // 顶部卡片区域
-                FortuneCardGroup(fortuneData: _fortuneData?.data),
+                FortuneCardGroup(
+                  fortuneData: _fortuneData?.data,
+                  onCardTap: (cardType) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content:
+                            Text('查看${cardType == 'base' ? '本命卦' : '大运卦'}详情'),
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                ),
                 // 革年标题
                 const DecoratedTitle(title: '革年'),
                 // 日期选择按钮

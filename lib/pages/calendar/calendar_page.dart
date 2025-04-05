@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'widgets/hexagram_detail.dart';
 import 'widgets/hexagram_display.dart';
 import '../../widgets/lunar_calendar.dart';
+import '../../widgets/fortune_card_group.dart';
+import '../../widgets/glowing_hexagram.dart';
 import '../../services/fortune_service.dart';
 import '../../models/fortune.dart';
+import '../fortune/hexagram_year_page.dart';
+import '../fortune/hexagram_decade_page.dart';
 
 /// 先天历页面
 class CalendarPage extends StatefulWidget {
@@ -59,6 +63,33 @@ class _CalendarPageState extends State<CalendarPage> {
     }
   }
 
+  void _handleCardTap(String cardType) {
+    // 只处理点击左侧卡片（本命卦）的情况，跳转到六十年世选择页面
+    if (cardType == 'base' && _fortuneData != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HexagramYearPage(
+            text: _fortuneData!.baseName,
+            bgType: HexagramBgType.green,
+            yearRange: _fortuneData!.decadeYears,
+          ),
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HexagramDecadePage(
+            text: _fortuneData!.baseName,
+            bgType: HexagramBgType.green,
+            yearRange: _fortuneData!.decadeYears,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -71,6 +102,10 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
             child: Column(
               children: [
+                FortuneCardGroup(
+                  fortuneData: _fortuneData,
+                  onCardTap: _handleCardTap,
+                ),
                 LunarCalendar(
                   onDaySelected: (selectedDay, focusedDay) {
                     setState(() {

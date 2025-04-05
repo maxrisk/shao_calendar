@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar/widgets/glowing_hexagram.dart';
+import 'glowing_hexagram.dart';
 
 /// 运势卡片组件
 class FortuneCard extends StatelessWidget {
@@ -23,7 +23,7 @@ class FortuneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 90,
+      height: 95,
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12.0),
@@ -37,17 +37,20 @@ class FortuneCard extends StatelessWidget {
         children: [
           GlowingHexagram(
             text: text,
-            size: 50,
+            size: 56,
             enableAnimation: false,
             bgType: bgType,
           ),
-          Text(
-            yearRange,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
+          Transform.translate(
+            offset: const Offset(0, -5),
+            child: Text(
+              yearRange,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
             ),
-          ),
+          )
         ],
       ),
     );
