@@ -13,6 +13,7 @@ import 'account_page.dart';
 import '../../utils/route_animations.dart';
 import 'about_page.dart';
 import '../../widgets/dialogs/interpretation_dialog.dart';
+import 'custom_service_page.dart';
 
 /// 个人中心页面
 class ProfilePage extends StatefulWidget {
@@ -189,6 +190,18 @@ class _ProfilePageState extends State<ProfilePage> {
                           title: '推荐邀请',
                           onTap: _handleInvite,
                         ),
+                      ListCell(
+                        icon: Icons.design_services_outlined,
+                        title: '定制服务',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CustomServicePage(),
+                            ),
+                          );
+                        },
+                      ),
                       ListCell(
                         icon: Icons.headset_mic_outlined,
                         title: '在线客服',
