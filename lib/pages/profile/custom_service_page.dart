@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/package_service.dart';
 import '../../models/package.dart';
 import '../../models/package_group.dart';
+import 'package_purchase_page.dart';
 
 /// 定制服务页面
 class CustomServicePage extends StatefulWidget {
@@ -51,6 +52,24 @@ class _CustomServicePageState extends State<CustomServicePage> {
 
   void _navigateToOrderHistory() {
     // TODO: 导航到购买记录页面
+  }
+
+  void _navigateToPackagePurchase(Package package) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PackagePurchasePage(package: package),
+      ),
+    );
+  }
+
+  void _navigateToPackageGroupPurchase(PackageGroup packageGroup) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PackagePurchasePage(packageGroup: packageGroup),
+      ),
+    );
   }
 
   @override
@@ -131,6 +150,8 @@ class _CustomServicePageState extends State<CustomServicePage> {
                                 package.name,
                                 '${package.price}元',
                                 package.id,
+                                onTap: () =>
+                                    _navigateToPackagePurchase(package),
                               ),
                             )),
 
@@ -160,7 +181,7 @@ class _CustomServicePageState extends State<CustomServicePage> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        onTap: () => _handleServicePackagePurchase(group.id),
+        onTap: () => _navigateToPackageGroupPurchase(group),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -214,7 +235,19 @@ class _CustomServicePageState extends State<CustomServicePage> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        onTap: () => _handleServicePackagePurchase(0),
+        onTap: () {
+          // 创建一个临时的服务包对象
+          final defaultGroup = PackageGroup(
+            id: 0,
+            name: '问事服务包',
+            description: '1个小时人人，咨询事文创1次',
+            price: 8888,
+            originalPrice: 9999,
+            validDays: 365,
+            status: 1,
+          );
+          _navigateToPackageGroupPurchase(defaultGroup);
+        },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -234,7 +267,7 @@ class _CustomServicePageState extends State<CustomServicePage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '1 个小时个人，咨询事文创 1 次',
+                      '1个小时人人，咨询事文创1次',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: colorScheme.primary,
                       ),
@@ -258,7 +291,8 @@ class _CustomServicePageState extends State<CustomServicePage> {
   }
 
   Widget _buildServiceItem(
-      BuildContext context, String title, String price, int id) {
+      BuildContext context, String title, String price, int id,
+      {VoidCallback? onTap}) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -269,7 +303,20 @@ class _CustomServicePageState extends State<CustomServicePage> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        onTap: () => _handleSingleServicePurchase(id),
+        onTap: onTap ??
+            () {
+              // 创建一个临时的单项服务对象
+              final defaultPackage = Package(
+                id: id,
+                name: title,
+                description: '$title的详细描述',
+                price: double.tryParse(price.replaceAll('元', '')) ?? 0,
+                originalPrice: 0,
+                validDays: 365,
+                status: 1,
+              );
+              _navigateToPackagePurchase(defaultPackage);
+            },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
