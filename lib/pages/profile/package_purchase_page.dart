@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/package.dart';
 import '../../models/package_group.dart';
 import '../../services/package_service.dart';
+import 'payment_page.dart';
 
 /// 服务包购买页面
 class PackagePurchasePage extends StatefulWidget {
@@ -26,7 +27,6 @@ class PackagePurchasePage extends StatefulWidget {
 }
 
 class _PackagePurchasePageState extends State<PackagePurchasePage> {
-  PayType _selectedPayType = PayType.alipay;
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -38,57 +38,35 @@ class _PackagePurchasePageState extends State<PackagePurchasePage> {
   String get _description =>
       widget.package?.description ?? widget.packageGroup!.description;
 
-  /// 购买说明，如果API没返回则提供默认内容
-  List<String> get _benefitsList {
-    final List<String>? benefits =
-        widget.package?.benefits ?? widget.packageGroup?.benefits;
+  void _handlePurchase() {
+    if (!mounted) return;
 
-    if (benefits != null && benefits.isNotEmpty) {
-      return benefits;
-    } else {
-      return ['专业老师一对一服务', '购买后可在个人中心-购买记录中查看', '客服时间：9:00-18:00'];
-    }
-  }
-
-  Future<void> _handlePurchase() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final packageService = PackageService();
-      final response = widget.package != null
-          ? await packageService.createPackageOrder(
-              widget.package!.id, _selectedPayType)
-          : await packageService.createPackageGroupOrder(
-              widget.packageGroup!.id, _selectedPayType);
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (response == null || response.payUrl == null) {
-        setState(() {
-          _errorMessage = '创建订单失败，请稍后重试';
-        });
-        return;
-      }
-
-      // TODO: 打开支付链接或跳转到支付页面
-      print('支付URL: ${response.payUrl}');
-
-      if (!mounted) return;
-
-      // 显示成功提示
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('订单创建成功，请完成支付')),
+    if (widget.package != null) {
+      // 跳转到单项服务支付页面
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PaymentPage(
+            amount: _price,
+            title: _name,
+            serviceType: ServiceType.package,
+            packageId: widget.package!.id,
+          ),
+        ),
       );
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = '创建订单失败: $e';
-      });
+    } else if (widget.packageGroup != null) {
+      // 跳转到服务包支付页面
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PaymentPage(
+            amount: _price,
+            title: _name,
+            serviceType: ServiceType.packageGroup,
+            packageGroupId: widget.packageGroup!.id,
+          ),
+        ),
+      );
     }
   }
 
@@ -241,51 +219,6 @@ class _PackagePurchasePageState extends State<PackagePurchasePage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // 支付方式卡片
-                  Card(
-                    color: theme.cardColor,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.payment,
-                                color: colorScheme.primary,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '支付方式',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          _buildPaymentOption(
-                            PayType.alipay,
-                            '支付宝支付',
-                            Icons.account_balance_wallet,
-                          ),
-                          const SizedBox(height: 10),
-                          _buildPaymentOption(
-                            PayType.wechat,
-                            '微信支付',
-                            Icons.chat_bubble,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
                   // 错误信息
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 16),
@@ -295,8 +228,6 @@ class _PackagePurchasePageState extends State<PackagePurchasePage> {
                       textAlign: TextAlign.center,
                     ),
                   ],
-
-                  const SizedBox(height: 32),
                 ],
               ),
             ),
@@ -306,7 +237,7 @@ class _PackagePurchasePageState extends State<PackagePurchasePage> {
           child: SizedBox(
             height: 50,
             child: ElevatedButton(
-              onPressed: _isLoading ? null : _handlePurchase,
+              onPressed: _handlePurchase,
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorScheme.primary,
                 foregroundColor: colorScheme.onPrimary,
@@ -314,73 +245,15 @@ class _PackagePurchasePageState extends State<PackagePurchasePage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: _isLoading
-                  ? const SizedBox(
-                      height: 24,
-                      width: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Text(
-                      '立即购买',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPaymentOption(PayType payType, String title, IconData icon) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final isSelected = _selectedPayType == payType;
-
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _selectedPayType = payType;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 12.0,
-          horizontal: 16.0,
-        ),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: isSelected ? colorScheme.primary : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? colorScheme.primary : Colors.grey.shade700,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              title,
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: isSelected ? colorScheme.primary : null,
-                fontWeight: isSelected ? FontWeight.bold : null,
+              child: const Text(
+                '立即购买',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            const Spacer(),
-            if (isSelected)
-              Icon(
-                Icons.check_circle,
-                color: colorScheme.primary,
-              ),
-          ],
+          ),
         ),
       ),
     );

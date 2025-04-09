@@ -342,10 +342,48 @@ class _CustomServicePageState extends State<CustomServicePage> {
   }
 
   void _handleServicePackagePurchase(int groupId) {
-    // TODO: 实现服务包购买
+    // 查找指定ID的服务包
+    PackageGroup? selectedGroup = _packageGroups.firstWhere(
+      (group) => group.id == groupId,
+      orElse: () => PackageGroup(
+        id: groupId,
+        name: '服务包',
+        description: '服务包详情',
+        price: 0,
+        originalPrice: 0,
+        validDays: 365,
+        status: 1,
+      ),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PackagePurchasePage(packageGroup: selectedGroup),
+      ),
+    );
   }
 
   void _handleSingleServicePurchase(int serviceId) {
-    // TODO: 实现单项服务购买
+    // 查找指定ID的单项服务
+    Package? selectedPackage = _packages.firstWhere(
+      (package) => package.id == serviceId,
+      orElse: () => Package(
+        id: serviceId,
+        name: '单项服务',
+        description: '服务详情',
+        price: 0,
+        originalPrice: 0,
+        validDays: 365,
+        status: 1,
+      ),
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PackagePurchasePage(package: selectedPackage),
+      ),
+    );
   }
 }

@@ -29,7 +29,7 @@ class PackageService {
       int packageId, PayType payType) async {
     try {
       final response = await _dio.post(
-        '/app/package/order',
+        '/app/order/packageOrder',
         data: {
           'id': packageId,
           'payType': payType.name.toUpperCase(),
@@ -47,7 +47,7 @@ class PackageService {
       int groupId, PayType payType) async {
     try {
       final response = await _dio.post(
-        '/app/package/group/order',
+        '/app/order/packageGroupOrder',
         data: {
           'id': groupId,
           'payType': payType.name.toUpperCase(),

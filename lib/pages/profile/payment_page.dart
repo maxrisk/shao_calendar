@@ -3,9 +3,24 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/list/list_cell.dart';
 import '../../widgets/list/list_group.dart';
-import '../../services/order_service.dart';
+import '../../models/order.dart';
 import '../../services/alipay_service.dart';
 import '../../services/user_service.dart';
+import '../../services/package_service.dart';
+import '../../services/order_service.dart' as order_service
+    show OrderService, ProductType, PayType;
+
+/// 服务类型
+enum ServiceType {
+  /// 天历服务
+  calendar,
+
+  /// 单项服务
+  package,
+
+  /// 服务包
+  packageGroup,
+}
 
 /// 付款页面
 class PaymentPage extends StatefulWidget {
@@ -14,13 +29,35 @@ class PaymentPage extends StatefulWidget {
     super.key,
     required this.amount,
     required this.title,
-  });
+    required this.serviceType,
+    this.productType = order_service.ProductType.normal,
+    this.packageId,
+    this.packageGroupId,
+  }) : assert(
+          (serviceType == ServiceType.calendar) ||
+              (serviceType == ServiceType.package && packageId != null) ||
+              (serviceType == ServiceType.packageGroup &&
+                  packageGroupId != null),
+          '单项服务需提供packageId，服务包需提供packageGroupId',
+        );
 
   /// 金额
   final double amount;
 
   /// 标题
   final String title;
+
+  /// 服务类型
+  final ServiceType serviceType;
+
+  /// 产品类型（只用于天历服务）
+  final order_service.ProductType productType;
+
+  /// 单项服务ID
+  final int? packageId;
+
+  /// 服务包ID
+  final int? packageGroupId;
 
   @override
   State<PaymentPage> createState() => _PaymentPageState();
@@ -30,7 +67,8 @@ class _PaymentPageState extends State<PaymentPage> {
   String _selectedPaymentMethod = 'alipay'; // 默认选择支付宝
   bool _isLoading = false;
 
-  final _orderService = OrderService();
+  final _orderService = order_service.OrderService();
+  final _packageService = PackageService();
   final _alipayService = AlipayService();
 
   Future<void> _handleConfirmPayment() async {
@@ -41,17 +79,17 @@ class _PaymentPageState extends State<PaymentPage> {
     });
 
     try {
-      // 创建订单
+      // 使用package_service.dart中的PayType
       final payType =
           _selectedPaymentMethod == 'alipay' ? PayType.alipay : PayType.wechat;
-      final response =
-          await _orderService.createOrder(payType, ProductType.normal);
+
+      // 根据不同服务类型创建订单
+      final response = await _createOrder(payType);
 
       if (response?.code == 0 && response?.payUrl != null) {
         if (_selectedPaymentMethod == 'alipay') {
           // 调用支付宝支付
           final success = await _alipayService.pay(response!.payUrl!);
-          print('success: $success');
           if (success) {
             if (mounted) {
               // 支付成功后更新用户信息
@@ -98,9 +136,8 @@ class _PaymentPageState extends State<PaymentPage> {
       }
     } catch (e) {
       if (mounted) {
-        print('error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('支付异常')),
+          SnackBar(content: Text('支付异常: $e')),
         );
       }
     } finally {
@@ -109,6 +146,28 @@ class _PaymentPageState extends State<PaymentPage> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  /// 根据服务类型创建对应的订单
+  Future<OrderResponse?> _createOrder(PayType payType) async {
+    switch (widget.serviceType) {
+      case ServiceType.calendar:
+        // 将PayType转换为order_service.PayType
+        order_service.PayType orderPayType;
+        if (payType == PayType.alipay) {
+          orderPayType = order_service.PayType.alipay;
+        } else {
+          orderPayType = order_service.PayType.wechat;
+        }
+        return await _orderService.createOrder(
+            orderPayType, widget.productType);
+      case ServiceType.package:
+        return await _packageService.createPackageOrder(
+            widget.packageId!, payType);
+      case ServiceType.packageGroup:
+        return await _packageService.createPackageGroupOrder(
+            widget.packageGroupId!, payType);
     }
   }
 
