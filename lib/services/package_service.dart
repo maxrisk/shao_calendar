@@ -5,6 +5,7 @@ import '../models/package.dart';
 import '../models/package_group.dart';
 import '../models/order_list.dart';
 import '../models/package_order.dart';
+import '../models/single_package_order.dart';
 
 /// 支付类型
 enum PayType {
@@ -58,6 +59,22 @@ class PackageService {
       return OrderResponse.fromJson(response.data);
     } on DioException catch (e) {
       print('创建服务包订单失败: ${e.message}');
+      return null;
+    }
+  }
+
+  /// 获取单项服务订单列表
+  Future<List<SinglePackageOrderItem>?> getSinglePackageOrders() async {
+    try {
+      final response = await _dio.get('/app/order/packageOrder');
+      final singlePackageOrderListResponse =
+          SinglePackageOrderListResponse.fromJson(response.data);
+      return singlePackageOrderListResponse.data;
+    } on DioException catch (e) {
+      print('获取单项服务订单列表失败: ${e.message}');
+      return null;
+    } catch (e) {
+      print('解析单项服务订单列表失败: $e');
       return null;
     }
   }
