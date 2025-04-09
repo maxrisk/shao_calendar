@@ -32,7 +32,6 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
 
     try {
       final product = await OrderService().getProduct();
-      print('product: $product');
       if (mounted) {
         setState(() {
           _product = product;
@@ -67,7 +66,8 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final userService = context.watch<UserService>();
 
     return Scaffold(
@@ -101,65 +101,65 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 剩余天数卡片
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary.withAlpha(25),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '剩余天数',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: colorScheme.onSurface,
+                  if (_product == null || _product!.type != 2)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: theme.cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '剩余天数',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: colorScheme.onSurface,
+                            ),
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              '${userService.remainingDays}',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: colorScheme.primary,
+                          Row(
+                            children: [
+                              Text(
+                                '${userService.remainingDays}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: colorScheme.primary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '天',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: colorScheme.primary,
+                              const SizedBox(width: 4),
+                              Text(
+                                '天',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: colorScheme.primary,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                  // 只有当显示了剩余天数卡片时才显示间距
+                  if (_product == null || _product!.type != 2)
+                    const SizedBox(height: 24),
                   // 价格信息
                   Center(
                     child: Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: colorScheme.outlineVariant,
-                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             _product?.name ?? '服务名称',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -202,6 +202,55 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 24),
+
+                  // 详情说明卡片
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              color: colorScheme.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '详情说明',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        _buildDetailItem(
+                          '1、购买即获取实物天时日历一本（线下领取）',
+                          colorScheme,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDetailItem(
+                          '2、购买即获取线上个人流年运卦一年查看权限',
+                          colorScheme,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDetailItem(
+                          '3、购买即获取线上生历卦、死结卦邵氏详解',
+                          colorScheme,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -230,6 +279,23 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDetailItem(String text, ColorScheme colorScheme) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 14,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
