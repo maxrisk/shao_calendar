@@ -169,7 +169,7 @@ class InvitePage extends StatelessWidget {
                     _buildQRCode(
                       context,
                       'https://example.com/invite?code=${userInfo?.referralCode?.toString() ?? ''}',
-                      isBlurred: false,
+                      isBlurred: userInfo?.promotion == 0,
                     ),
                     const SizedBox(height: 20),
                     Row(
