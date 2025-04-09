@@ -3,6 +3,7 @@ import '../../services/package_service.dart';
 import '../../models/package.dart';
 import '../../models/package_group.dart';
 import 'package_purchase_page.dart';
+import 'package_order_history_page.dart';
 
 /// 定制服务页面
 class CustomServicePage extends StatefulWidget {
@@ -51,7 +52,12 @@ class _CustomServicePageState extends State<CustomServicePage> {
   }
 
   void _navigateToOrderHistory() {
-    // TODO: 导航到购买记录页面
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const PackageOrderHistoryPage(),
+      ),
+    );
   }
 
   void _navigateToPackagePurchase(Package package) {

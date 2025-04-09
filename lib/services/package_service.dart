@@ -3,6 +3,8 @@ import 'http_client.dart';
 import '../models/order.dart';
 import '../models/package.dart';
 import '../models/package_group.dart';
+import '../models/order_list.dart';
+import '../models/package_order.dart';
 
 /// 支付类型
 enum PayType {
@@ -56,6 +58,22 @@ class PackageService {
       return OrderResponse.fromJson(response.data);
     } on DioException catch (e) {
       print('创建服务包订单失败: ${e.message}');
+      return null;
+    }
+  }
+
+  /// 获取服务包订单列表
+  Future<List<PackageOrderItem>?> getPackageGroupOrders() async {
+    try {
+      final response = await _dio.get('/app/order/packageGroupOrder');
+      final packageOrderListResponse =
+          PackageOrderListResponse.fromJson(response.data);
+      return packageOrderListResponse.data;
+    } on DioException catch (e) {
+      print('获取服务包订单列表失败: ${e.message}');
+      return null;
+    } catch (e) {
+      print('解析服务包订单列表失败: $e');
       return null;
     }
   }

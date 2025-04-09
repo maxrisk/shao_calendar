@@ -6,9 +6,8 @@ import '../../widgets/list/list_group.dart';
 import '../../models/order.dart';
 import '../../services/alipay_service.dart';
 import '../../services/user_service.dart';
-import '../../services/package_service.dart';
-import '../../services/order_service.dart' as order_service
-    show OrderService, ProductType, PayType;
+import '../../services/package_service.dart' as package_service;
+import '../../services/order_service.dart';
 
 /// 服务类型
 enum ServiceType {
@@ -30,7 +29,7 @@ class PaymentPage extends StatefulWidget {
     required this.amount,
     required this.title,
     required this.serviceType,
-    this.productType = order_service.ProductType.normal,
+    this.productType = ProductType.normal,
     this.packageId,
     this.packageGroupId,
   }) : assert(
@@ -51,7 +50,7 @@ class PaymentPage extends StatefulWidget {
   final ServiceType serviceType;
 
   /// 产品类型（只用于天历服务）
-  final order_service.ProductType productType;
+  final ProductType productType;
 
   /// 单项服务ID
   final int? packageId;
@@ -67,8 +66,8 @@ class _PaymentPageState extends State<PaymentPage> {
   String _selectedPaymentMethod = 'alipay'; // 默认选择支付宝
   bool _isLoading = false;
 
-  final _orderService = order_service.OrderService();
-  final _packageService = PackageService();
+  final _orderService = OrderService();
+  final _packageService = package_service.PackageService();
   final _alipayService = AlipayService();
 
   Future<void> _handleConfirmPayment() async {
@@ -79,12 +78,8 @@ class _PaymentPageState extends State<PaymentPage> {
     });
 
     try {
-      // 使用package_service.dart中的PayType
-      final payType =
-          _selectedPaymentMethod == 'alipay' ? PayType.alipay : PayType.wechat;
-
       // 根据不同服务类型创建订单
-      final response = await _createOrder(payType);
+      final response = await _createOrder();
 
       if (response?.code == 0 && response?.payUrl != null) {
         if (_selectedPaymentMethod == 'alipay') {
@@ -150,24 +145,32 @@ class _PaymentPageState extends State<PaymentPage> {
   }
 
   /// 根据服务类型创建对应的订单
-  Future<OrderResponse?> _createOrder(PayType payType) async {
+  Future<OrderResponse?> _createOrder() async {
+    // 选择支付类型
+    final payTypeStr = _selectedPaymentMethod == 'alipay' ? 'ALIPAY' : 'WECHAT';
+
     switch (widget.serviceType) {
       case ServiceType.calendar:
-        // 将PayType转换为order_service.PayType
-        order_service.PayType orderPayType;
-        if (payType == PayType.alipay) {
-          orderPayType = order_service.PayType.alipay;
-        } else {
-          orderPayType = order_service.PayType.wechat;
-        }
+        // 使用订单服务的PayType
+        final orderPayType = _selectedPaymentMethod == 'alipay'
+            ? PayType.alipay
+            : PayType.wechat;
         return await _orderService.createOrder(
             orderPayType, widget.productType);
       case ServiceType.package:
+        // 使用包服务的PayType
+        final packagePayType = _selectedPaymentMethod == 'alipay'
+            ? package_service.PayType.alipay
+            : package_service.PayType.wechat;
         return await _packageService.createPackageOrder(
-            widget.packageId!, payType);
+            widget.packageId!, packagePayType);
       case ServiceType.packageGroup:
+        // 使用包服务的PayType
+        final packagePayType = _selectedPaymentMethod == 'alipay'
+            ? package_service.PayType.alipay
+            : package_service.PayType.wechat;
         return await _packageService.createPackageGroupOrder(
-            widget.packageGroupId!, payType);
+            widget.packageGroupId!, packagePayType);
     }
   }
 
