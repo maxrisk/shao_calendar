@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../services/withdraw_service.dart';
 import 'bank_card_page.dart';
 
 /// 提现页面
@@ -19,9 +20,11 @@ class WithdrawPage extends StatefulWidget {
 
 class _WithdrawPageState extends State<WithdrawPage> {
   final _amountController = TextEditingController();
+  final _withdrawService = WithdrawService();
   String _bankName = '工商银行'; // 模拟数据
   String _cardNo = '1234'; // 模拟数据
   bool _isValid = false;
+  bool _isLoading = false;
   double _fee = 0; // 添加手续费变量
   String? _errorText; // 添加错误提示文本
 
@@ -42,10 +45,54 @@ class _WithdrawPageState extends State<WithdrawPage> {
     });
   }
 
-  void _handleWithdraw() {
-    if (_isValid) {
-      // TODO: 处理提现
-      Navigator.pop(context);
+  Future<void> _handleWithdraw() async {
+    if (!_isValid || _isLoading) return;
+
+    final amount = double.tryParse(_amountController.text) ?? 0;
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('请输入有效的提现金额'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await _withdrawService.withdraw(amount);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result.message),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+
+      if (result.success) {
+        Navigator.pop(context, true); // 返回true表示提现成功
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('网络异常，请稍后重试'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -258,20 +305,28 @@ class _WithdrawPageState extends State<WithdrawPage> {
                 16 + MediaQuery.of(context).padding.bottom,
               ),
               child: FilledButton(
-                onPressed: _isValid ? _handleWithdraw : null,
+                onPressed: _isValid && !_isLoading ? _handleWithdraw : null,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(44),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text(
-                  '确定',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        '确定',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
               ),
             ),
           ],
