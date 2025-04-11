@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/package.dart';
 import '../../models/package_group.dart';
-import '../../services/package_service.dart';
 import 'payment_page.dart';
 
 /// 服务包购买页面
@@ -127,17 +126,56 @@ class _PackagePurchasePageState extends State<PackagePurchasePage> {
                             height: 200,
                             width: double.infinity,
                             fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) {
+                                return FadeTransition(
+                                  opacity: AlwaysStoppedAnimation(1.0),
+                                  child: child,
+                                );
+                              }
+                              return Container(
+                                height: 200,
+                                width: double.infinity,
+                                color: colorScheme.surfaceVariant,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                    strokeWidth: 2,
+                                    color: colorScheme.primary,
+                                  ),
+                                ),
+                              );
+                            },
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
                                 height: 200,
                                 width: double.infinity,
-                                color: colorScheme.primaryContainer,
-                                child: Center(
-                                  child: Icon(
-                                    Icons.image_not_supported,
-                                    size: 50,
-                                    color: colorScheme.onPrimaryContainer,
-                                  ),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.errorContainer,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.broken_image_rounded,
+                                      size: 40,
+                                      color: colorScheme.onErrorContainer,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      '图片加载失败',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: colorScheme.onErrorContainer,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             },
