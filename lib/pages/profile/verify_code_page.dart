@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/verify_code_input.dart';
 import '../../pages/profile/complete_info_page.dart';
+import '../../pages/profile/confirm_area_page.dart';
 import '../../services/user_service.dart';
 
 /// 验证码页面
@@ -25,6 +26,8 @@ class VerifyCodePage extends StatefulWidget {
 
 class _VerifyCodePageState extends State<VerifyCodePage> {
   bool _isSubmitting = false;
+  Map<String, dynamic>? _province;
+  Map<String, dynamic>? _city;
 
   void showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -45,11 +48,15 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
       });
 
       final userService = context.read<UserService>();
-      final success = await userService.getVerificationCode(widget.phone);
+      final (success, province, city) =
+          await userService.getVerificationCode(widget.phone);
       if (!mounted) return false;
 
       if (!success) {
         showMessage('发送验证码失败，请重试');
+      } else {
+        _province = province;
+        _city = city;
       }
       return success;
     } catch (e) {
@@ -69,22 +76,42 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
     try {
       final userService = context.read<UserService>();
       final userInfo = await userService.login(widget.phone, code);
-      print('userInfo: $userInfo');
 
       if (!mounted) return;
 
       if (userInfo != null) {
-        // 登录成功，判断是否需要完善信息
-        if (userInfo.userInfo.birthDate?.isEmpty ?? true) {
-          // 需要完善生日信息
-          Navigator.pushReplacement(
+        // 登录成功，检查用户信息
+        final user = userInfo.userInfo;
+
+        if (user.provinceId == null || user.cityId == null) {
+          // 如果地区信息为空，跳转到确认区域页面
+          if (_province == null || _city == null) {
+            showMessage('获取地区信息失败，请重试');
+            return;
+          }
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ConfirmAreaPage(
+                phone: widget.phone,
+                code: code,
+                province: _province!,
+                city: _city!,
+              ),
+            ),
+          );
+        } else if (user.birthDate?.isEmpty ?? true) {
+          // 如果生日信息为空，跳转到完善信息页面
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => const CompleteInfoPage(),
             ),
+            (route) => false, // 清除所有路由栈
           );
         } else {
-          // 直接返回上一页
+          // 信息完整，直接返回
           Navigator.pop(context);
           Navigator.pop(context);
         }

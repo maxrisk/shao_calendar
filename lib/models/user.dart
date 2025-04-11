@@ -33,6 +33,9 @@ class User {
   final int? secondUserId;
   final int? promotion;
   final double? amount;
+  final int? provinceId;
+  final int? cityId;
+  final int? districtId;
 
   const User({
     this.id,
@@ -59,6 +62,9 @@ class User {
     this.secondUserId,
     this.promotion,
     this.amount,
+    this.provinceId,
+    this.cityId,
+    this.districtId,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -90,6 +96,9 @@ class User {
     int? secondUserId,
     int? promotion,
     double? amount,
+    int? provinceId,
+    int? cityId,
+    int? districtId,
   }) {
     return User(
       id: id ?? this.id,
@@ -114,6 +123,9 @@ class User {
       secondUserId: secondUserId ?? this.secondUserId,
       promotion: promotion ?? this.promotion,
       amount: amount ?? this.amount,
+      provinceId: provinceId ?? this.provinceId,
+      cityId: cityId ?? this.cityId,
+      districtId: districtId ?? this.districtId,
     );
   }
 }

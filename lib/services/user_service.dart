@@ -80,14 +80,21 @@ class UserService extends ChangeNotifier {
   }
 
   // 获取验证码
-  Future<bool> getVerificationCode(String phone) async {
+  Future<(bool, Map<String, dynamic>?, Map<String, dynamic>?)>
+      getVerificationCode(String phone) async {
     try {
       print('获取验证码: $phone');
       final response = await _dio.get('/app/verification/$phone');
-      return response.data['code'] == 0;
+      if (response.data['code'] == 0 && response.data['data'] != null) {
+        final data = response.data['data'];
+        final provinces = data['provinces'] as Map<String, dynamic>?;
+        final city = data['city'] as Map<String, dynamic>?;
+        return (true, provinces, city);
+      }
+      return (false, null, null);
     } catch (e) {
       print('获取验证码失败: $e');
-      return false;
+      return (false, null, null);
     }
   }
 
@@ -270,6 +277,30 @@ class UserService extends ChangeNotifier {
     final now = DateTime.now();
     final days = expiration.difference(now).inDays;
     return days < 0 ? 0 : days;
+  }
+
+  /// 更新用户地区信息
+  Future<bool> updateArea({
+    required int provinceId,
+    required int cityId,
+    int? districtId,
+  }) async {
+    try {
+      final response = await _dio.put('/app/userArea', data: {
+        'provinceId': provinceId,
+        'cityId': cityId,
+        if (districtId != null) 'districtId': districtId,
+      });
+
+      if (response.data['code'] == 0) {
+        await getUserInfo(); // 更新用户信息
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('更新地区信息失败: $e');
+      return false;
+    }
   }
 
   UserService._internal();
