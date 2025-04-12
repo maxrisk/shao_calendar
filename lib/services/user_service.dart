@@ -43,14 +43,18 @@ class UserService extends ChangeNotifier {
   }
 
   // 用户登录或注册
-  Future<UserInfoResponse?> login(String phone, String code,
-      {String? openid, String? unionid}) async {
+  Future<UserInfoResponse?> login({
+    String? phone,
+    String? code,
+    String? openid,
+    String? unionid,
+  }) async {
     try {
       final response = await _dio.post(
         '/app/user',
         data: {
-          'phone': phone,
-          'code': code,
+          if (phone != null) 'phone': phone,
+          if (code != null) 'code': code,
           if (openid != null) 'openid': openid,
           if (unionid != null) 'unionid': unionid,
         },

@@ -52,6 +52,8 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>alipay</string>
+		<string>weixin</string>
+		<string>weixinULAPI</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -61,6 +63,14 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>flutter.calendar</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>weixin</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wx94c3ff80fb2eb730</string>
 			</array>
 		</dict>
 	</array>

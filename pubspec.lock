@@ -290,6 +290,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fluwx:
+    dependency: "direct main"
+    description:
+      name: fluwx
+      sha256: "957c2160018e89f3da03e7abb0127ee7b215ecfc632bf90b5214366862e3d446"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.5.1"
   font_awesome_flutter:
     dependency: "direct main"
     description:

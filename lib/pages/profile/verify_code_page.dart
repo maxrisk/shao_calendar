@@ -12,6 +12,8 @@ class VerifyCodePage extends StatefulWidget {
     super.key,
     required this.phone,
     this.autoStart = false,
+    this.openid,
+    this.unionid,
   });
 
   /// 手机号
@@ -19,6 +21,12 @@ class VerifyCodePage extends StatefulWidget {
 
   /// 是否自动开始倒计时
   final bool autoStart;
+
+  /// 微信openid，用于绑定手机号
+  final String? openid;
+
+  /// 微信unionid，用于绑定手机号
+  final String? unionid;
 
   @override
   State<VerifyCodePage> createState() => _VerifyCodePageState();
@@ -75,7 +83,12 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
   Future<void> _handleSubmit(String code) async {
     try {
       final userService = context.read<UserService>();
-      final userInfo = await userService.login(widget.phone, code);
+      final userInfo = await userService.login(
+        phone: widget.phone,
+        code: code,
+        openid: widget.openid,
+        unionid: widget.unionid,
+      );
 
       if (!mounted) return;
 
@@ -113,6 +126,10 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
         } else {
           // 信息完整，直接返回
           Navigator.pop(context);
+          if (widget.openid != null) {
+            // 如果是微信登录绑定手机号，多返回一层
+            Navigator.pop(context);
+          }
           Navigator.pop(context);
         }
       } else {
