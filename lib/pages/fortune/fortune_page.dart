@@ -31,6 +31,7 @@ class _FortunePageState extends State<FortunePage> {
   final _fortuneService = FortuneService();
   FortuneResponse? _fortuneData;
   bool _isLoading = false;
+  bool? _previousLoginState;
 
   @override
   void initState() {
@@ -41,6 +42,20 @@ class _FortunePageState extends State<FortunePage> {
     if (_fortuneData == null) {
       _loadFortuneData(_selectedDate);
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 监听用户登录状态变化
+    final userService = context.watch<UserService>();
+    final isLoggedIn = userService.userInfo != null;
+
+    // 如果用户从未登录状态变为已登录状态，刷新数据
+    if (_previousLoginState == false && isLoggedIn) {
+      _loadFortuneData(_selectedDate);
+    }
+    _previousLoginState = isLoggedIn;
   }
 
   Future<void> _loadFortuneData(DateTime date) async {
