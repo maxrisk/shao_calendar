@@ -38,9 +38,7 @@ class FortuneService {
   /// 获取个人运势
   Future<FortuneResponse?> getUserFortune(String date) async {
     try {
-      print('获取个人运势: $date');
       final response = await _dio.get('/app/user/fortune/$date');
-      print('个人运势响应数据: ${response.data}');
       _userFortuneData = FortuneResponse.fromJson(response.data);
       return _userFortuneData;
     } on DioException catch (e) {

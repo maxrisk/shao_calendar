@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/widgets/glowing_hexagram.dart';
 import 'package:provider/provider.dart';
 import '../../services/user_service.dart';
 import '../profile/widgets/login_prompt.dart';
-import '../../widgets/fortune_card_group.dart';
+import '../../widgets/fortune_card.dart';
 import 'widgets/date_picker_button.dart';
 import 'widgets/decorated_title.dart';
 import 'widgets/fortune_display.dart';
@@ -13,6 +14,7 @@ import '../../models/fortune.dart';
 import '../../services/fortune_service.dart';
 import '../../pages/profile/login_page.dart';
 import '../../utils/route_animations.dart';
+import 'personal_divination_page.dart';
 
 /// 个人运势页面
 class FortunePage extends StatefulWidget {
@@ -132,17 +134,34 @@ class _FortunePageState extends State<FortunePage> {
             child: Column(
               children: [
                 // 顶部卡片区域
-                FortuneCardGroup(
-                  fortuneData: _fortuneData?.data,
-                  onCardTap: (cardType) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content:
-                            Text('查看${cardType == 'base' ? '本命卦' : '大运卦'}详情'),
-                        duration: const Duration(seconds: 1),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_fortuneData?.data?.thisYear != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PersonalDivinationPage(
+                                    divination: _fortuneData!.data!.thisYear,
+                                    yearRange: '${DateTime.now().year}年个人运势',
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: FortuneCard(
+                            text: _fortuneData?.data?.thisYear.name ?? '',
+                            bgType: HexagramBgType.green,
+                            yearRange: '${DateTime.now().year}年个人运势',
+                          ),
+                        ),
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
                 // 革年标题
                 const DecoratedTitle(title: '革年'),

@@ -13,6 +13,7 @@ class Divination {
   final String tuanChuan;
   final String luck;
   final String? fierce;
+  final String? guide;
   final String? baziInterpretation;
   final String? lifeInterpretation;
   final String? deathInterpretation;
@@ -27,6 +28,7 @@ class Divination {
     required this.tuanChuan,
     required this.luck,
     this.fierce,
+    this.guide,
     this.baziInterpretation,
     this.lifeInterpretation,
     this.deathInterpretation,
