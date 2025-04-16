@@ -81,9 +81,7 @@ class _CalendarPageState extends State<CalendarPage> {
         context,
         MaterialPageRoute(
           builder: (context) => HexagramDecadePage(
-            text: _fortuneData!.baseName,
-            bgType: HexagramBgType.green,
-            yearRange: _fortuneData!.decadeYears,
+            baseYearId: _fortuneData!.baseYear.id!,
           ),
         ),
       );

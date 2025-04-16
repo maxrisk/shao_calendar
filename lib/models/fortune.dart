@@ -66,7 +66,8 @@ class FortuneData {
 
 @JsonSerializable()
 class BaseYear {
-  final String? id;
+  @JsonKey(fromJson: _parseInt)
+  final int? id;
   final int startYear;
   final int endYear;
   final String divinationSymbol;
@@ -109,6 +110,15 @@ class BaseYear {
   factory BaseYear.fromJson(Map<String, dynamic> json) =>
       _$BaseYearFromJson(json);
   Map<String, dynamic> toJson() => _$BaseYearToJson(this);
+
+  /// 解析可能为字符串的整数
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    if (value is double) return value.toInt();
+    return null;
+  }
 }
 
 @JsonSerializable()

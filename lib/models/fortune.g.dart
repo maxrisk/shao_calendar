@@ -66,7 +66,7 @@ Map<String, dynamic> _$FortuneDataToJson(FortuneData instance) =>
     };
 
 BaseYear _$BaseYearFromJson(Map<String, dynamic> json) => BaseYear(
-      id: json['id'] as String?,
+      id: BaseYear._parseInt(json['id']),
       startYear: (json['startYear'] as num).toInt(),
       endYear: (json['endYear'] as num).toInt(),
       divinationSymbol: json['divinationSymbol'] as String,

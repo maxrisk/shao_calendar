@@ -9,6 +9,7 @@ class HexagramInfoCard extends StatelessWidget {
     required this.text,
     required this.bgType,
     required this.yearRange,
+    required this.guide,
     this.onTap,
   });
 
@@ -21,12 +22,16 @@ class HexagramInfoCard extends StatelessWidget {
   /// 年份范围
   final String yearRange;
 
+  /// 卦象指引
+  final String guide;
+
   /// 点击回调
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return InkWell(
       onTap: onTap,
@@ -34,7 +39,7 @@ class HexagramInfoCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(12.0),
           boxShadow: [
             BoxShadow(
@@ -86,8 +91,7 @@ class HexagramInfoCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '此卦象代表的年代（$yearRange）有其特定的时运与能量场。在这段时期出生或经历重要人生阶段的人，往往会受到此卦象能量的影响。\n\n'
-                      '【$text】卦蕴含着宇宙运行的规律与智慧，影响着这一时期的集体潜意识和时代特征。了解这一卦象，有助于理解个人命运与大时代背景的关联。',
+                      guide,
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.6,
