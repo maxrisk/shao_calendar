@@ -41,18 +41,11 @@ class HexagramInfoCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.cardColor,
           borderRadius: BorderRadius.circular(12.0),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.shadow.withAlpha(25),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // 左侧卦象和年份
               Column(
@@ -64,13 +57,15 @@ class HexagramInfoCard extends StatelessWidget {
                     enableAnimation: false,
                     bgType: bgType,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    yearRange,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
+                  Transform.translate(
+                    offset: const Offset(0, -8),
+                    child: Text(
+                      yearRange,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -82,21 +77,13 @@ class HexagramInfoCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '卦象解读',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
                       guide,
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.6,
                         color: colorScheme.onSurface,
                       ),
+                      textAlign: TextAlign.justify,
                     ),
                   ],
                 ),

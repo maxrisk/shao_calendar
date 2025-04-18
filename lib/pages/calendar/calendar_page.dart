@@ -3,7 +3,6 @@ import 'widgets/hexagram_detail.dart';
 import 'widgets/hexagram_display.dart';
 import '../../widgets/lunar_calendar.dart';
 import '../../widgets/fortune_card_group.dart';
-import '../../widgets/glowing_hexagram.dart';
 import '../../services/fortune_service.dart';
 import '../../models/fortune.dart';
 import '../fortune/hexagram_year_page.dart';
@@ -71,7 +70,6 @@ class _CalendarPageState extends State<CalendarPage> {
         MaterialPageRoute(
           builder: (context) => HexagramYearPage(
             text: _fortuneData!.baseName,
-            bgType: HexagramBgType.green,
             yearRange: _fortuneData!.decadeYears,
           ),
         ),

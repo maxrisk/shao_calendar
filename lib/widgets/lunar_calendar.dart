@@ -29,7 +29,7 @@ class _LunarCalendarState extends State<LunarCalendar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
       child: Column(
         children: [
           // 日历头部 - 透明背景

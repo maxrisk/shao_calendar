@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../widgets/glowing_hexagram.dart';
 import 'widgets/hexagram_info_card.dart';
 import 'hexagram_decade_page.dart';
-import 'hexagram_year_event_page.dart';
 import '../../services/hexagram_service.dart';
 import '../../models/base_year.dart';
 
@@ -12,15 +11,11 @@ class HexagramYearPage extends StatefulWidget {
   const HexagramYearPage({
     super.key,
     required this.text,
-    required this.bgType,
     required this.yearRange,
   });
 
   /// 卦象文字
   final String text;
-
-  /// 背景类型
-  final HexagramBgType bgType;
 
   /// 年份范围
   final String yearRange;
@@ -93,26 +88,6 @@ class _HexagramYearPageState extends State<HexagramYearPage> {
               : ListView(
                   padding: const EdgeInsets.all(16.0),
                   children: [
-                    // 年份选择说明
-                    Text(
-                      '年份选择',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      '在六十甲子周期中，每个年份都对应特定卦象能量。请选择与您命运相关的年份，以获取更准确的卦象解读。',
-                      style: TextStyle(
-                        fontSize: 14,
-                        height: 1.5,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
                     // 卦象列表
                     ..._baseYears!.map((baseYear) {
                       final yearRange =
@@ -121,7 +96,7 @@ class _HexagramYearPageState extends State<HexagramYearPage> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: HexagramInfoCard(
                           text: baseYear.divinationName ?? '',
-                          bgType: widget.bgType,
+                          bgType: HexagramBgType.orange,
                           yearRange: yearRange,
                           guide: baseYear.guide ?? '',
                           onTap: () {

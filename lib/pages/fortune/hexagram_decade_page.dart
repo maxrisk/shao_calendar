@@ -82,26 +82,6 @@ class _HexagramDecadePageState extends State<HexagramDecadePage> {
                   )
                 : ListView(
                     children: [
-                      // 十年旬说明
-                      Text(
-                        '十年旬选择',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        '每个六十年世又分为六个十年旬，每个十年旬都有其独特的卦象能量。请选择与您命运相关的十年旬，以获取更准确的卦象解读。',
-                        style: TextStyle(
-                          fontSize: 14,
-                          height: 1.5,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
                       // 十年旬列表
                       for (var tenYear in _tenYears!) ...[
                         Padding(

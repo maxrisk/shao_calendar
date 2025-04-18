@@ -30,7 +30,7 @@ class FortuneCardGroup extends StatelessWidget {
               child: FortuneCard(
                 text: fortuneData!.baseName,
                 bgType: HexagramBgType.green,
-                yearRange: fortuneData!.decadeYears,
+                yearRange: fortuneData!.baseYears,
               ),
             ),
           ),
