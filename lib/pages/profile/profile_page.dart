@@ -66,6 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         : '未设置',
                     userId: userInfo.referralCode?.toString() ?? '-',
                     onInviteTap: _handleInvite,
+                    promotion: userInfo.promotion,
                   ),
                   InterpretationCard(
                     title:
