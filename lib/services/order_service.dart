@@ -50,10 +50,10 @@ class OrderService {
     }
   }
 
-  /// 获取服务产品
-  Future<Product?> getProduct() async {
+  /// 获取服务产品 1: 普通365天 2: VIP 3650天
+  Future<Product?> getProduct({int type = 1}) async {
     try {
-      final response = await _dio.get('/app/order/product');
+      final response = await _dio.get('/app/order/product?type=$type');
       final productResponse = ProductResponse.fromJson(response.data);
       return productResponse.data;
     } on DioException catch (e) {

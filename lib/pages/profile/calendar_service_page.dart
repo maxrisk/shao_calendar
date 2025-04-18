@@ -9,7 +9,9 @@ import 'package:provider/provider.dart';
 /// 天历服务页面
 class CalendarServicePage extends StatefulWidget {
   /// 创建天历服务页面
-  const CalendarServicePage({super.key});
+  const CalendarServicePage({super.key, this.type = 1});
+
+  final int type;
 
   @override
   State<CalendarServicePage> createState() => _CalendarServicePageState();
@@ -31,7 +33,7 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
     });
 
     try {
-      final product = await OrderService().getProduct();
+      final product = await OrderService().getProduct(type: widget.type);
       if (mounted) {
         setState(() {
           _product = product;
@@ -90,7 +92,7 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
                 ),
               );
             },
-            child: Text('购买记录'),
+            child: const Text('购买记录'),
           ),
         ],
       ),

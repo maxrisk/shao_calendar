@@ -7,6 +7,7 @@ import '../../services/user_service.dart';
 import 'widgets/statistic_card.dart';
 import 'invite_detail_page.dart';
 import 'commission_detail_page.dart';
+import '../../pages/profile/calendar_service_page.dart';
 
 /// 推荐邀请页面
 class InvitePage extends StatelessWidget {
@@ -250,6 +251,139 @@ class InvitePage extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+            ),
+            // 添加两个按钮
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Column(
+                children: [
+                  // Ghost按钮
+                  Container(
+                    width: double.infinity,
+                    height: 56,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: colorScheme.primary,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          if (userInfo?.promotion != 1 &&
+                              userInfo?.promotion != 2) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CalendarServicePage(type: 1),
+                              ),
+                            );
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            children: [
+                              Text(
+                                '直接推荐奖励权限',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                userInfo?.promotion == 1 ||
+                                        userInfo?.promotion == 2
+                                    ? '已开通'
+                                    : '¥365',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              if (userInfo?.promotion != 1 &&
+                                  userInfo?.promotion != 2) ...[
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  size: 16,
+                                  color: colorScheme.primary,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // 实心按钮
+                  Container(
+                    width: double.infinity,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          if (userInfo?.promotion != 2) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const CalendarServicePage(type: 2),
+                              ),
+                            );
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            children: [
+                              Text(
+                                '直接与间接推荐奖励权限',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: colorScheme.onPrimary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                userInfo?.promotion == 2 ? '已开通' : '¥3650',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: colorScheme.onPrimary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              if (userInfo?.promotion != 2) ...[
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  size: 16,
+                                  color: colorScheme.onPrimary,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
