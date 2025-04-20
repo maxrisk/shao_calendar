@@ -123,9 +123,8 @@ class _PackagePurchasePageState extends State<PackagePurchasePage> {
                           borderRadius: BorderRadius.circular(12),
                           child: Image.network(
                             _imageUrl!,
-                            height: 200,
                             width: double.infinity,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fitWidth,
                             loadingBuilder: (context, child, loadingProgress) {
                               if (loadingProgress == null) {
                                 return FadeTransition(

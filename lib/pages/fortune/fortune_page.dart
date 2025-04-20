@@ -154,7 +154,7 @@ class _FortunePageState extends State<FortunePage> {
                             }
                           },
                           child: FortuneCard(
-                            text: _fortuneData?.data?.thisYear.name ?? '',
+                            text: _fortuneData?.data?.thisYear.name ?? '？',
                             bgType: HexagramBgType.green,
                             yearRange: '${DateTime.now().year}年个人运势',
                           ),
