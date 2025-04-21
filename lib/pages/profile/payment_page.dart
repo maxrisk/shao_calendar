@@ -29,7 +29,7 @@ class PaymentPage extends StatefulWidget {
     required this.amount,
     required this.title,
     required this.serviceType,
-    this.productType = ProductType.normal,
+    this.productId,
     this.packageId,
     this.packageGroupId,
   }) : assert(
@@ -49,8 +49,8 @@ class PaymentPage extends StatefulWidget {
   /// 服务类型
   final ServiceType serviceType;
 
-  /// 产品类型（只用于天历服务）
-  final ProductType productType;
+  /// 产品ID
+  final int? productId;
 
   /// 单项服务ID
   final int? packageId;
@@ -147,7 +147,7 @@ class _PaymentPageState extends State<PaymentPage> {
   /// 根据服务类型创建对应的订单
   Future<OrderResponse?> _createOrder() async {
     // 选择支付类型
-    final payTypeStr = _selectedPaymentMethod == 'alipay' ? 'ALIPAY' : 'WECHAT';
+    // final payTypeStr = _selectedPaymentMethod == 'alipay' ? 'ALIPAY' : 'WECHAT';
 
     switch (widget.serviceType) {
       case ServiceType.calendar:
@@ -155,8 +155,7 @@ class _PaymentPageState extends State<PaymentPage> {
         final orderPayType = _selectedPaymentMethod == 'alipay'
             ? PayType.alipay
             : PayType.wechat;
-        return await _orderService.createOrder(
-            orderPayType, widget.productType);
+        return await _orderService.createOrder(orderPayType, widget.productId!);
       case ServiceType.package:
         // 使用包服务的PayType
         final packagePayType = _selectedPaymentMethod == 'alipay'

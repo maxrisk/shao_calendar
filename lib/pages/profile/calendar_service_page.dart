@@ -61,6 +61,7 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
         builder: (context) => PaymentPage(
           amount: _product!.price,
           title: _product!.name,
+          productId: _product!.id,
           serviceType: ServiceType.calendar,
         ),
       ),

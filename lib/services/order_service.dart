@@ -37,11 +37,10 @@ class OrderService {
   OrderService._internal();
 
   /// 创建订单
-  Future<OrderResponse?> createOrder(
-      PayType payType, ProductType productType) async {
+  Future<OrderResponse?> createOrder(PayType payType, int productId) async {
     try {
       final response = await _dio.post(
-        '/app/order/create/${payType.name.toUpperCase()}/${productType.id}',
+        '/app/order/create/${payType.name.toUpperCase()}/$productId',
       );
       return OrderResponse.fromJson(response.data);
     } on DioException catch (e) {
