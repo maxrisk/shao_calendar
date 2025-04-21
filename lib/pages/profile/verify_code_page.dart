@@ -116,12 +116,11 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
           );
         } else if (user.birthDate?.isEmpty ?? true) {
           // 如果生日信息为空，跳转到完善信息页面
-          Navigator.pushAndRemoveUntil(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => const CompleteInfoPage(),
             ),
-            (route) => false, // 清除所有路由栈
           );
         } else {
           // 信息完整，直接返回

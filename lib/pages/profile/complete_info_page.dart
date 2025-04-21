@@ -88,9 +88,12 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
       _birthTimeIndex! + 1,
       code: _referralController.text,
     );
+    print(success);
     if (success) {
-      Navigator.pop(context);
-      Navigator.pop(context);
+      if (mounted) {
+        // 直接返回到根路由（首页）
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

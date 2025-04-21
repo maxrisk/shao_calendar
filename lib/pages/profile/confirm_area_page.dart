@@ -196,12 +196,11 @@ class _ConfirmAreaPageState extends State<ConfirmAreaPage> {
       final userInfo = userService.userInfo?.userInfo;
       if (userInfo?.birthDate?.isEmpty ?? true) {
         // 未设置出生日期，跳转到完善信息页面
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const CompleteInfoPage(),
           ),
-          (route) => false, // 清除所有路由栈
         );
       } else {
         // 已设置出生日期，返回首页
