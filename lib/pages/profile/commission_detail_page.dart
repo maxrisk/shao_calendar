@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'widgets/statistic_card.dart';
 import 'widgets/commission_record_cell.dart';
 import '../../models/commission_order.dart';
+import '../../services/user_service.dart';
 import 'commission_order_page.dart';
 import 'withdraw_page.dart';
 
@@ -13,6 +15,10 @@ class CommissionDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final userService = context.watch<UserService>();
+    final user = userService.userInfo?.userInfo;
+    final commission = user?.commission ?? 0.0;
+    final balance = user?.amount ?? 0.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -33,21 +39,21 @@ class CommissionDetailPage extends StatelessWidget {
               children: [
                 Expanded(
                   child: StatisticCard(
-                    value: '123.00',
+                    value: commission.toStringAsFixed(2),
                     label: '总提成（元）',
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: StatisticCard(
-                    value: '123.00',
+                    value: balance.toStringAsFixed(2),
                     label: '余额（元）',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const WithdrawPage(
-                            balance: 123.00,
+                          builder: (context) => WithdrawPage(
+                            balance: balance,
                           ),
                         ),
                       );

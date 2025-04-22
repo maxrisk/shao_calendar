@@ -24,7 +24,6 @@ class User {
   final bool? isVip;
   final String? phone;
   final String? wxSessionKey;
-  final int referralCount;
   final String? referralCode;
   final String? nickName;
   final String? firstCode;
@@ -33,6 +32,9 @@ class User {
   final int? secondUserId;
   final int? promotion;
   final double? amount;
+  @JsonKey(name: 'amountCount')
+  final double? commission;
+  final int? referralCount;
   final int? provinceId;
   final int? cityId;
   final int? districtId;
@@ -53,7 +55,6 @@ class User {
     this.isVip,
     this.phone,
     this.wxSessionKey,
-    this.referralCount = 0,
     this.referralCode,
     this.nickName,
     this.firstCode,
@@ -62,6 +63,8 @@ class User {
     this.secondUserId,
     this.promotion,
     this.amount,
+    this.commission,
+    this.referralCount,
     this.provinceId,
     this.cityId,
     this.districtId,
@@ -87,7 +90,6 @@ class User {
     bool? isVip,
     String? phone,
     String? wxSessionKey,
-    int? referralCount,
     String? referralCode,
     String? nickName,
     String? firstCode,
@@ -96,6 +98,8 @@ class User {
     int? secondUserId,
     int? promotion,
     double? amount,
+    double? commission,
+    int? referralCount,
     int? provinceId,
     int? cityId,
     int? districtId,
@@ -123,6 +127,8 @@ class User {
       secondUserId: secondUserId ?? this.secondUserId,
       promotion: promotion ?? this.promotion,
       amount: amount ?? this.amount,
+      commission: commission ?? this.commission,
+      referralCount: referralCount ?? this.referralCount,
       provinceId: provinceId ?? this.provinceId,
       cityId: cityId ?? this.cityId,
       districtId: districtId ?? this.districtId,
