@@ -26,6 +26,7 @@ class _CommissionDetailPageState extends State<CommissionDetailPage> {
   void initState() {
     super.initState();
     _loadRecords();
+    _loadUserInfo();
   }
 
   Future<void> _loadRecords() async {
@@ -49,6 +50,20 @@ class _CommissionDetailPageState extends State<CommissionDetailPage> {
         });
       }
     }
+  }
+
+  Future<void> _loadUserInfo() async {
+    final userService = context.read<UserService>();
+    await userService.getUserInfo();
+  }
+
+  // 同时刷新用户信息和提成记录
+  Future<void> _refreshAll() async {
+    // 并行加载数据以提高效率
+    await Future.wait([
+      _loadUserInfo(),
+      _loadRecords(),
+    ]);
   }
 
   @override
@@ -105,7 +120,7 @@ class _CommissionDetailPageState extends State<CommissionDetailPage> {
           // 提成记录列表
           Expanded(
             child: RefreshIndicator(
-              onRefresh: _loadRecords,
+              onRefresh: _refreshAll,
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : _records?.isEmpty ?? true
