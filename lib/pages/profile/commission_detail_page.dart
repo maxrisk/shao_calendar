@@ -2,15 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'widgets/statistic_card.dart';
 import 'widgets/commission_record_cell.dart';
-import '../../models/commission_order.dart';
+import '../../models/commission_record.dart';
 import '../../services/user_service.dart';
-import 'commission_order_page.dart';
+import '../../services/commission_service.dart';
+import 'commission_record_page.dart';
 import 'withdraw_page.dart';
 
 /// 提成明细页面
-class CommissionDetailPage extends StatelessWidget {
+class CommissionDetailPage extends StatefulWidget {
   /// 创建提成明细页面
   const CommissionDetailPage({super.key});
+
+  @override
+  State<CommissionDetailPage> createState() => _CommissionDetailPageState();
+}
+
+class _CommissionDetailPageState extends State<CommissionDetailPage> {
+  final _commissionService = CommissionService();
+  List<CommissionRecord>? _records;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecords();
+  }
+
+  Future<void> _loadRecords() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final records = await _commissionService.getCommissionRecords();
+      if (mounted) {
+        setState(() {
+          _records = records;
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,44 +104,34 @@ class CommissionDetailPage extends StatelessWidget {
           ),
           // 提成记录列表
           Expanded(
-            child: ListView.builder(
-              itemCount: 20,
-              itemBuilder: (context, index) {
-                return CommissionRecordCell(
-                  type: index % 3 == 0
-                      ? CommissionOrderType.withdraw
-                      : index % 2 == 0
-                          ? CommissionOrderType.direct
-                          : CommissionOrderType.indirect,
-                  orderNo: 'NO.${index.toString().padLeft(8, '0')}',
-                  dateTime: '2024-03-${index.toString().padLeft(2, '0')} 12:00',
-                  amount: index % 3 == 0 ? -10.0 : 50.0,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CommissionOrderPage(
-                          order: CommissionOrder(
-                            type: index % 3 == 0
-                                ? CommissionOrderType.withdraw
-                                : index % 2 == 0
-                                    ? CommissionOrderType.direct
-                                    : CommissionOrderType.indirect,
-                            amount: index % 3 == 0 ? -10.0 : 50.0,
-                            orderNo: 'NO.${index.toString().padLeft(8, '0')}',
-                            dateTime:
-                                '2024-03-${index.toString().padLeft(2, '0')} 12:00',
-                            description:
-                                index % 3 == 0 ? '提现到银行卡' : '推荐用户购买会员服务',
-                            cardNo:
-                                index % 3 == 0 ? '6222************1234' : null,
-                          ),
+            child: RefreshIndicator(
+              onRefresh: _loadRecords,
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _records?.isEmpty ?? true
+                      ? const Center(child: Text('暂无记录'))
+                      : ListView.builder(
+                          itemCount: _records!.length,
+                          itemBuilder: (context, index) {
+                            final record = _records![index];
+                            return CommissionRecordCell(
+                              type: record.level,
+                              orderNo: record.orderNo,
+                              dateTime: record.createTime ?? '',
+                              amount: record.changeAmount,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CommissionRecordPage(
+                                      record: record,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
             ),
           ),
         ],

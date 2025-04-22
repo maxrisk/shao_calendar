@@ -112,7 +112,7 @@ class InvitePage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: StatisticCard(
-                      value: userInfo?.amount?.toStringAsFixed(2) ?? '0.00',
+                      value: userInfo?.commission?.toStringAsFixed(2) ?? '0.00',
                       label: '已获提成（元）',
                       onTap: () {
                         Navigator.push(
@@ -127,7 +127,7 @@ class InvitePage extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: StatisticCard(
-                      value: userInfo?.promotion?.toString() ?? '0',
+                      value: userInfo?.referralCount?.toString() ?? '0',
                       label: '总邀请（人）',
                       onTap: () {
                         Navigator.push(
