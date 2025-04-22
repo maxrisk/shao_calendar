@@ -1,0 +1,27 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 项目结构指南
+
+本项目是一个 Flutter 应用，使用了以下目录结构：
+
+## 主要目录
+- `lib/` - 包含所有 Dart 源代码
+  - `models/` - 数据模型类，使用 json_serializable 进行 JSON 序列化
+  - `services/` - 服务类，处理 API 调用和业务逻辑
+  - `pages/` - UI 页面
+  - `widgets/` - 可复用的 UI 组件
+
+## 重要文件
+- [lib/services/http_client.dart](mdc:lib/services/http_client.dart) - 网络请求客户端
+- [lib/services/user_service.dart](mdc:lib/services/user_service.dart) - 用户服务，管理用户信息
+- [lib/models/user.dart](mdc:lib/models/user.dart) - 用户模型类
+- [lib/models/user_info_response.dart](mdc:lib/models/user_info_response.dart) - 用户信息响应模型
+
+## 数据流
+1. 服务类使用 Dio 发起网络请求
+2. 响应数据被解析为模型对象
+3. 页面通过服务类获取数据
+4. 数据在 UI 中展示

@@ -1,0 +1,39 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 数据模型指南
+
+本项目使用 `json_serializable` 库进行 JSON 序列化和反序列化。
+
+## 常用模型
+- [lib/models/user.dart](mdc:lib/models/user.dart) - 用户模型
+- [lib/models/invite_record.dart](mdc:lib/models/invite_record.dart) - 邀请记录模型
+- [lib/models/commission_record.dart](mdc:lib/models/commission_record.dart) - 佣金记录模型
+
+## 模型设计模式
+- 使用 `@JsonSerializable()` 注解类
+- 使用 `part 'filename.g.dart'` 包含生成的代码
+- 使用 `@JsonKey()` 注解处理特殊字段名或转换
+- 实现 `fromJson` 和 `toJson` 方法
+
+## 枚举处理
+```dart
+enum SomeEnum {
+  @JsonValue(0)
+  value1(label: '显示文本1'),
+  
+  @JsonValue(1)
+  value2(label: '显示文本2');
+  
+  final String label;
+  const SomeEnum({required this.label});
+}
+```
+
+## 处理未知值
+- 使用 `@JsonKey(unknownEnumValue: DefaultValue)` 处理未知枚举值
+- 添加自定义错误处理逻辑
+- 使用可空类型处理可能缺失的字段
+- 提供合理的默认值

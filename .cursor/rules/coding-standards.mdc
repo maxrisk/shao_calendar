@@ -1,0 +1,35 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 编码标准
+
+本项目遵循以下编码标准和最佳实践：
+
+## Dart 编码规范
+- 遵循 [Dart 风格指南](https://dart.dev/guides/language/effective-dart/style)
+- 使用驼峰命名法（camelCase）命名变量和方法
+- 类名使用 Pascal 命名法（PascalCase）
+- 使用下划线前缀命名私有变量和方法
+
+## 空安全
+- 明确区分可空（`Type?`）和非空（`Type`）类型
+- 使用空安全操作符（`?.`、`??`、`!`）
+- 提供合理的默认值处理 null
+
+## 服务类模式
+- 使用单例模式实现服务类
+- 缓存和重用数据，避免重复请求
+- 使用异步方法（`async/await`）处理网络请求
+
+## 状态管理和 UI
+- 使用 `StatefulWidget` 管理本地状态
+- 使用 `FutureBuilder` 处理异步数据
+- 提供加载、错误和空数据状态的处理
+- 使用主题系统（`Theme.of(context)`）保持 UI 一致性
+
+## 错误处理
+- 捕获和记录所有异常
+- 提供友好的用户错误提示
+- 优雅地处理边缘情况
