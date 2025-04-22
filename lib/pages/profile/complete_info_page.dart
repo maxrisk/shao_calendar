@@ -18,6 +18,7 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
   final _referralController = TextEditingController();
   DateTime? _birthDate;
   int? _birthTimeIndex;
+  bool _hasLoadedInviteCode = false;
 
   // 时辰列表
   final _timeList = const [
@@ -33,6 +34,41 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
       _birthTimeIndex != null ? _timeList[_birthTimeIndex!] : null;
 
   bool get _isValid => _birthDate != null && _birthTimeIndex != null;
+
+  @override
+  void initState() {
+    super.initState();
+    // 延迟加载邀请码，确保Widget已完全构建
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadInviteCode();
+    });
+  }
+
+  void _loadInviteCode() {
+    if (_hasLoadedInviteCode) return;
+
+    final userService = Provider.of<UserService>(context, listen: false);
+    final inviteCode = userService.inviteCode;
+
+    if (inviteCode != null && inviteCode.isNotEmpty) {
+      setState(() {
+        _referralController.text = inviteCode;
+        _hasLoadedInviteCode = true;
+      });
+
+      // 显示提示
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('已自动填入邀请码: $inviteCode'),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.only(bottom: 80, left: 16, right: 16),
+        ),
+      );
+
+      // 填充后清空邀请码，避免重复使用
+      userService.clearInviteCode();
+    }
+  }
 
   @override
   void dispose() {
@@ -83,12 +119,14 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
 
   Future<void> _handleSubmit() async {
     final userService = context.read<UserService>();
+    final referralCode = _referralController.text.trim();
+
     final (success, errorMsg) = await userService.openFortune(
       '${_birthDate!.year}-${_birthDate!.month}-${_birthDate!.day}',
       _birthTimeIndex! + 1,
-      code: _referralController.text,
+      code: referralCode.isNotEmpty ? referralCode : null,
     );
-    print(success);
+
     if (success) {
       if (mounted) {
         // 直接返回到根路由（首页）

@@ -86,11 +86,7 @@ class _HomePageState extends State<HomePage> {
 
     if (!mounted) return;
 
-    if (result != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('扫描结果: $result')),
-      );
-    }
+    if (result != null) {}
   }
 
   @override

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/pages/profile/login_page.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:provider/provider.dart';
+import '../../services/user_service.dart';
+import '../../utils/invite_code_util.dart';
 
 /// 二维码扫描页面
 class QRScannerPage extends StatefulWidget {
@@ -81,6 +85,7 @@ class _QRScannerPageState extends State<QRScannerPage>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final userService = Provider.of<UserService>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -118,7 +123,43 @@ class _QRScannerPageState extends State<QRScannerPage>
                 final String? code = barcodes.first.rawValue;
                 if (code != null) {
                   controller.stop();
-                  Navigator.of(context).pop(code);
+
+                  // 检测是否包含邀请码
+                  final inviteCode = InviteCodeUtil.extractInviteCode(code);
+                  if (inviteCode != null) {
+                    // 检查用户是否已登录
+                    if (userService.userInfo != null) {
+                      // 用户未登录，保存邀请码并跳转登录页面
+                      // 保存邀请码到 UserService
+                      userService.setInviteCode(inviteCode);
+
+                      // 显示提示
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('已保存邀请码: $inviteCode'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+
+                      // 跳转至登录页面
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      );
+                    } else {
+                      // 用户已登录，显示提示并返回上一页
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('您已登录，无需填写邀请码'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                      Navigator.of(context).pop(code);
+                    }
+                  } else {
+                    Navigator.of(context).pop(code);
+                  }
                 }
               }
             },

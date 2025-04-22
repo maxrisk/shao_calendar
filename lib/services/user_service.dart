@@ -11,9 +11,13 @@ class UserService extends ChangeNotifier {
   late final SharedPreferences _prefs;
   UserInfoResponse? _userInfo;
 
-  UserInfoResponse? get userInfo => _userInfo;
+  // 添加邀请码属性
+  String? _inviteCode;
 
+  UserInfoResponse? get userInfo => _userInfo;
   bool get isVip => _userInfo?.userInfo.isVip ?? false;
+  // 邀请码的getter
+  String? get inviteCode => _inviteCode;
 
   factory UserService() {
     return _instance;
@@ -21,6 +25,23 @@ class UserService extends ChangeNotifier {
 
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+    // 从SharedPreferences读取邀请码
+    _inviteCode = _prefs.getString('invite_code');
+  }
+
+  // 设置邀请码的方法
+  Future<void> setInviteCode(String code) async {
+    _inviteCode = code;
+    // 保存到SharedPreferences
+    await _prefs.setString('invite_code', code);
+    notifyListeners();
+  }
+
+  // 清除邀请码的方法
+  Future<void> clearInviteCode() async {
+    _inviteCode = null;
+    await _prefs.remove('invite_code');
+    notifyListeners();
   }
 
   // 获取用户信息

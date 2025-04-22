@@ -8,6 +8,8 @@ import 'widgets/statistic_card.dart';
 import 'invite_detail_page.dart';
 import 'commission_detail_page.dart';
 import '../../pages/profile/calendar_service_page.dart';
+import '../../config/app_config.dart';
+import '../../utils/invite_code_util.dart';
 
 /// 推荐邀请页面
 class InvitePage extends StatelessWidget {
@@ -91,6 +93,7 @@ class InvitePage extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final userService = context.watch<UserService>();
     final userInfo = userService.userInfo?.userInfo;
+    final referralCode = userInfo?.referralCode?.toString() ?? '';
 
     return Scaffold(
       appBar: AppBar(
@@ -169,7 +172,10 @@ class InvitePage extends StatelessWidget {
                     ),
                     _buildQRCode(
                       context,
-                      'https://example.com/invite?code=${userInfo?.referralCode?.toString() ?? ''}',
+                      // 使用工具类生成邀请链接
+                      referralCode.isNotEmpty
+                          ? InviteCodeUtil.generateInviteLink(referralCode)
+                          : AppConfig.apiBaseUrl,
                       isBlurred: userInfo?.promotion == 0,
                     ),
                     const SizedBox(height: 20),
@@ -177,7 +183,7 @@ class InvitePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'ID: ${userInfo?.referralCode?.toString() ?? '-'}',
+                          'ID: ${referralCode.isNotEmpty ? referralCode : "-"}',
                           style: TextStyle(
                             fontSize: 15,
                             color: colorScheme.onSurfaceVariant,
@@ -185,8 +191,8 @@ class InvitePage extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          onPressed: () => _copyToClipboard(context,
-                              userInfo?.referralCode?.toString() ?? ''),
+                          onPressed: () =>
+                              _copyToClipboard(context, referralCode),
                           icon: Icon(
                             Icons.copy_rounded,
                             size: 16,
