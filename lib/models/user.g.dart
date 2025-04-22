@@ -35,6 +35,8 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       provinceId: (json['provinceId'] as num?)?.toInt(),
       cityId: (json['cityId'] as num?)?.toInt(),
       districtId: (json['districtId'] as num?)?.toInt(),
+      firstCount: (json['firstCount'] as num?)?.toInt(),
+      secondCount: (json['secondCount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -66,4 +68,6 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'provinceId': instance.provinceId,
       'cityId': instance.cityId,
       'districtId': instance.districtId,
+      'firstCount': instance.firstCount,
+      'secondCount': instance.secondCount,
     };

@@ -39,6 +39,12 @@ class User {
   final int? cityId;
   final int? districtId;
 
+  /// 直接推荐人数
+  final int? firstCount;
+
+  /// 间接推荐人数
+  final int? secondCount;
+
   const User({
     this.id,
     this.openId,
@@ -68,6 +74,8 @@ class User {
     this.provinceId,
     this.cityId,
     this.districtId,
+    this.firstCount,
+    this.secondCount,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -103,6 +111,8 @@ class User {
     int? provinceId,
     int? cityId,
     int? districtId,
+    int? firstCount,
+    int? secondCount,
   }) {
     return User(
       id: id ?? this.id,
@@ -132,6 +142,8 @@ class User {
       provinceId: provinceId ?? this.provinceId,
       cityId: cityId ?? this.cityId,
       districtId: districtId ?? this.districtId,
+      firstCount: firstCount ?? this.firstCount,
+      secondCount: secondCount ?? this.secondCount,
     );
   }
 }

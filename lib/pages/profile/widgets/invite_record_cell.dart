@@ -1,52 +1,28 @@
 import 'package:flutter/material.dart';
 
-/// 邀请类型
-enum InviteType {
-  /// 直接邀请
-  direct(label: '直接'),
-
-  /// 间接邀请
-  indirect(label: '间接');
-
-  const InviteType({required this.label});
-
-  /// 标签文本
-  final String label;
-}
-
-/// 付费状态
-enum PaymentStatus {
-  /// 已付费
-  paid(label: '已付费'),
-
-  /// 未付费
-  unpaid(label: '未付费');
-
-  const PaymentStatus({required this.label});
-
-  /// 标签文本
-  final String label;
-}
-
 /// 邀请记录单元格
 class InviteRecordCell extends StatelessWidget {
   /// 创建邀请记录单元格
   const InviteRecordCell({
     super.key,
     required this.phoneNumber,
-    required this.inviteType,
-    required this.paymentStatus,
+    required this.inviteTypeLabel,
+    required this.paymentStatusLabel,
+    required this.isPaid,
     this.onTap,
   });
 
   /// 手机号
   final String phoneNumber;
 
-  /// 邀请类型
-  final InviteType inviteType;
+  /// 邀请类型文本
+  final String inviteTypeLabel;
 
-  /// 付费状态
-  final PaymentStatus paymentStatus;
+  /// 付费状态文本
+  final String paymentStatusLabel;
+
+  /// 是否已付费
+  final bool isPaid;
 
   /// 点击回调
   final VoidCallback? onTap;
@@ -92,7 +68,7 @@ class InviteRecordCell extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  inviteType.label,
+                  inviteTypeLabel,
                   style: TextStyle(
                     fontSize: 13,
                     color: colorScheme.primary,
@@ -103,10 +79,10 @@ class InviteRecordCell extends StatelessWidget {
               const SizedBox(width: 12),
               // 付费状态
               Text(
-                paymentStatus.label,
+                paymentStatusLabel,
                 style: TextStyle(
                   fontSize: 13,
-                  color: paymentStatus == PaymentStatus.paid
+                  color: isPaid
                       ? colorScheme.primary
                       : colorScheme.onSurfaceVariant,
                   height: 1.2,
