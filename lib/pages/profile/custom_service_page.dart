@@ -136,40 +136,29 @@ class _CustomServicePageState extends State<CustomServicePage> {
                       const SizedBox(height: 32),
 
                       // 单项服务标题
-                      Center(
-                        child: Text(
-                          '单项定制服务',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
+                      if (_packages.isNotEmpty)
+                        Center(
+                          child: Text(
+                            '单项定制服务',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                      ),
 
                       const SizedBox(height: 16),
 
                       // 单项服务列表
-                      if (_packages.isNotEmpty)
-                        ..._packages.map((package) => Padding(
-                              padding: const EdgeInsets.only(bottom: 12.0),
-                              child: _buildServiceItem(
-                                context,
-                                package.name,
-                                '${package.price}元',
-                                package.id,
-                                onTap: () =>
-                                    _navigateToPackagePurchase(package),
-                              ),
-                            )),
-
-                      if (_packages.isEmpty) ...[
-                        _buildServiceItem(context, '个人咨询', '1000元', 1),
-                        const SizedBox(height: 12),
-                        _buildServiceItem(context, '事文创', '2000元', 2),
-                        const SizedBox(height: 12),
-                        _buildServiceItem(context, '运文创', '3000元', 3),
-                        const SizedBox(height: 12),
-                        _buildServiceItem(context, '身文创', '5000元', 4),
-                      ],
+                      ..._packages.map((package) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12.0),
+                            child: _buildServiceItem(
+                              context,
+                              package.name,
+                              '${package.price}元',
+                              package.id,
+                              onTap: () => _navigateToPackagePurchase(package),
+                            ),
+                          )),
                     ],
                   ),
                 ),

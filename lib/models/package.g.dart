@@ -9,9 +9,9 @@ part of 'package.dart';
 Package _$PackageFromJson(Map<String, dynamic> json) => Package(
       id: (json['id'] as num).toInt(),
       name: json['serviceName'] as String,
-      description: json['description'] as String,
       price: (json['price'] as num?)?.toDouble() ?? 0,
       originalPrice: (json['originalPrice'] as num?)?.toInt() ?? 0,
+      description: json['description'] as String?,
       coverImage: json['detailImage'] as String?,
       images:
           (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
