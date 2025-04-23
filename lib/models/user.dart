@@ -38,6 +38,7 @@ class User {
   final int? provinceId;
   final int? cityId;
   final int? districtId;
+  final bool? hasPayPass;
 
   /// 直接推荐人数
   final int? firstCount;
@@ -76,6 +77,7 @@ class User {
     this.districtId,
     this.firstCount,
     this.secondCount,
+    this.hasPayPass,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

@@ -57,7 +57,6 @@ class _SetPayPasswordPageState extends State<SetPayPasswordPage>
             // 密码设置成功，返回到安全页面
             Navigator.pop(context);
             Navigator.pop(context);
-            Navigator.pop(context);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('支付密码设置失败')),

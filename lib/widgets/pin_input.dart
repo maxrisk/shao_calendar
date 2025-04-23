@@ -12,6 +12,7 @@ class PinInput extends StatefulWidget {
     this.onCompleted,
     this.onChanged,
     this.controller,
+    this.compact = false,
   }) : assert(length > 0 && length <= 6, 'PIN码长度必须在1-6之间');
 
   /// 长度
@@ -31,6 +32,9 @@ class PinInput extends StatefulWidget {
 
   /// 输入控制器
   final TextEditingController? controller;
+
+  /// 是否使用紧凑模式（适用于对话框等空间有限的场景）
+  final bool compact;
 
   @override
   State<PinInput> createState() => _PinInputState();
@@ -79,21 +83,26 @@ class _PinInputState extends State<PinInput> {
     final colorScheme = Theme.of(context).colorScheme;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    // 计算每个输入框的大小
-    const minSpacing = 5.0; // 输入框之间的最小间距
-    const horizontalPadding = 32.0; // 两侧留白
+    // 根据是否紧凑模式调整参数
+    final topMargin = widget.compact ? 8.0 : 16.0;
+    final horizontalPadding = widget.compact ? 16.0 : 32.0;
+    final minSize = widget.compact ? 36.0 : 48.0;
+    final maxSize = widget.compact ? 48.0 : 64.0;
+    final minSpacing = widget.compact ? 4.0 : 5.0; // 输入框之间的最小间距
+
     final totalSpacing = (widget.length - 1) * minSpacing; // 所有间距的总和
-    final availableWidth =
-        screenWidth - totalSpacing - horizontalPadding * 2; // 可用宽度
+    final availableWidth = widget.compact
+        ? screenWidth - totalSpacing - horizontalPadding // 紧凑模式下不考虑屏幕宽度
+        : screenWidth - totalSpacing - horizontalPadding * 2; // 可用宽度
     final size =
-        (availableWidth / widget.length).clamp(48.0, 64.0); // 输入框大小，限制在48-64之间
+        (availableWidth / widget.length).clamp(minSize, maxSize); // 输入框大小
 
     return Stack(
       children: [
         GestureDetector(
           onTap: () => _focusNode.requestFocus(),
           child: Container(
-            margin: const EdgeInsets.only(top: 16),
+            margin: EdgeInsets.only(top: topMargin),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(widget.length, (index) {
@@ -106,7 +115,8 @@ class _PinInputState extends State<PinInput> {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius:
+                        BorderRadius.circular(widget.compact ? 8 : 12),
                     border: Border.all(
                       color: colorScheme.outlineVariant,
                     ),

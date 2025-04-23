@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../services/withdraw_service.dart';
 import '../../services/bank_card_service.dart';
+import '../../services/user_service.dart';
+import '../../widgets/dialogs/confirm_dialog.dart';
+import '../../widgets/dialogs/pay_password_dialog.dart';
 import 'bank_card_page.dart';
+import 'withdraw_record_page.dart';
+import 'verify_phone_page.dart';
 
 /// 提现页面
 class WithdrawPage extends StatefulWidget {
@@ -23,6 +28,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
   final _amountController = TextEditingController();
   final _withdrawService = WithdrawService();
   final _bankCardService = BankCardService();
+  final _userService = UserService();
   String _bankName = '';
   String _cardNo = '';
   bool _isValid = false;
@@ -86,6 +92,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
     });
   }
 
+  // 处理提现前的支付密码验证
   Future<void> _handleWithdraw() async {
     if (!_isValid || _isLoading) return;
 
@@ -100,12 +107,68 @@ class _WithdrawPageState extends State<WithdrawPage> {
       return;
     }
 
+    // 检查用户是否设置了支付密码
+    final hasPayPass = _userService.userInfo?.userInfo.hasPayPass ?? false;
+
+    if (!hasPayPass) {
+      // 用户未设置支付密码，使用ConfirmDialog显示提示
+      final shouldSetPayPass = await ConfirmDialog.show(
+        context: context,
+        title: '设置支付密码',
+        content: '您还未设置支付密码，请先设置支付密码后再进行提现操作',
+        cancelText: '取消',
+        confirmText: '去设置',
+      );
+
+      if (shouldSetPayPass == true && mounted) {
+        // 直接跳转到验证手机号页面
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const VerifyPhonePage(
+              isVerifyCode: true,
+            ),
+          ),
+        );
+
+        // 重新判断是否已设置支付密码
+        await _userService.getUserInfo();
+        if (mounted) {
+          _handleWithdraw(); // 重新调用本方法
+        }
+      }
+      return;
+    }
+
+    // 已设置支付密码，弹出密码输入对话框
+    final password = await _showPayPasswordInput();
+    if (password == null || !mounted) {
+      return; // 用户取消输入密码
+    }
+
+    // 执行提现操作
+    await _processWithdraw(amount, password);
+  }
+
+  // 显示支付密码输入对话框
+  Future<String?> _showPayPasswordInput() async {
+    return PayPasswordDialog.show(
+      context: context,
+      title: '请输入支付密码',
+      hintText: '请输入6位数字支付密码',
+      cancelText: '取消',
+      confirmText: '确定',
+    );
+  }
+
+  // 处理实际的提现操作
+  Future<void> _processWithdraw(double amount, String password) async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final result = await _withdrawService.withdraw(amount);
+      final result = await _withdrawService.withdraw(amount, password);
 
       if (!mounted) return;
 
@@ -150,6 +213,20 @@ class _WithdrawPageState extends State<WithdrawPage> {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const WithdrawRecordPage(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.history),
+            tooltip: '提现记录',
+          ),
+        ],
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),

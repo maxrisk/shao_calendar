@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../models/withdraw_record.dart';
 import 'http_client.dart';
 
 /// 提现结果
@@ -24,11 +25,12 @@ class WithdrawService {
   final _dio = HttpClient().dio;
 
   /// 余额提现
-  Future<WithdrawResult> withdraw(double amount) async {
+  Future<WithdrawResult> withdraw(double amount, String password) async {
     try {
-      final response = await _dio.post(
-        '/app/withdraw/${amount.toStringAsFixed(2)}',
-      );
+      final response = await _dio.post('/app/withdraw', data: {
+        'money': amount.toStringAsFixed(2),
+        'password': password,
+      });
       return WithdrawResult(
         success: response.data['code'] == 0,
         message: response.data['msg'] ?? '提现申请已提交',
@@ -43,12 +45,13 @@ class WithdrawService {
   }
 
   /// 获取提现记录
-  Future<List<Map<String, dynamic>>> getWithdrawRecords() async {
+  Future<List<WithdrawRecord>> getWithdrawRecords() async {
     try {
       final response = await _dio.get('/app/withdraw/record');
-      if (response.data['code'] == 0 && response.data['data'] != null) {
-        final List<dynamic> data = response.data['data'];
-        return data.map((e) => e as Map<String, dynamic>).toList();
+      final apiResponse = WithdrawRecordListResponse.fromJson(response.data);
+
+      if (apiResponse.code == 0 && apiResponse.data != null) {
+        return apiResponse.data!;
       }
       return [];
     } catch (e) {
