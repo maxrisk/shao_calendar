@@ -70,10 +70,10 @@ class HexagramService {
 
       if (response.data is Map<String, dynamic>) {
         final data = response.data['data'];
-        if (data != null && data is Map<String, dynamic>) {
-          final eventsList = data['events'];
-          if (eventsList is List) {
-            return eventsList
+        if (data != null) {
+          if (data is List) {
+            // 直接处理数组数据
+            return data
                 .map((e) => YearEvent.fromJson(e as Map<String, dynamic>))
                 .toList();
           }

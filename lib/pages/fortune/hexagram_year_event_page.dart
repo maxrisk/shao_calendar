@@ -64,16 +64,39 @@ class _HexagramYearEventPageState extends State<HexagramYearEventPage> {
     });
 
     try {
-      final events = await _hexagramService.getYearEvents(widget.tenYearId);
+      // 先获取年卦解说
       final divinations =
           await _hexagramService.getYearDivinations(widget.tenYearId);
 
-      if (mounted) {
+      if (mounted && divinations.isNotEmpty) {
         setState(() {
-          _events = events;
           _divinations = divinations;
-          _isLoading = false;
         });
+
+        // 确保_selectedYearIndex不超过数组范围
+        if (_selectedYearIndex >= divinations.length) {
+          _selectedYearIndex = 0;
+        }
+
+        // 使用当前选中的divination.name作为参数
+        final selectedDivination = divinations[_selectedYearIndex];
+        final events =
+            await _hexagramService.getYearEvents(selectedDivination.year);
+
+        if (mounted) {
+          setState(() {
+            _events = events;
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _divinations = [];
+            _events = [];
+            _isLoading = false;
+          });
+        }
       }
     } catch (e) {
       print('加载年卦数据失败: $e');
@@ -85,25 +108,44 @@ class _HexagramYearEventPageState extends State<HexagramYearEventPage> {
     }
   }
 
-  // 根据年份获取对应的年号
-  String _getEraName(int year) {
-    // 简化处理，实际应用中可能需要更复杂的逻辑
-    if (year >= 2024) return '龙年';
-    if (year >= 2023) return '兔年';
-    if (year >= 2022) return '虎年';
-    if (year >= 2021) return '牛年';
-    if (year >= 2020) return '鼠年';
-    if (year >= 2019) return '猪年';
-    if (year >= 2018) return '狗年';
-    if (year >= 2017) return '鸡年';
-    if (year >= 2016) return '猴年';
-    if (year >= 2015) return '羊年';
-    return '其他';
+  // 只加载当前选中年份的事件数据
+  Future<void> _loadYearEvents() async {
+    if (_divinations == null ||
+        _divinations!.isEmpty ||
+        _selectedYearIndex >= _divinations!.length) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // 使用当前选中的divination的year作为参数
+      final selectedDivination = _divinations![_selectedYearIndex];
+      final events =
+          await _hexagramService.getYearEvents(selectedDivination.year);
+
+      if (mounted) {
+        setState(() {
+          _events = events;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('加载年卦事件失败: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -144,6 +186,7 @@ class _HexagramYearEventPageState extends State<HexagramYearEventPage> {
                     setState(() {
                       _selectedYearIndex = index;
                     });
+                    // 重新请求该年份的所有数据
                     _loadYearData();
                   },
                   child: Container(
@@ -308,12 +351,12 @@ class _HexagramYearEventPageState extends State<HexagramYearEventPage> {
                                       ),
                                       padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
-                                        color: colorScheme.surface,
+                                        color: theme.cardColor,
                                         borderRadius: BorderRadius.circular(12),
                                         boxShadow: [
                                           BoxShadow(
                                             color: colorScheme.shadow
-                                                .withOpacity(0.08),
+                                                .withAlpha(25),
                                             blurRadius: 6,
                                             offset: const Offset(0, 2),
                                           ),
