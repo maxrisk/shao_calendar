@@ -128,9 +128,6 @@ class _WithdrawRecordPageState extends State<WithdrawRecordPage> {
     final createTime = DateTime.parse(record.createTime);
     final formattedDate = dateFormat.format(createTime);
 
-    // 状态颜色
-    final statusColor = Color(record.statusColor);
-
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
@@ -168,28 +165,17 @@ class _WithdrawRecordPageState extends State<WithdrawRecordPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '提现状态',
+                '零钱余额',
                 style: TextStyle(
                   fontSize: 14,
                   color: colorScheme.onSurfaceVariant,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  record.statusText,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: statusColor,
-                  ),
+              Text(
+                '¥${record.nowAmount.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ],

@@ -83,14 +83,6 @@ class WithdrawRecord {
   /// 获取提现金额（取变动金额的绝对值）
   String get money =>
       (changeAmount < 0 ? -changeAmount : changeAmount).toStringAsFixed(2);
-
-  /// 获取状态文本
-  /// 目前API没有返回明确的状态字段，可以根据实际业务需求调整
-  String get statusText => '已提现';
-
-  /// 获取状态颜色
-  /// 目前API没有返回明确的状态字段，统一显示为绿色
-  int get statusColor => 0xFF4CAF50; // 绿色
 }
 
 /// 提现记录列表响应
