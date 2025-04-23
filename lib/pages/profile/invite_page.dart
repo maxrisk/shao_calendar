@@ -280,16 +280,13 @@ class InvitePage extends StatelessWidget {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          if (userInfo?.promotion != 1 &&
-                              userInfo?.promotion != 2) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const CalendarServicePage(type: 1),
-                              ),
-                            );
-                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const CalendarServicePage(type: 1),
+                            ),
+                          );
                         },
                         borderRadius: BorderRadius.circular(12),
                         child: Padding(
@@ -343,15 +340,13 @@ class InvitePage extends StatelessWidget {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          if (userInfo?.promotion != 2) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const CalendarServicePage(type: 2),
-                              ),
-                            );
-                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const CalendarServicePage(type: 2),
+                            ),
+                          );
                         },
                         borderRadius: BorderRadius.circular(12),
                         child: Padding(
