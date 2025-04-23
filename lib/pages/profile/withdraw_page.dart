@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../services/withdraw_service.dart';
+import '../../services/bank_card_service.dart';
 import 'bank_card_page.dart';
 
 /// 提现页面
@@ -21,17 +22,57 @@ class WithdrawPage extends StatefulWidget {
 class _WithdrawPageState extends State<WithdrawPage> {
   final _amountController = TextEditingController();
   final _withdrawService = WithdrawService();
-  String _bankName = '工商银行'; // 模拟数据
-  String _cardNo = '1234'; // 模拟数据
+  final _bankCardService = BankCardService();
+  String _bankName = '';
+  String _cardNo = '';
   bool _isValid = false;
   bool _isLoading = false;
+  bool _isLoadingBankCard = true;
   double _fee = 0; // 添加手续费变量
   String? _errorText; // 添加错误提示文本
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBankCardInfo();
+  }
 
   @override
   void dispose() {
     _amountController.dispose();
     super.dispose();
+  }
+
+  // 加载银行卡信息
+  Future<void> _loadBankCardInfo() async {
+    setState(() {
+      _isLoadingBankCard = true;
+    });
+
+    try {
+      final bankCard = await _bankCardService.getBankCard();
+      if (mounted) {
+        setState(() {
+          if (bankCard != null) {
+            _bankName = bankCard.bankName;
+            _cardNo = bankCard.cardNo.substring(bankCard.cardNo.length - 4);
+          } else {
+            _bankName = '未绑定银行卡';
+            _cardNo = '';
+          }
+          _isLoadingBankCard = false;
+        });
+      }
+    } catch (e) {
+      print('加载银行卡信息失败: $e');
+      if (mounted) {
+        setState(() {
+          _bankName = '加载失败';
+          _cardNo = '';
+          _isLoadingBankCard = false;
+        });
+      }
+    }
   }
 
   void _onAmountChanged(String value) {
@@ -132,18 +173,15 @@ class _WithdrawPageState extends State<WithdrawPage> {
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () async {
-                            final result = await Navigator.push<BankCard>(
+                            final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const BankCardPage(),
                               ),
                             );
-                            if (result != null) {
-                              setState(() {
-                                _bankName = result.bankName;
-                                _cardNo = result.cardNo
-                                    .substring(result.cardNo.length - 4);
-                              });
+                            if (result == true) {
+                              // 如果返回true，表示银行卡信息已更新，重新加载
+                              _loadBankCardInfo();
                             }
                           },
                           borderRadius: BorderRadius.circular(12),
@@ -159,13 +197,24 @@ class _WithdrawPageState extends State<WithdrawPage> {
                                   ),
                                 ),
                                 const Spacer(),
-                                Text(
-                                  '$_bankName 尾号$_cardNo',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: colorScheme.onSurface,
-                                  ),
-                                ),
+                                _isLoadingBankCard
+                                    ? SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: colorScheme.primary,
+                                        ),
+                                      )
+                                    : Text(
+                                        _cardNo.isEmpty
+                                            ? _bankName
+                                            : '$_bankName 尾号$_cardNo',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: colorScheme.onSurface,
+                                        ),
+                                      ),
                                 const SizedBox(width: 4),
                                 Icon(
                                   Icons.chevron_right_rounded,
@@ -305,7 +354,12 @@ class _WithdrawPageState extends State<WithdrawPage> {
                 16 + MediaQuery.of(context).padding.bottom,
               ),
               child: FilledButton(
-                onPressed: _isValid && !_isLoading ? _handleWithdraw : null,
+                onPressed: _isValid &&
+                        !_isLoading &&
+                        !_isLoadingBankCard &&
+                        _cardNo.isNotEmpty
+                    ? _handleWithdraw
+                    : null,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(44),
                   shape: RoundedRectangleBorder(

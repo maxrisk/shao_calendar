@@ -33,7 +33,7 @@ class CommissionRecord {
   final double preAmount;
   final double changeAmount;
   final int userId;
-  final int linkUserId;
+  final int? linkUserId;
   final String orderNo;
   final int promotion;
   @JsonKey(unknownEnumValue: CommissionRecordType.direct)
@@ -48,7 +48,7 @@ class CommissionRecord {
     required this.preAmount,
     required this.changeAmount,
     required this.userId,
-    required this.linkUserId,
+    this.linkUserId,
     required this.orderNo,
     required this.promotion,
     required this.level,

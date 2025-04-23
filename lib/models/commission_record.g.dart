@@ -15,7 +15,7 @@ CommissionRecord _$CommissionRecordFromJson(Map<String, dynamic> json) =>
       preAmount: (json['preAmount'] as num).toDouble(),
       changeAmount: (json['changeAmount'] as num).toDouble(),
       userId: (json['userId'] as num).toInt(),
-      linkUserId: (json['linkUserId'] as num).toInt(),
+      linkUserId: (json['linkUserId'] as num?)?.toInt(),
       orderNo: json['orderNo'] as String,
       promotion: (json['promotion'] as num).toInt(),
       level: $enumDecode(_$CommissionRecordTypeEnumMap, json['level'],
