@@ -1,0 +1,55 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 对话框使用指南
+
+## 确认对话框 (ConfirmDialog)
+
+项目中需要使用确认对话框时，应使用 [confirm_dialog.dart](mdc:lib/widgets/dialogs/confirm_dialog.dart) 中的 `ConfirmDialog` 组件。
+
+### 使用方法
+
+推荐使用静态方法 `ConfirmDialog.show()` 来显示确认对话框：
+
+```dart
+final result = await ConfirmDialog.show(
+  context: context,
+  title: '删除确认',
+  content: '确定要删除此项目吗？删除后无法恢复',
+  cancelText: '取消', // 可选，默认为"取消"
+  confirmText: '删除', // 可选，默认为"确定"
+  isDanger: true, // 可选，用于危险操作，按钮将显示为红色
+);
+
+if (result == true) {
+  // 用户点击了确认按钮
+  // 执行确认操作
+} else {
+  // 用户点击了取消按钮或关闭了对话框
+  // 执行取消操作或不做任何事
+}
+```
+
+### 参数说明
+
+- `context`：构建上下文，必填
+- `title`：对话框标题，必填
+- `content`：对话框内容，必填
+- `cancelText`：取消按钮文本，可选，默认为"取消"
+- `confirmText`：确认按钮文本，可选，默认为"确定"
+- `isDanger`：是否为危险操作，可选，默认为 false
+
+### 返回值
+
+- 返回 `Future<bool?>`
+- 点击确认按钮返回 `true`
+- 点击取消按钮返回 `false`
+- 点击对话框外部或返回键关闭对话框返回 `null`
+
+### 注意事项
+
+- 避免直接使用 Flutter 原生的 `AlertDialog`，应始终使用 `ConfirmDialog` 以保持 UI 一致性
+- 对于危险操作（如删除、重置等），应将 `isDanger` 设置为 `true`
+- 对话框文本应简洁明了，表达清晰的意图
