@@ -71,21 +71,18 @@ class HexagramInfoCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(width: 20),
-              // 右侧解说文本
+              // 右侧解说文本，使其垂直居中
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      guide,
-                      style: TextStyle(
-                        fontSize: 14,
-                        height: 1.6,
-                        color: colorScheme.onSurface,
-                      ),
-                      textAlign: TextAlign.justify,
+                child: Center(
+                  child: Text(
+                    guide,
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.6,
+                      color: colorScheme.onSurface,
                     ),
-                  ],
+                    textAlign: TextAlign.justify,
+                  ),
                 ),
               ),
             ],

@@ -168,15 +168,6 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            _product?.description ?? '服务描述',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
                           const SizedBox(height: 24),
                           Row(
                             mainAxisSize: MainAxisSize.min,
@@ -237,19 +228,9 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 14),
                         _buildDetailItem(
-                          '1、购买即获取实物天时日历一本（线下领取）',
-                          colorScheme,
-                        ),
-                        const SizedBox(height: 12),
-                        _buildDetailItem(
-                          '2、购买即获取线上个人流年运卦一年查看权限',
-                          colorScheme,
-                        ),
-                        const SizedBox(height: 12),
-                        _buildDetailItem(
-                          '3、购买即获取线上生历卦、死结卦邵氏详解',
+                          _product?.description ?? '服务描述',
                           colorScheme,
                         ),
                       ],
@@ -295,6 +276,7 @@ class _CalendarServicePageState extends State<CalendarServicePage> {
             text,
             style: TextStyle(
               fontSize: 14,
+              height: 1.8,
               color: colorScheme.onSurfaceVariant,
             ),
           ),

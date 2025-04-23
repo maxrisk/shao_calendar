@@ -30,13 +30,16 @@ class DatePickerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: TextButton(
         onPressed: () => _handlePressed(context),
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          backgroundColor: Theme.of(context).primaryColor.withAlpha(180),
+          backgroundColor: colorScheme.primary.withOpacity(0.8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.0),
           ),
@@ -48,14 +51,14 @@ class DatePickerButton extends StatelessWidget {
             const SizedBox(width: 16),
             Text(
               '${date.year}年${date.month}月${date.day}日',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: colorScheme.onPrimary,
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_downward,
-              color: Colors.white,
+              color: colorScheme.onPrimary,
             ),
           ],
         ),

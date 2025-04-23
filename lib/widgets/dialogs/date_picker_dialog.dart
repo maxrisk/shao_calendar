@@ -12,7 +12,7 @@ Future<DateTime?> showDatePickerDialog(
 
   final result = await showModalBottomSheet<bool>(
     context: context,
-    backgroundColor: Colors.white,
+    backgroundColor: Theme.of(context).colorScheme.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
@@ -22,7 +22,7 @@ Future<DateTime?> showDatePickerDialog(
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             boxShadow: [
               BoxShadow(
