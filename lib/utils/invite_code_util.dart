@@ -1,3 +1,5 @@
+import '../config/app_config.dart';
+
 /// 邀请码工具类
 /// 提供邀请码相关的处理方法
 class InviteCodeUtil {
@@ -7,8 +9,14 @@ class InviteCodeUtil {
       // 解析URL中的邀请码
       final uri = Uri.parse(url);
 
-      // 检查是否来自我们的应用域名
+      // 从API_BASE_URL获取有效域名
+      final apiBaseUrl = AppConfig.apiBaseUrl;
+      final apiUri = Uri.parse(apiBaseUrl);
+      final apiHost = apiUri.host;
+
+      // 根据API_BASE_URL生成有效域名列表
       final validHosts = [
+        apiHost, // 当前环境
         'app.sssltc.com', // 正式环境
         'dev-app.sssltc.com', // 开发环境
         'test-app.sssltc.com', // 测试环境
@@ -41,8 +49,13 @@ class InviteCodeUtil {
   }
 
   /// 生成邀请链接
-  static String generateInviteLink(String code, {bool isProduction = true}) {
-    final host = isProduction ? 'app.sssltc.com' : 'dev-app.sssltc.com';
+  static String generateInviteLink(String code) {
+    // 从API_BASE_URL获取当前环境的域名
+    final apiBaseUrl = AppConfig.apiBaseUrl;
+    final apiUri = Uri.parse(apiBaseUrl);
+    final host = apiUri.host;
+
+    // 使用HTTPS协议生成邀请链接
     return 'https://$host/invite?code=$code';
   }
 

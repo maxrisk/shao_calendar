@@ -128,7 +128,7 @@ class _QRScannerPageState extends State<QRScannerPage>
                   final inviteCode = InviteCodeUtil.extractInviteCode(code);
                   if (inviteCode != null) {
                     // 检查用户是否已登录
-                    if (userService.userInfo != null) {
+                    if (userService.userInfo == null) {
                       // 用户未登录，保存邀请码并跳转登录页面
                       // 保存邀请码到 UserService
                       userService.setInviteCode(inviteCode);
