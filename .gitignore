@@ -50,3 +50,6 @@ app.*.map.json
 
 # VSCode launch.json
 .vscode/launch.json
+
+# Android build cache
+android/app/.cxx/
