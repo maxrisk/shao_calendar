@@ -172,22 +172,37 @@ class _WithdrawPageState extends State<WithdrawPage> {
 
       if (!mounted) return;
 
+      // 显示接口返回的消息（无论成功或失败）
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(result.message),
           behavior: SnackBarBehavior.floating,
+          backgroundColor:
+              result.success ? null : Theme.of(context).colorScheme.error,
         ),
       );
 
       if (result.success) {
         Navigator.pop(context, true); // 返回true表示提现成功
+      } else if (result.message.contains('密码')) {
+        // 如果错误消息包含"密码"字样，可能是密码错误，重新弹出密码输入框
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          if (mounted) {
+            _showPayPasswordInput().then((newPassword) {
+              if (newPassword != null && mounted) {
+                _processWithdraw(amount, newPassword);
+              }
+            });
+          }
+        });
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('网络异常，请稍后重试'),
+          SnackBar(
+            content: const Text('网络异常，请稍后重试'),
             behavior: SnackBarBehavior.floating,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }

@@ -8,6 +8,7 @@ class WithdrawResult {
   WithdrawResult({
     required this.success,
     required this.message,
+    this.code = 0,
   });
 
   /// 是否成功
@@ -15,6 +16,9 @@ class WithdrawResult {
 
   /// 提示消息
   final String message;
+
+  /// 响应代码
+  final int code;
 }
 
 class WithdrawService {
@@ -31,15 +35,46 @@ class WithdrawService {
         'money': amount.toStringAsFixed(2),
         'password': password,
       });
+
+      final code = response.data['code'] ?? -1;
+      final success = code == 0;
+      final message = response.data['msg'] ?? (success ? '提现申请已提交' : '提现失败');
+
       return WithdrawResult(
-        success: response.data['code'] == 0,
-        message: response.data['msg'] ?? '提现申请已提交',
+        success: success,
+        message: message,
+        code: code,
+      );
+    } on DioException catch (e) {
+      print('提现请求失败: ${e.message}');
+      // 处理Dio异常，提供更具体的错误信息
+      String errorMessage = '网络异常，请稍后重试';
+
+      if (e.response != null) {
+        // 如果服务器返回了错误响应
+        final responseData = e.response?.data;
+        if (responseData != null &&
+            responseData is Map &&
+            responseData.containsKey('msg')) {
+          errorMessage = responseData['msg'] ?? errorMessage;
+        }
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = '连接超时，请检查网络';
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        errorMessage = '接收数据超时，请稍后再试';
+      }
+
+      return WithdrawResult(
+        success: false,
+        message: errorMessage,
+        code: e.response?.statusCode ?? -1,
       );
     } catch (e) {
       print('提现失败: $e');
       return WithdrawResult(
         success: false,
-        message: '网络异常，请稍后重试',
+        message: '系统异常，请稍后重试',
+        code: -1,
       );
     }
   }
