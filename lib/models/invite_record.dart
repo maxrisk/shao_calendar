@@ -25,6 +25,10 @@ class InviteRecord {
   @JsonKey(includeFromJson: false, includeToJson: false)
   final int userId;
 
+  /// 是否是付费用户
+  @JsonKey(name: 'payUser')
+  final bool isPaid;
+
   const InviteRecord({
     required this.id,
     this.phone,
@@ -32,6 +36,7 @@ class InviteRecord {
     this.promotion,
     this.createTime,
     int? userId,
+    required this.isPaid,
   }) : userId = userId ?? id;
 
   /// 是否是直接邀请
@@ -39,9 +44,6 @@ class InviteRecord {
 
   /// 是否是间接邀请
   bool get isIndirectInvite => dir == false;
-
-  /// 是否已付费
-  bool get isPaid => promotion != null && promotion! > 0;
 
   /// 获取邀请类型显示文本
   String get inviteTypeLabel => isDirectInvite ? '直接邀请' : '间接邀请';

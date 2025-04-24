@@ -37,6 +37,7 @@ class InviteService {
           return const InviteRecord(
             id: 0,
             userId: 0,
+            isPaid: false,
           );
         }
       }).toList();
