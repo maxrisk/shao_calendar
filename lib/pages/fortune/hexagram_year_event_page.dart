@@ -88,18 +88,6 @@ class _HexagramYearEventPageState extends State<HexagramYearEventPage> {
             _events = events;
             _isLoading = false;
           });
-
-          // 数据加载完成后，安排在下一帧尝试滚动
-          // 此时ListView应该已经构建完成
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            try {
-              if (_yearScrollController.hasClients) {
-                _yearScrollController.jumpTo(0);
-              }
-            } catch (e) {
-              print('滚动列表失败: $e');
-            }
-          });
         }
       } else {
         if (mounted) {
