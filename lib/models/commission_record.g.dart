@@ -43,4 +43,5 @@ const _$CommissionRecordTypeEnumMap = {
   CommissionRecordType.withdraw: 0,
   CommissionRecordType.direct: 1,
   CommissionRecordType.indirect: 2,
+  CommissionRecordType.fee: 6,
 };

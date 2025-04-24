@@ -14,7 +14,11 @@ enum CommissionRecordType {
 
   /// 间接推荐
   @JsonValue(2)
-  indirect(label: '间接推荐奖励');
+  indirect(label: '间接推荐奖励'),
+
+  /// 手续费
+  @JsonValue(6)
+  fee(label: '手续费');
 
   const CommissionRecordType({
     required this.label,
