@@ -27,7 +27,7 @@ class InviteRecord {
 
   /// 是否是付费用户
   @JsonKey(name: 'payUser')
-  final bool isPaid;
+  final bool? isPaid;
 
   const InviteRecord({
     required this.id,
@@ -36,7 +36,7 @@ class InviteRecord {
     this.promotion,
     this.createTime,
     int? userId,
-    required this.isPaid,
+    this.isPaid,
   }) : userId = userId ?? id;
 
   /// 是否是直接邀请
@@ -49,7 +49,7 @@ class InviteRecord {
   String get inviteTypeLabel => isDirectInvite ? '直接邀请' : '间接邀请';
 
   /// 获取付费状态显示文本
-  String get paymentStatusLabel => isPaid ? '已付费' : '未付费';
+  String get paymentStatusLabel => isPaid == true ? '已付费' : '未付费';
 
   factory InviteRecord.fromJson(Map<String, dynamic> json) =>
       _$InviteRecordFromJson(json);

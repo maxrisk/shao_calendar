@@ -166,7 +166,7 @@ class _InviteDetailPageState extends State<InviteDetailPage> {
                         phoneNumber: record.phone ?? '未知用户',
                         inviteTypeLabel: record.inviteTypeLabel,
                         paymentStatusLabel: record.paymentStatusLabel,
-                        isPaid: record.isPaid,
+                        isPaid: record.isPaid ?? false,
                         onTap: () {
                           Navigator.push(
                             context,

@@ -11,7 +11,7 @@ InviteRecord _$InviteRecordFromJson(Map<String, dynamic> json) => InviteRecord(
       phone: json['phone'] as String?,
       dir: json['dir'] as bool?,
       promotion: (json['promotion'] as num?)?.toInt(),
-      isPaid: json['payUser'] as bool,
+      isPaid: json['payUser'] as bool?,
     );
 
 Map<String, dynamic> _$InviteRecordToJson(InviteRecord instance) =>
