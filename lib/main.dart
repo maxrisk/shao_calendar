@@ -8,9 +8,14 @@ import 'services/http_client.dart';
 import 'pages/home/home_page.dart';
 import 'pages/profile/complete_info_page.dart';
 import 'services/fortune_service.dart';
+import 'utils/shared_prefs.dart';
+import 'widgets/dialogs/agreement_dialog.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化共享偏好设置
+  await SharedPrefs.init();
 
   // 初始化HTTP客户端
   final httpClient = HttpClient();
@@ -47,10 +52,36 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    _initUserData();
+    // 延迟检查用户协议，确保界面已构建完成
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkUserAgreement();
+    });
+  }
+
+  // 检查用户是否同意用户协议和隐私政策
+  Future<void> _checkUserAgreement() async {
+    // 如果用户未同意协议，则显示协议弹窗
+    if (!SharedPrefs.isUserAgreementAccepted() && mounted) {
+      final navigatorContext =
+          HttpClient.navigatorKey.currentContext ?? context;
+      final result = await AgreementDialog.show(navigatorContext);
+
+      if (result == true && mounted) {
+        // 用户同意协议
+        await SharedPrefs.setUserAgreementAccepted(true);
+        // 用户数据初始化放在这里
+        _initUserData();
+      }
+      // 用户不同意协议的情况由AgreementDialog内部处理（调用_exitApp方法）
+    } else {
+      // 用户已经同意过协议，继续初始化用户数据
+      _initUserData();
+    }
   }
 
   Future<void> _initUserData() async {
+    if (!mounted) return;
+
     final userService = context.read<UserService>();
     // 检查是否有token
     final token = userService.getToken();
