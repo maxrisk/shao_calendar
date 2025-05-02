@@ -37,6 +37,13 @@ class OrderService {
   OrderService._internal();
 
   /// 创建订单
+  ///
+  /// [payType] 支付类型，支付宝或微信支付
+  /// [productId] 产品ID
+  ///
+  /// 返回订单响应：
+  /// - 支付宝支付：返回支付链接，通过 [OrderResponse.alipayUrl] 获取
+  /// - 微信支付：返回支付参数，通过 [OrderResponse.wechatData] 获取
   Future<OrderResponse?> createOrder(PayType payType, int productId) async {
     try {
       final response = await _dio.post(

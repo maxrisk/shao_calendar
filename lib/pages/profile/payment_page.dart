@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 import '../../widgets/list/list_cell.dart';
 import '../../widgets/list/list_group.dart';
 import '../../models/order.dart';
 import '../../services/alipay_service.dart';
+import '../../services/wechat_service.dart';
 import '../../services/user_service.dart';
 import '../../services/package_service.dart' as package_service;
 import '../../services/order_service.dart';
@@ -69,6 +71,60 @@ class _PaymentPageState extends State<PaymentPage> {
   final _orderService = OrderService();
   final _packageService = package_service.PackageService();
   final _alipayService = AlipayService();
+  final _wechatService = WechatService();
+  StreamSubscription? _wechatPaySubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _initWechatPay();
+  }
+
+  @override
+  void dispose() {
+    _wechatPaySubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _initWechatPay() async {
+    await _wechatService.init();
+    _wechatPaySubscription =
+        _wechatService.paymentResponseStream.listen((response) {
+      if (response.errCode == 0) {
+        _onPaymentSuccess();
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('支付失败: ${response.errStr ?? "未知错误"}')),
+          );
+        }
+      }
+    });
+  }
+
+  Future<void> _onPaymentSuccess() async {
+    if (mounted) {
+      // 支付成功后更新用户信息
+      final userService = context.read<UserService>();
+      final userInfo = await userService.getUserInfo();
+
+      if (userInfo != null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('支付成功')),
+          );
+          Navigator.pop(context);
+          Navigator.pop(context); // 返回到服务页面
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('支付成功，但更新用户信息失败')),
+          );
+        }
+      }
+    }
+  }
 
   Future<void> _handleConfirmPayment() async {
     if (_isLoading) return;
@@ -81,10 +137,11 @@ class _PaymentPageState extends State<PaymentPage> {
       // 根据不同服务类型创建订单
       final response = await _createOrder();
 
-      if (response?.code == 0 && response?.payUrl != null) {
-        if (_selectedPaymentMethod == 'alipay') {
+      if (response?.code == 0) {
+        print('aliUrl: ${response?.alipayUrl}');
+        if (_selectedPaymentMethod == 'alipay' && response?.alipayUrl != null) {
           // 调用支付宝支付
-          final success = await _alipayService.pay(response!.payUrl!);
+          final success = await _alipayService.pay(response!.alipayUrl!);
           if (success) {
             if (mounted) {
               // 支付成功后更新用户信息
@@ -114,11 +171,23 @@ class _PaymentPageState extends State<PaymentPage> {
               );
             }
           }
+        } else if (_selectedPaymentMethod == 'wechat' &&
+            response?.wechatData != null) {
+          // 处理微信支付
+          final success = await _wechatService.pay(response!.wechatData!.pay);
+          if (!success) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('发起微信支付失败')),
+              );
+            }
+          }
         } else {
-          // TODO: 处理微信支付
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('暂不支持微信支付')),
+              SnackBar(
+                  content: Text(
+                      '创建${_selectedPaymentMethod == 'alipay' ? '支付宝' : '微信'}订单失败')),
             );
           }
         }

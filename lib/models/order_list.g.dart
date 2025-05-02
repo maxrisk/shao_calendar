@@ -9,25 +9,33 @@ part of 'order_list.dart';
 OrderItem _$OrderItemFromJson(Map<String, dynamic> json) => OrderItem(
       id: (json['id'] as num).toInt(),
       userId: (json['userId'] as num).toInt(),
-      payType: json['payType'] as String,
+      payType: $enumDecode(_$PayTypeEnumMap, json['payType']),
       orderNo: json['orderNo'] as String,
-      total: (json['total'] as num).toDouble(),
+      total: (json['total'] as num?)?.toDouble(),
       status: json['status'] as String,
       createTime: json['createTime'] as String,
       expireTime: json['expireTime'] as String?,
       payedTime: json['payedTime'] as String?,
       title: json['title'] as String?,
-      firstAmount: (json['firstAmount'] as num).toDouble(),
-      secondAmount: (json['secondAmount'] as num).toDouble(),
+      firstAmount: (json['firstAmount'] as num?)?.toDouble(),
+      secondAmount: (json['secondAmount'] as num?)?.toDouble(),
+      provinceAmount: (json['provinceAmount'] as num?)?.toDouble(),
+      cityAmount: (json['cityAmount'] as num?)?.toDouble(),
+      districtAmount: (json['districtAmount'] as num?)?.toDouble(),
+      areaAgent: (json['areaAgent'] as num?)?.toDouble(),
       firstUserId: (json['firstUserId'] as num?)?.toInt(),
       secondUserId: (json['secondUserId'] as num?)?.toInt(),
       productId: (json['productId'] as num?)?.toInt(),
+      createBy: json['createBy'] as String?,
+      updateBy: json['updateBy'] as String?,
+      updateTime: json['updateTime'] as String?,
+      remark: json['remark'] as String?,
     );
 
 Map<String, dynamic> _$OrderItemToJson(OrderItem instance) => <String, dynamic>{
       'id': instance.id,
       'userId': instance.userId,
-      'payType': instance.payType,
+      'payType': _$PayTypeEnumMap[instance.payType]!,
       'orderNo': instance.orderNo,
       'total': instance.total,
       'status': instance.status,
@@ -37,10 +45,23 @@ Map<String, dynamic> _$OrderItemToJson(OrderItem instance) => <String, dynamic>{
       'title': instance.title,
       'firstAmount': instance.firstAmount,
       'secondAmount': instance.secondAmount,
+      'provinceAmount': instance.provinceAmount,
+      'cityAmount': instance.cityAmount,
+      'districtAmount': instance.districtAmount,
+      'areaAgent': instance.areaAgent,
       'firstUserId': instance.firstUserId,
       'secondUserId': instance.secondUserId,
       'productId': instance.productId,
+      'createBy': instance.createBy,
+      'updateBy': instance.updateBy,
+      'updateTime': instance.updateTime,
+      'remark': instance.remark,
     };
+
+const _$PayTypeEnumMap = {
+  PayType.wechat: 'WECHAT',
+  PayType.alipay: 'ALIPAY',
+};
 
 OrderListResponse _$OrderListResponseFromJson(Map<String, dynamic> json) =>
     OrderListResponse(
