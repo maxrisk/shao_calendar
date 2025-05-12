@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/confirm_dialog.dart';
 import '../../pages/pages.dart';
 import '../../pages/scanner/qr_scanner_page.dart';
 import '../../theme/app_theme.dart';
@@ -77,6 +79,43 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _onScanPressed() async {
+    // 检查相机权限状态
+    final status = await Permission.camera.status;
+
+    print('相机权限状态: $status');
+    // 如果已经获取过权限，直接进入扫码页面
+    if (status.isGranted) {
+      _navigateToScannerPage();
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    // 显示相机权限使用说明对话框
+    final shouldContinue = await ConfirmDialog.show(
+      context: context,
+      title: '相机权限使用说明',
+      content: '我们需要使用您的相机权限，用于扫描邀请码进行快速完成注册使用。',
+      cancelText: '取消',
+      confirmText: '继续',
+      isDanger: false,
+    );
+
+    if (shouldContinue != true || !mounted) return;
+
+    // 请求相机权限
+    final result = await Permission.camera.request();
+    if (result.isGranted && mounted) {
+      _navigateToScannerPage();
+    }
+  }
+
+  // 导航到扫码页面
+  Future<void> _navigateToScannerPage() async {
+    if (!mounted) return;
+
     final result = await Navigator.push<String>(
       context,
       MaterialPageRoute(
