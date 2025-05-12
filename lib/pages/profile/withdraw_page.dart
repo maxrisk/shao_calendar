@@ -34,6 +34,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
   bool _isValid = false;
   bool _isLoading = false;
   bool _isLoadingBankCard = true;
+  double _serviceRate = 0; // 手续费比例
   double _fee = 0; // 添加手续费变量
   String? _errorText; // 添加错误提示文本
 
@@ -41,6 +42,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
   void initState() {
     super.initState();
     _loadBankCardInfo();
+    _loadRate();
   }
 
   @override
@@ -81,12 +83,23 @@ class _WithdrawPageState extends State<WithdrawPage> {
     }
   }
 
+  Future<void> _loadRate() async {
+    try {
+      final rate = await _withdrawService.getWithdrawFee();
+      setState(() {
+        _serviceRate = rate;
+      });
+    } catch (e) {
+      print('获取提现手续费失败');
+    }
+  }
+
   void _onAmountChanged(String value) {
     final amount = double.tryParse(value) ?? 0;
     setState(() {
       _isValid = amount > 0 && amount <= widget.balance;
-      // 计算手续费（3%）
-      _fee = amount * 0.03;
+      // 计算手续费
+      _fee = amount * _serviceRate;
       // 设置错误提示
       _errorText = amount > widget.balance ? '输入金额超过零钱余额' : null;
     });
@@ -218,6 +231,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final percentageRate = _serviceRate * 100;
 
     return Scaffold(
       appBar: AppBar(
@@ -385,7 +399,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '手续费（3%）',
+                                '手续费（${(percentageRate % 1) == 0 ? percentageRate.toInt() : percentageRate}%）',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: colorScheme.onSurfaceVariant,

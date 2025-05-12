@@ -203,13 +203,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           );
                         },
                       ),
-                      ListCell(
-                        icon: Icons.headset_mic_outlined,
-                        title: '在线客服',
-                        onTap: () {
-                          // TODO: 处理点击
-                        },
-                      ),
+                      // ListCell(
+                      //   icon: Icons.headset_mic_outlined,
+                      //   title: '在线客服',
+                      //   onTap: () {
+                      //     // TODO: 处理点击
+                      //   },
+                      // ),
                       ListCell(
                         icon: Icons.info_outline,
                         title: '关于我们',

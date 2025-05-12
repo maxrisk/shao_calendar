@@ -94,4 +94,21 @@ class WithdrawService {
       return [];
     }
   }
+
+  /// 获取提现手续费
+  Future<double> getWithdrawFee() async {
+    try {
+      final response = await _dio.get('/app/serviceFee');
+      final resData = response.data;
+
+      if (resData['code'] == 0) {
+        return resData['data']?['serviceRate']?.toDouble() ?? 0;
+      }
+
+      return 0;
+    } catch (e) {
+      print('获取提现手续费失败');
+      return 0;
+    }
+  }
 }
