@@ -18,8 +18,8 @@ class ConfirmAreaPage extends StatefulWidget {
 
   final String phone;
   final String code;
-  final Map<String, dynamic> province;
-  final Map<String, dynamic> city;
+  final Map<String, dynamic>? province;
+  final Map<String, dynamic>? city;
 
   @override
   State<ConfirmAreaPage> createState() => _ConfirmAreaPageState();

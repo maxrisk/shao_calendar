@@ -97,20 +97,14 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
         final user = userInfo.userInfo;
 
         if (user.provinceId == null || user.cityId == null) {
-          // 如果地区信息为空，跳转到确认区域页面
-          if (_province == null || _city == null) {
-            showMessage('获取地区信息失败，请重试');
-            return;
-          }
-
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ConfirmAreaPage(
                 phone: widget.phone,
                 code: code,
-                province: _province!,
-                city: _city!,
+                province: _province,
+                city: _city,
               ),
             ),
           );
