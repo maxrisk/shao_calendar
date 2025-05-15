@@ -130,9 +130,6 @@ class _CustomServicePageState extends State<CustomServicePage> {
                         ..._packageGroups.map(
                             (group) => _buildPackageGroupCard(context, group)),
 
-                      if (_packageGroups.isEmpty)
-                        _buildDefaultPackageGroupCard(context),
-
                       const SizedBox(height: 32),
 
                       // 单项服务标题
@@ -219,72 +216,6 @@ class _CustomServicePageState extends State<CustomServicePage> {
     );
   }
 
-  Widget _buildDefaultPackageGroupCard(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Card(
-      margin: EdgeInsets.zero,
-      color: theme.cardColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: InkWell(
-        onTap: () {
-          // 创建一个临时的服务包对象
-          final defaultGroup = PackageGroup(
-            id: 0,
-            name: '问事服务包',
-            description: '1个小时人人，咨询事文创1次',
-            price: 8888,
-            originalPrice: 9999,
-            validDays: 365,
-            status: 1,
-          );
-          _navigateToPackageGroupPurchase(defaultGroup);
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // 左侧内容
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '问事服务包',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '1个小时人人，咨询事文创1次',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // 右侧价格
-              Text(
-                '8888元',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildServiceItem(
       BuildContext context, String title, String price, int id,
       {VoidCallback? onTap}) {
@@ -332,52 +263,6 @@ class _CustomServicePageState extends State<CustomServicePage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  void _handleServicePackagePurchase(int groupId) {
-    // 查找指定ID的服务包
-    PackageGroup? selectedGroup = _packageGroups.firstWhere(
-      (group) => group.id == groupId,
-      orElse: () => PackageGroup(
-        id: groupId,
-        name: '服务包',
-        description: '服务包详情',
-        price: 0,
-        originalPrice: 0,
-        validDays: 365,
-        status: 1,
-      ),
-    );
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PackagePurchasePage(packageGroup: selectedGroup),
-      ),
-    );
-  }
-
-  void _handleSingleServicePurchase(int serviceId) {
-    // 查找指定ID的单项服务
-    Package? selectedPackage = _packages.firstWhere(
-      (package) => package.id == serviceId,
-      orElse: () => Package(
-        id: serviceId,
-        name: '单项服务',
-        description: '服务详情',
-        price: 0,
-        originalPrice: 0,
-        validDays: 365,
-        status: 1,
-      ),
-    );
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PackagePurchasePage(package: selectedPackage),
       ),
     );
   }
