@@ -93,8 +93,10 @@ class _AppState extends State<App> {
         if (mounted &&
             (userInfo.userInfo.birthDate == null ||
                 userInfo.userInfo.birthTime == null)) {
+          final navigatorContext =
+              HttpClient.navigatorKey.currentContext ?? context;
           Navigator.push(
-            context,
+            navigatorContext,
             MaterialPageRoute(
               builder: (context) => const CompleteInfoPage(),
             ),
