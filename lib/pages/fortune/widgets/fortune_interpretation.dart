@@ -30,7 +30,7 @@ class _FortuneInterpretationState extends State<FortuneInterpretation> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          const Label(text: '运势解读'),
+          const Label(text: '动态分析'),
           const SizedBox(height: 10),
           // 爻选择器
           YaoSelector(

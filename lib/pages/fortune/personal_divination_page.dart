@@ -112,7 +112,7 @@ class _PersonalDivinationPageState extends State<PersonalDivinationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('个人运卦'),
+        title: const Text('个人年卦'),
         centerTitle: true,
       ),
       body: Stack(

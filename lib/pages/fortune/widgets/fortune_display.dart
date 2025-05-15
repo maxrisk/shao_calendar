@@ -117,7 +117,7 @@ class _FortuneDisplayState extends State<FortuneDisplay>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    '个人运势',
+                    '值年轨迹',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,

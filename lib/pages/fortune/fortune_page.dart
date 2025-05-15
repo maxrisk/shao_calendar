@@ -147,7 +147,7 @@ class _FortunePageState extends State<FortunePage> {
                                 MaterialPageRoute(
                                   builder: (context) => PersonalDivinationPage(
                                     divination: _fortuneData!.data!.thisYear,
-                                    yearRange: '${DateTime.now().year}年个人运势',
+                                    yearRange: '${DateTime.now().year}年卦',
                                   ),
                                 ),
                               );
@@ -156,7 +156,7 @@ class _FortunePageState extends State<FortunePage> {
                           child: FortuneCard(
                             text: _fortuneData?.data?.thisYear.name ?? '？',
                             bgType: HexagramBgType.green,
-                            yearRange: '${DateTime.now().year}年个人运势',
+                            yearRange: '${DateTime.now().year}年卦',
                           ),
                         ),
                       ),
