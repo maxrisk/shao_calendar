@@ -60,7 +60,7 @@ class _HexagramDetailState extends State<HexagramDetail> {
             ],
           ),
           // 标签
-          const Label(text: '《易经》运势'),
+          const Label(text: '《易经》解读'),
           InfoCardGroup(
             cards: [
               InfoCard(
@@ -72,7 +72,7 @@ class _HexagramDetailState extends State<HexagramDetail> {
               ),
             ],
           ),
-          const Label(text: '解读'),
+          const Label(text: '策略'),
           InfoCardGroup(
             cards: [
               InfoCard(
