@@ -8,7 +8,7 @@ class PackageGroup {
   final int id;
   @JsonKey(name: 'packageName')
   final String name;
-  final String description;
+  final String? description;
   @JsonKey(defaultValue: 0)
   final double price;
   @JsonKey(defaultValue: 0)

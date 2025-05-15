@@ -9,7 +9,7 @@ part of 'package_group.dart';
 PackageGroup _$PackageGroupFromJson(Map<String, dynamic> json) => PackageGroup(
       id: (json['id'] as num).toInt(),
       name: json['packageName'] as String,
-      description: json['description'] as String,
+      description: json['description'] as String?,
       price: (json['price'] as num?)?.toDouble() ?? 0,
       originalPrice: (json['originalPrice'] as num?)?.toInt() ?? 0,
       coverImage: json['detailImage'] as String?,

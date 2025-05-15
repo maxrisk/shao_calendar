@@ -193,7 +193,7 @@ class _CustomServicePageState extends State<CustomServicePage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      group.description,
+                      group.description ?? '',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: colorScheme.primary,
                       ),
