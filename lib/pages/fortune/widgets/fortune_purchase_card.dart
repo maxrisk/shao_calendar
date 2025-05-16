@@ -26,7 +26,7 @@ class FortunePurchaseCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '全年运势解锁仅需 ',
+                '全年数历解锁仅需 ',
                 style: TextStyle(
                   fontSize: 16,
                   color: Theme.of(context).colorScheme.onSurface,

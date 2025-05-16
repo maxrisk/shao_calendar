@@ -221,7 +221,7 @@ class _CompleteInfoPageState extends State<CompleteInfoPage> {
                     ),
                   ),
                   child: const Text(
-                    '开启流年运势',
+                    '开启流年轨迹',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
