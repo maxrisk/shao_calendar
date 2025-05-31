@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/glowing_hexagram.dart';
+import 'package:flutter_calendar/widgets/glowing_hexagram.dart';
 
 /// 运势卡片组件
 class FortuneCard extends StatelessWidget {
@@ -8,7 +8,7 @@ class FortuneCard extends StatelessWidget {
     super.key,
     required this.text,
     required this.bgType,
-    this.yearRange = '1984-2043',
+    required this.yearRange,
   });
 
   /// 卦象文字
@@ -27,6 +27,10 @@ class FortuneCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12.0),
+        image: const DecorationImage(
+          image: AssetImage('assets/images/fortune_card_bg.png'),
+          fit: BoxFit.cover,
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -42,36 +46,6 @@ class FortuneCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 12,
               color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// 运势卡片组
-class FortuneCardGroup extends StatelessWidget {
-  /// 创建运势卡片组
-  const FortuneCardGroup({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: const [
-          Expanded(
-            child: FortuneCard(
-              text: '乾',
-              bgType: HexagramBgType.green,
-            ),
-          ),
-          SizedBox(width: 8),
-          Expanded(
-            child: FortuneCard(
-              text: '坤',
-              bgType: HexagramBgType.orange,
             ),
           ),
         ],

@@ -15,14 +15,13 @@ class VerifyCodeInput extends StatefulWidget {
     this.customContent,
     this.showVerifyCodeButton = true,
     this.submitEnabled = false,
-    this.onSubmit,
+    required this.onSubmit,
     this.onCancel,
     this.autoStart = false,
     this.codeLength = 4,
     this.obscureText = false,
     this.autoFocus = false,
     this.controller,
-    this.isSubmitting = false,
   });
 
   /// 标题
@@ -41,7 +40,7 @@ class VerifyCodeInput extends StatefulWidget {
   final bool submitEnabled;
 
   /// 提交回调
-  final ValueChanged<String>? onSubmit;
+  final FutureOr<void> Function(String) onSubmit;
 
   /// 取消回调
   final VoidCallback? onCancel;
@@ -64,9 +63,6 @@ class VerifyCodeInput extends StatefulWidget {
   /// 发送验证码回调
   final Future<bool> Function()? onSend;
 
-  /// 是否正在提交
-  final bool isSubmitting;
-
   @override
   State<VerifyCodeInput> createState() => _VerifyCodeInputState();
 }
@@ -77,6 +73,7 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
   int _countdown = 0;
   Timer? _timer;
   bool _isLoading = false;
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -121,13 +118,24 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
     }
   }
 
-  void _handleSubmit() {
-    if (widget.customContent == null) {
-      if (_isValid) {
-        widget.onSubmit?.call(_code);
+  void _handleSubmit() async {
+    if (_isSubmitting) return;
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final result = widget.onSubmit(_code);
+      if (result is Future) {
+        await result;
       }
-    } else {
-      widget.onSubmit?.call(''); // 当有自定义内容时，直接调用回调
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
@@ -263,7 +271,7 @@ class _VerifyCodeInputState extends State<VerifyCodeInput> {
                                     ),
                             if (widget.showVerifyCodeButton) const Spacer(),
                             RoundedIconButton(
-                              isSubmitting: widget.isSubmitting,
+                              isSubmitting: _isSubmitting,
                               icon: Icon(
                                 Icons.check,
                                 color: (isVerifyCodeInput

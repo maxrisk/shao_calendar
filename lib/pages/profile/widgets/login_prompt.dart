@@ -6,10 +6,18 @@ class LoginPrompt extends StatelessWidget {
   const LoginPrompt({
     super.key,
     required this.onLogin,
+    this.title = '登录后查看更多内容',
+    this.buttonText = '立即登录',
   });
 
   /// 登录按钮点击回调
   final VoidCallback onLogin;
+
+  /// 提示文本
+  final String title;
+
+  /// 按钮文本
+  final String buttonText;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +46,7 @@ class LoginPrompt extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '登录后查看更多内容',
+            title,
             style: TextStyle(
               fontSize: 16,
               color: colorScheme.onSurface,
@@ -55,9 +63,9 @@ class LoginPrompt extends StatelessWidget {
               ),
               foregroundColor: colorScheme.primary,
             ),
-            child: const Text(
-              '立即登录',
-              style: TextStyle(fontSize: 16),
+            child: Text(
+              buttonText,
+              style: const TextStyle(fontSize: 16),
             ),
           ),
         ],

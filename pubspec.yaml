@@ -1,5 +1,5 @@
 name: flutter_calendar
-description: "A new Flutter project."
+description: "邵氏先天历"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -36,15 +36,20 @@ dependencies:
   lunar: ^1.6.1
   mobile_scanner: ^3.5.6
   qr_flutter: ^4.1.0
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
+  cupertino_icons: ^1.0.2
+  font_awesome_flutter: ^10.8.0
+  dio: ^5.4.0
+  shared_preferences: ^2.2.2
+  provider: ^6.1.1
+  tobias: ^5.1.1
+  url_launcher: ^6.2.4
+  fluwx: ^5.5.1
+  permission_handler: ^12.0.0+1
+  web: ^0.5.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
-  font_awesome_flutter: ^10.8.0
-  dio: ^5.4.1
-  shared_preferences: ^2.2.2
-  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +63,8 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   build_runner: ^2.4.8
   json_serializable: ^6.7.1
+  change_app_package_name: ^1.4.0
+  flutter_launcher_icons: "^0.14.3"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -82,7 +89,8 @@ flutter:
     - assets/images/yao_bg.png
     - assets/images/label_bg.png
     - assets/images/icon_qrcode.png
-    - assets/images/logo.jpg
+    - assets/images/logo.png
+    - assets/images/fortune_card_bg.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -109,3 +117,21 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+tobias:
+  url_scheme: shaocalendar
+  ios:
+    ignore_security: true
+    universal_link: https://hjjs101110.com
+
+fluwx:
+  app_id: 'calendarsun'
+  debug_logging: false # Logging in debug mode.
+  android:
+#    interrupt_wx_request: true # Defaults to true.
+#    flutter_activity: 'MainActivity' # Defaults to app's launcher
+  ios:
+    universal_link: https://hjjs101110.com
+#    scene_delegate: true # Defaults to false.
+#    no_pay: true # Set to true to disable payment.
+#    ignore_security: true # Set to true to disable security seetings.

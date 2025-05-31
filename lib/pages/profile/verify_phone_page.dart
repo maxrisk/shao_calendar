@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../widgets/verify_code_input.dart';
-import '../../widgets/form/form_field.dart';
+import '../../services/user_service.dart';
 import 'set_pay_password_page.dart';
+import 'package:provider/provider.dart';
 
 /// 验证手机号页面
 class VerifyPhonePage extends StatefulWidget {
@@ -24,7 +25,6 @@ class VerifyPhonePage extends StatefulWidget {
 
 class _VerifyPhonePageState extends State<VerifyPhonePage> {
   final _phoneController = TextEditingController();
-  bool _isValid = false;
 
   @override
   void dispose() {
@@ -32,64 +32,51 @@ class _VerifyPhonePageState extends State<VerifyPhonePage> {
     super.dispose();
   }
 
-  void _handleSubmit(String code) {
-    if (widget.isVerifyCode) {
-      // 验证码验证成功后跳转到设置支付密码页面
+  Future<void> _handleSubmit(String code) async {
+    final success = await UserService().validatePayCode(code);
+    if (success && context.mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const SetPayPasswordPage(),
+          builder: (context) => SetPayPasswordPage(verificationCode: code),
         ),
       );
     } else {
-      // 手机号验证成功后跳转到验证码页面
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerifyPhonePage(
-            phone: _phoneController.text,
-            isVerifyCode: true,
-          ),
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('验证码错误，请重试')),
+        );
+      }
     }
   }
 
-  void _onPhoneChanged(String value) {
-    setState(() {
-      _isValid = value.length == 11;
-    });
+  Future<bool> _handleSend() async {
+    // 发送支付密码验证码
+    final success = await UserService().getPayPasswordCode();
+    if (mounted) {
+      if (!success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('获取验证码失败，请重试')),
+        );
+      }
+    }
+    return success;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isVerifyCode) {
-      return VerifyCodeInput(
-        title: '输入验证码',
-        subtitle: TextSpan(text: '验证码已发送至 ${widget.phone}'),
-        autoStart: true,
-        autoFocus: true,
-        onSubmit: _handleSubmit,
-        onCancel: () => Navigator.pop(context),
-      );
-    }
+    final userService = context.watch<UserService>();
+    final userInfo = userService.userInfo?.userInfo;
 
     return VerifyCodeInput(
-      title: '验证手机号',
-      subtitle: const TextSpan(text: '请输入手机号进行验证'),
-      customContent: FormItem(
-        label: '手机号',
-        hint: '请输入手机号',
-        icon: Icons.phone_outlined,
-        controller: _phoneController,
-        keyboardType: TextInputType.phone,
-        maxLength: 11,
-        onChanged: _onPhoneChanged,
-      ),
-      showVerifyCodeButton: false,
-      submitEnabled: _isValid,
+      title: '获取验证码',
+      subtitle: TextSpan(
+          text:
+              '验证 ${userInfo?.phone?.substring(0, 3)}****${userInfo?.phone?.substring(7, 11)} 获取的验证码'),
+      autoFocus: true,
       onSubmit: _handleSubmit,
       onCancel: () => Navigator.pop(context),
+      onSend: _handleSend,
     );
   }
 }

@@ -1,9 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/confirm_dialog.dart';
 import '../../pages/pages.dart';
 import '../../pages/scanner/qr_scanner_page.dart';
 import '../../theme/app_theme.dart';
+import '../../services/fortune_service.dart';
+import '../../models/fortune.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -16,6 +21,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  final _fortuneService = FortuneService();
+  FortuneResponse? _fortuneData;
+  FortuneResponse? _userFortuneData;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFortuneData();
+  }
 
   // 获取状态栏和AppBar的总高度
   double get _topPadding =>
@@ -29,7 +44,79 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<void> _loadFortuneData() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final today = DateTime.now();
+      final dateStr =
+          '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+
+      final fortuneData = await _fortuneService.getFortune(dateStr);
+      final userFortuneData = await _fortuneService.getUserFortune(dateStr);
+
+      if (mounted) {
+        setState(() {
+          _fortuneData = fortuneData;
+          _userFortuneData = userFortuneData;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('获取运势数据失败: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('获取运势数据失败')),
+        );
+      }
+    }
+  }
+
   Future<void> _onScanPressed() async {
+    // 检查相机权限状态
+    final status = await Permission.camera.status;
+
+    print('相机权限状态: $status');
+    // 如果已经获取过权限，直接进入扫码页面
+    if (status.isGranted) {
+      _navigateToScannerPage();
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    // 显示相机权限使用说明对话框
+    final shouldContinue = await ConfirmDialog.show(
+      context: context,
+      title: '相机权限使用说明',
+      content: '我们需要使用您的相机权限，用于扫描邀请码进行快速完成注册使用。',
+      cancelText: '取消',
+      confirmText: '继续',
+      isDanger: false,
+    );
+
+    if (shouldContinue != true || !mounted) return;
+
+    // 请求相机权限
+    final result = await Permission.camera.request();
+    if (result.isGranted && mounted) {
+      _navigateToScannerPage();
+    }
+  }
+
+  // 导航到扫码页面
+  Future<void> _navigateToScannerPage() async {
+    if (!mounted) return;
+
     final result = await Navigator.push<String>(
       context,
       MaterialPageRoute(
@@ -37,13 +124,9 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 
-    if (!mounted) return; // 确保在使用 context 前检查 mounted
+    if (!mounted) return;
 
-    if (result != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('扫描结果: $result')),
-      );
-    }
+    if (result != null) {}
   }
 
   @override
@@ -89,13 +172,15 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 centerTitle: false,
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.qr_code_scanner_rounded),
-                    onPressed: _onScanPressed,
-                    color: Colors.white,
-                  ),
-                ],
+                actions: kIsWeb
+                    ? []
+                    : [
+                        IconButton(
+                          icon: const Icon(Icons.qr_code_scanner_rounded),
+                          onPressed: _onScanPressed,
+                          color: Colors.white,
+                        ),
+                      ],
               )
             : null,
         body: Stack(
@@ -132,14 +217,16 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             SafeArea(
-              child: IndexedStack(
-                index: _selectedIndex,
-                children: const [
-                  CalendarPage(),
-                  FortunePage(),
-                  ProfilePage(),
-                ],
-              ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : IndexedStack(
+                      index: _selectedIndex,
+                      children: [
+                        CalendarPage(fortuneData: _fortuneData?.data),
+                        FortunePage(fortuneData: _userFortuneData?.data),
+                        const ProfilePage(),
+                      ],
+                    ),
             ),
           ],
         ),

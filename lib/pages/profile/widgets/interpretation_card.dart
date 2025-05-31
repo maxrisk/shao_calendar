@@ -211,9 +211,9 @@ class InterpretationCard extends StatelessWidget {
                     backgroundColor: colorScheme.primary.withAlpha(20),
                     foregroundColor: colorScheme.primary,
                   ),
-                  child: const Text(
-                    '邵氏生历解读',
-                    style: TextStyle(
+                  child: Text(
+                    '邵氏${type.label}解读',
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       height: 1.2,
@@ -232,7 +232,7 @@ class InterpretationCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 55,
+          width: 65,
           child: Text(
             title,
             style: TextStyle(
@@ -241,6 +241,8 @@ class InterpretationCard extends StatelessWidget {
               fontWeight: FontWeight.w500,
               height: 1.6,
             ),
+            softWrap: false,
+            overflow: TextOverflow.clip,
           ),
         ),
         Expanded(

@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
-import 'widgets/fortune_card.dart';
+import 'package:flutter_calendar/widgets/glowing_hexagram.dart';
+import 'package:provider/provider.dart';
+import '../../services/user_service.dart';
+import '../profile/widgets/login_prompt.dart';
+import '../../widgets/fortune_card.dart';
 import 'widgets/date_picker_button.dart';
 import 'widgets/decorated_title.dart';
 import 'widgets/fortune_display.dart';
 import 'widgets/fortune_interpretation.dart';
 import 'widgets/fortune_purchase_card.dart';
 import '../../pages/profile/calendar_service_page.dart';
+import '../../models/fortune.dart';
+import '../../services/fortune_service.dart';
+import '../../pages/profile/login_page.dart';
+import '../../utils/route_animations.dart';
+import 'personal_divination_page.dart';
 
 /// 个人运势页面
 class FortunePage extends StatefulWidget {
   /// 创建个人运势页面
-  const FortunePage({super.key});
+  const FortunePage({super.key, this.fortuneData});
+
+  /// 个人运势数据
+  final FortuneData? fortuneData;
 
   @override
   State<FortunePage> createState() => _FortunePageState();
@@ -18,35 +30,99 @@ class FortunePage extends StatefulWidget {
 
 class _FortunePageState extends State<FortunePage> {
   DateTime _selectedDate = DateTime.now();
+  final _fortuneService = FortuneService();
+  FortuneResponse? _fortuneData;
+  bool _isLoading = false;
+  bool? _previousLoginState;
 
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
+  @override
+  void initState() {
+    super.initState();
+    _fortuneData = widget.fortuneData != null
+        ? FortuneResponse(code: 0, data: widget.fortuneData)
+        : null;
+    if (_fortuneData == null) {
+      _loadFortuneData(_selectedDate);
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 监听用户登录状态变化
+    final userService = context.watch<UserService>();
+    final isLoggedIn = userService.userInfo != null;
+
+    // 如果用户从未登录状态变为已登录状态，刷新数据
+    if (_previousLoginState == false && isLoggedIn) {
+      _loadFortuneData(_selectedDate);
+    }
+    _previousLoginState = isLoggedIn;
+  }
+
+  Future<void> _loadFortuneData(DateTime date) async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final dateStr =
+          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      final response = await _fortuneService.getUserFortune(dateStr);
+      if (mounted) {
+        setState(() {
+          _fortuneData = response;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('获取个人运势数据失败')),
+        );
+      }
     }
   }
 
   void _previousDay() {
+    final previousDate = _selectedDate.subtract(const Duration(days: 1));
     setState(() {
-      _selectedDate = _selectedDate.subtract(const Duration(days: 1));
+      _selectedDate = previousDate;
     });
+    _loadFortuneData(previousDate);
   }
 
   void _nextDay() {
+    final nextDate = _selectedDate.add(const Duration(days: 1));
     setState(() {
-      _selectedDate = _selectedDate.add(const Duration(days: 1));
+      _selectedDate = nextDate;
     });
+    _loadFortuneData(nextDate);
   }
 
   @override
   Widget build(BuildContext context) {
+    final userService = context.watch<UserService>();
+    final isLoggedIn = userService.userInfo != null;
+
+    if (!isLoggedIn) {
+      return LoginPrompt(
+        onLogin: () {
+          Navigator.push(
+            context,
+            RouteAnimations.slideUp(
+              page: const LoginPage(),
+            ),
+          );
+        },
+      );
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -58,35 +134,72 @@ class _FortunePageState extends State<FortunePage> {
             child: Column(
               children: [
                 // 顶部卡片区域
-                const FortuneCardGroup(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_fortuneData?.data?.thisYear != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PersonalDivinationPage(
+                                    divination: _fortuneData!.data!.thisYear,
+                                    yearRange: '${DateTime.now().year}年卦',
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: FortuneCard(
+                            text: _fortuneData?.data?.thisYear.name ?? '？',
+                            bgType: HexagramBgType.green,
+                            yearRange: '${DateTime.now().year}年卦',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 // 革年标题
                 const DecoratedTitle(title: '革年'),
                 // 日期选择按钮
                 DatePickerButton(
                   date: _selectedDate,
-                  onPressed: _selectDate,
+                  onDateChanged: (date) {
+                    setState(() {
+                      _selectedDate = date;
+                    });
+                    _loadFortuneData(date);
+                  },
                 ),
                 // 运势展示卡片
                 FortuneDisplay(
                   date: _selectedDate,
                   onPrevious: _previousDay,
                   onNext: _nextDay,
+                  divination: _fortuneData?.data?.dayDivinationInfo,
+                  isLoading: _isLoading,
                 ),
-                const SizedBox(height: 16),
                 // 购买卡片
-                FortunePurchaseCard(
-                  onPurchase: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CalendarServicePage(),
-                      ),
-                    );
-                  },
+                if (!userService.isVip)
+                  FortunePurchaseCard(
+                    onPurchase: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CalendarServicePage(),
+                        ),
+                      );
+                    },
+                  ),
+                // 运势解读
+                FortuneInterpretation(
+                  yaos: _fortuneData?.data?.yaos,
                 ),
                 const SizedBox(height: 16),
-                // 运势解读
-                const FortuneInterpretation(),
               ],
             ),
           ),

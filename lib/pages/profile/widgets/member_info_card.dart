@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'invite_record_cell.dart';
 
 /// 会员信息卡片
 class MemberInfoCard extends StatelessWidget {
@@ -7,7 +6,8 @@ class MemberInfoCard extends StatelessWidget {
   const MemberInfoCard({
     super.key,
     required this.memberId,
-    required this.paymentStatus,
+    required this.paymentStatusLabel,
+    required this.isPaid,
     required this.phoneNumber,
     required this.name,
     required this.directInvites,
@@ -17,8 +17,11 @@ class MemberInfoCard extends StatelessWidget {
   /// 会员号
   final String memberId;
 
-  /// 付费状态
-  final PaymentStatus paymentStatus;
+  /// 付费状态文本
+  final String paymentStatusLabel;
+
+  /// 是否已付费
+  final bool isPaid;
 
   /// 手机号
   final String phoneNumber;
@@ -99,17 +102,17 @@ class MemberInfoCard extends StatelessWidget {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: paymentStatus == PaymentStatus.paid
+                            color: isPaid
                                 ? colorScheme.primary.withAlpha(20)
                                 : colorScheme.surfaceContainerHighest
                                     .withAlpha(77),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            paymentStatus.label,
+                            paymentStatusLabel,
                             style: TextStyle(
                               fontSize: 13,
-                              color: paymentStatus == PaymentStatus.paid
+                              color: isPaid
                                   ? colorScheme.primary
                                   : colorScheme.onSurfaceVariant,
                               height: 1.2,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar/pages/profile/calendar_service_page.dart';
 import 'package:provider/provider.dart';
 import '../profile/login_page.dart';
 import 'widgets/login_prompt.dart';
@@ -9,7 +10,10 @@ import '../../widgets/list/list_group.dart';
 import '../../services/user_service.dart';
 import 'invite_page.dart';
 import 'account_page.dart';
+import '../../utils/route_animations.dart';
 import 'about_page.dart';
+import '../../widgets/dialogs/interpretation_dialog.dart';
+import 'custom_service_page.dart';
 
 /// 个人中心页面
 class ProfilePage extends StatefulWidget {
@@ -23,28 +27,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   void _handleLogin() {
     Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0.0, 1.0),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-              reverseCurve: Curves.easeInCubic,
-            )),
-            child: FadeTransition(
-              opacity: animation,
-              child: const LoginPage(),
-            ),
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 400),
-        reverseTransitionDuration: const Duration(milliseconds: 400),
-        fullscreenDialog: true,
-        opaque: false,
-        barrierColor: Colors.black.withAlpha(100),
+      RouteAnimations.slideUp(
+        page: const LoginPage(),
       ),
     );
   }
@@ -70,6 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
         elevation: 0,
+        scrolledUnderElevation: 0,
       ),
       body: userInfo != null
           ? SingleChildScrollView(
@@ -79,12 +64,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     birthTime: userInfo.birthDate != null
                         ? '${userInfo.birthDate} ${_getBirthTimeText(userInfo.birthTime)}'
                         : '未设置',
-                    userId: userInfo.id?.toString() ?? '-',
+                    userId: userInfo.referralCode?.toString() ?? '-',
                     onInviteTap: _handleInvite,
+                    promotion: userInfo.promotion,
                   ),
                   InterpretationCard(
                     title:
-                        '邵氏解读：${userService.userInfo?.weatherDivination?.luck ?? ''}',
+                        '邵氏解读：${userService.userInfo?.weatherDivination?.baziInterpretation ?? ''}',
                     type: InterpretationType.tianShi,
                     hexagramText:
                         userService.userInfo?.weatherDivination?.name ?? '',
@@ -98,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   InterpretationCard(
                     title:
-                        '邵氏解读：${userService.userInfo?.terrainDivination?.luck ?? ''}',
+                        '邵氏解读：${userService.userInfo?.terrainDivination?.baziInterpretation ?? ''}',
                     type: InterpretationType.diShi,
                     hexagramText:
                         userService.userInfo?.terrainDivination?.name ?? '',
@@ -112,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   InterpretationCard(
                     title:
-                        '邵氏解读：${userService.userInfo?.birthDivination?.luck ?? ''}',
+                        '邵氏解读：${userService.userInfo?.birthDivination?.baziInterpretation ?? ''}',
                     type: InterpretationType.shengLi,
                     hexagramText:
                         userService.userInfo?.birthDivination?.name ?? '',
@@ -122,12 +108,34 @@ class _ProfilePageState extends State<ProfilePage> {
                     tuanZhuan:
                         userService.userInfo?.birthDivination?.tuanChuan ?? '',
                     onPressed: () {
-                      // TODO: 处理按钮点击
+                      if (!userService.isVip) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CalendarServicePage(),
+                          ),
+                        );
+                      } else {
+                        showInterpretationDialog(
+                          context,
+                          title: '邵氏解读',
+                          items: [
+                            if (userService.userInfo?.birthDivination
+                                    ?.lifeInterpretation?.isNotEmpty ==
+                                true)
+                              (
+                                title: '生历',
+                                content: userService.userInfo!.birthDivination!
+                                    .lifeInterpretation!,
+                              ),
+                          ],
+                        );
+                      }
                     },
                   ),
                   InterpretationCard(
                     title:
-                        '邵氏解读：${userService.userInfo?.knotDivination?.luck ?? ''}',
+                        '邵氏解读：${userService.userInfo?.knotDivination?.baziInterpretation ?? ''}',
                     type: InterpretationType.siJie,
                     hexagramText:
                         userService.userInfo?.knotDivination?.name ?? '',
@@ -137,7 +145,29 @@ class _ProfilePageState extends State<ProfilePage> {
                     tuanZhuan:
                         userService.userInfo?.knotDivination?.tuanChuan ?? '',
                     onPressed: () {
-                      // TODO: 处理按钮点击
+                      if (!userService.isVip) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CalendarServicePage(),
+                          ),
+                        );
+                      } else {
+                        showInterpretationDialog(
+                          context,
+                          title: '邵氏死结解读',
+                          items: [
+                            if (userService.userInfo?.knotDivination
+                                    ?.deathInterpretation?.isNotEmpty ==
+                                true)
+                              (
+                                title: '死结',
+                                content: userService.userInfo!.knotDivination!
+                                    .deathInterpretation!,
+                              ),
+                          ],
+                        );
+                      }
                     },
                   ),
                   const SizedBox(height: 16),
@@ -162,12 +192,24 @@ class _ProfilePageState extends State<ProfilePage> {
                           onTap: _handleInvite,
                         ),
                       ListCell(
-                        icon: Icons.headset_mic_outlined,
-                        title: '在线客服',
+                        icon: Icons.design_services_outlined,
+                        title: '定制服务',
                         onTap: () {
-                          // TODO: 处理点击
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CustomServicePage(),
+                            ),
+                          );
                         },
                       ),
+                      // ListCell(
+                      //   icon: Icons.headset_mic_outlined,
+                      //   title: '在线客服',
+                      //   onTap: () {
+                      //     // TODO: 处理点击
+                      //   },
+                      // ),
                       ListCell(
                         icon: Icons.info_outline,
                         title: '关于我们',

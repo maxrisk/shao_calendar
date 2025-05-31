@@ -22,6 +22,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       isVip: json['payUser'] as bool?,
       phone: json['phone'] as String?,
       wxSessionKey: json['wxSessionKey'] as String?,
+      referralCode: json['referralCode'] as String?,
       nickName: json['nickName'] as String?,
       firstCode: json['firstCode'] as String?,
       secondCode: json['secondCode'] as String?,
@@ -29,6 +30,14 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       secondUserId: (json['secondUserId'] as num?)?.toInt(),
       promotion: (json['promotion'] as num?)?.toInt(),
       amount: (json['amount'] as num?)?.toDouble(),
+      commission: (json['amountCount'] as num?)?.toDouble(),
+      referralCount: (json['referralCount'] as num?)?.toInt(),
+      provinceId: (json['provinceId'] as num?)?.toInt(),
+      cityId: (json['cityId'] as num?)?.toInt(),
+      districtId: (json['districtId'] as num?)?.toInt(),
+      firstCount: (json['firstCount'] as num?)?.toInt(),
+      secondCount: (json['secondCount'] as num?)?.toInt(),
+      hasPayPass: json['hasPayPass'] as bool?,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -47,6 +56,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'payUser': instance.isVip,
       'phone': instance.phone,
       'wxSessionKey': instance.wxSessionKey,
+      'referralCode': instance.referralCode,
       'nickName': instance.nickName,
       'firstCode': instance.firstCode,
       'secondCode': instance.secondCode,
@@ -54,4 +64,12 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'secondUserId': instance.secondUserId,
       'promotion': instance.promotion,
       'amount': instance.amount,
+      'amountCount': instance.commission,
+      'referralCount': instance.referralCount,
+      'provinceId': instance.provinceId,
+      'cityId': instance.cityId,
+      'districtId': instance.districtId,
+      'hasPayPass': instance.hasPayPass,
+      'firstCount': instance.firstCount,
+      'secondCount': instance.secondCount,
     };

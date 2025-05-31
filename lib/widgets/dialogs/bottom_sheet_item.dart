@@ -7,6 +7,7 @@ class BottomSheetItem extends StatelessWidget {
     super.key,
     required this.title,
     required this.onTap,
+    this.selected = false,
   });
 
   /// 标题
@@ -14,6 +15,9 @@ class BottomSheetItem extends StatelessWidget {
 
   /// 点击回调
   final VoidCallback onTap;
+
+  /// 是否选中
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +39,26 @@ class BottomSheetItem extends StatelessWidget {
               ),
             ),
           ),
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 15,
-              color: colorScheme.onSurface,
-            ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color:
+                        selected ? colorScheme.primary : colorScheme.onSurface,
+                    fontWeight: selected ? FontWeight.w500 : null,
+                  ),
+                ),
+              ),
+              if (selected)
+                Icon(
+                  Icons.check_rounded,
+                  color: colorScheme.primary,
+                  size: 20,
+                ),
+            ],
           ),
         ),
       ),

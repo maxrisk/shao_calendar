@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../widgets/verify_code_input.dart';
+import '../../services/user_service.dart';
 import 'bind_new_phone_page.dart';
 
 /// 修改手机号页面
@@ -23,7 +24,7 @@ class ChangePhonePage extends StatelessWidget {
         text: '验证 ',
         children: [
           TextSpan(
-            text: phone,
+            text: '${phone.substring(0, 3)}****${phone.substring(7)}',
             style: TextStyle(
               color: colorScheme.primary,
               fontWeight: FontWeight.w500,
@@ -39,11 +40,22 @@ class ChangePhonePage extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const BindNewPhonePage(),
+            builder: (context) => BindNewPhonePage(
+              verificationCode: code,
+            ),
           ),
         );
       },
       onCancel: () => Navigator.pop(context),
+      onSend: () async {
+        final success = await UserService().getOldPhoneCode();
+        if (!success && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('获取验证码失败')),
+          );
+        }
+        return success;
+      },
     );
   }
 }

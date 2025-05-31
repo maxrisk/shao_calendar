@@ -7,9 +7,9 @@ on:
       - main
       - develop
   pull_request:
-    branches:
-      - main
-      - develop
+    #branches:
+    #  - main
+    #  - develop
 
 jobs:
   build:
@@ -40,21 +40,21 @@ jobs:
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "BUILD_ENV=production" >> $GITHUB_ENV
             echo "BUILD_NAME=正式版" >> $GITHUB_ENV
-            echo "DART_DEFINES=APP_ENV=production" >> $GITHUB_ENV
+            echo "DART_DEFINES=APP_ENV=production,API_BASE_URL=${{ secrets.API_BASE_URL_PROD }}" >> $GITHUB_ENV
             echo "PP_PROFILE=${{ secrets.IOS_PRODUCTION_PROFILE_BASE64 }}" >> $GITHUB_ENV
             echo "EXPORT_METHOD=app-store-connect" >> $GITHUB_ENV
             echo "SIGNING_CERTIFICATE=Apple Distribution" >> $GITHUB_ENV
             echo "BUILD_CERTIFICATE=${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}" >> $GITHUB_ENV
             echo "CERTIFICATE_PASSWORD=${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
           else
-            echo "BUILD_ENV=development" >> $GITHUB_ENV
+            echo "BUILD_ENV=production" >> $GITHUB_ENV
             echo "BUILD_NAME=测试版" >> $GITHUB_ENV
-            echo "DART_DEFINES=APP_ENV=development" >> $GITHUB_ENV
-            echo "PP_PROFILE=${{ secrets.IOS_DEVELOPMENT_PROFILE_BASE64 }}" >> $GITHUB_ENV
-            echo "EXPORT_METHOD=development" >> $GITHUB_ENV
-            echo "SIGNING_CERTIFICATE=Apple Development" >> $GITHUB_ENV
-            echo "BUILD_CERTIFICATE=${{ secrets.IOS_DEVELOPMENT_CERTIFICATE_BASE64 }}" >> $GITHUB_ENV
-            echo "CERTIFICATE_PASSWORD=${{ secrets.IOS_DEVELOPMENT_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
+            echo "DART_DEFINES=APP_ENV=production,API_BASE_URL=${{ secrets.API_BASE_URL_DEV }}" >> $GITHUB_ENV
+            echo "PP_PROFILE=${{ secrets.IOS_PRODUCTION_PROFILE_BASE64 }}" >> $GITHUB_ENV
+            echo "EXPORT_METHOD=ad-hoc" >> $GITHUB_ENV
+            echo "SIGNING_CERTIFICATE=Apple Distribution" >> $GITHUB_ENV
+            echo "BUILD_CERTIFICATE=${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}" >> $GITHUB_ENV
+            echo "CERTIFICATE_PASSWORD=${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
           fi
           
           # 获取版本号
@@ -143,6 +143,14 @@ jobs:
       # 10. 显示配置文件列表
       - name: List Provisioning Profiles
         run: cd ~/Library/MobileDevice/Provisioning\ Profiles && ls
+
+      - name: Update Xcode Project Settings
+        run: |
+          cd ios
+          # 修改签名设置
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Development"/CODE_SIGN_IDENTITY = "iPhone Distribution"/' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Developer"/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution"/' Runner.xcodeproj/project.pbxproj
+          cd ..
 
       # 11. 构建 iOS
       - name: Build iOS

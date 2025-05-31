@@ -24,6 +24,7 @@ class User {
   final bool? isVip;
   final String? phone;
   final String? wxSessionKey;
+  final String? referralCode;
   final String? nickName;
   final String? firstCode;
   final String? secondCode;
@@ -31,6 +32,19 @@ class User {
   final int? secondUserId;
   final int? promotion;
   final double? amount;
+  @JsonKey(name: 'amountCount')
+  final double? commission;
+  final int? referralCount;
+  final int? provinceId;
+  final int? cityId;
+  final int? districtId;
+  final bool? hasPayPass;
+
+  /// 直接推荐人数
+  final int? firstCount;
+
+  /// 间接推荐人数
+  final int? secondCount;
 
   const User({
     this.id,
@@ -48,6 +62,7 @@ class User {
     this.isVip,
     this.phone,
     this.wxSessionKey,
+    this.referralCode,
     this.nickName,
     this.firstCode,
     this.secondCode,
@@ -55,6 +70,14 @@ class User {
     this.secondUserId,
     this.promotion,
     this.amount,
+    this.commission,
+    this.referralCount,
+    this.provinceId,
+    this.cityId,
+    this.districtId,
+    this.firstCount,
+    this.secondCount,
+    this.hasPayPass,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -77,6 +100,7 @@ class User {
     bool? isVip,
     String? phone,
     String? wxSessionKey,
+    String? referralCode,
     String? nickName,
     String? firstCode,
     String? secondCode,
@@ -84,6 +108,13 @@ class User {
     int? secondUserId,
     int? promotion,
     double? amount,
+    double? commission,
+    int? referralCount,
+    int? provinceId,
+    int? cityId,
+    int? districtId,
+    int? firstCount,
+    int? secondCount,
   }) {
     return User(
       id: id ?? this.id,
@@ -108,6 +139,13 @@ class User {
       secondUserId: secondUserId ?? this.secondUserId,
       promotion: promotion ?? this.promotion,
       amount: amount ?? this.amount,
+      commission: commission ?? this.commission,
+      referralCount: referralCount ?? this.referralCount,
+      provinceId: provinceId ?? this.provinceId,
+      cityId: cityId ?? this.cityId,
+      districtId: districtId ?? this.districtId,
+      firstCount: firstCount ?? this.firstCount,
+      secondCount: secondCount ?? this.secondCount,
     );
   }
 }

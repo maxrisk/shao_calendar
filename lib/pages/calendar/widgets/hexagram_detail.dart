@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../models/fortune.dart';
 import '../../../widgets/yao_selector.dart';
 import '../../../widgets/info_card.dart';
 import '../../../widgets/label.dart';
@@ -9,31 +10,11 @@ class HexagramDetail extends StatefulWidget {
   /// 创建卦象详情组件
   const HexagramDetail({
     super.key,
-    required this.timeRange,
-    required this.hexagramName,
-    required this.mainText,
-    required this.secondaryText,
-    required this.interpretation,
-    required this.score,
+    required this.yaos,
   });
 
-  /// 时间范围
-  final String timeRange;
-
-  /// 卦名
-  final String hexagramName;
-
-  /// 主要文本
-  final String mainText;
-
-  /// 次要文本
-  final String secondaryText;
-
-  /// 解释
-  final String interpretation;
-
-  /// 分数
-  final int score;
+  /// 爻列表
+  final List<Yao>? yaos;
 
   @override
   State<HexagramDetail> createState() => _HexagramDetailState();
@@ -44,6 +25,10 @@ class _HexagramDetailState extends State<HexagramDetail> {
 
   @override
   Widget build(BuildContext context) {
+    Yao? yao = widget.yaos != null && _selectedYao < (widget.yaos?.length ?? 0)
+        ? widget.yaos![_selectedYao]
+        : null;
+
     return Container(
       margin: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -63,45 +48,42 @@ class _HexagramDetailState extends State<HexagramDetail> {
           ),
           // 两个卡片
           InfoCardGroup(
-            cards: const [
+            cards: [
               InfoCard(
-                title: '阳爻',
-                content: '君子道长，小人道消。事业上机遇与挑战并存，保持谨慎乐观的态度。',
+                content: '时效：${yao?.times ?? ''}',
+                centered: true,
               ),
               InfoCard(
-                title: '变爻',
-                content: '运势渐入佳境，贵人相助。投资理财宜稳健为主，避免冒进。',
+                content: yao?.change != null ? '${yao!.change}卦' : null,
+                centered: true,
               ),
             ],
           ),
           // 标签
-          Label(text: '《易经》运势'),
+          const Label(text: '《易经》解读'),
           InfoCardGroup(
-            cards: const [
+            cards: [
               InfoCard(
-                title: '爻辞',
-                content: '潜龙勿用',
-              ),
-              InfoCard(
-                title: '卦辞',
-                content: '勿用取女',
-              ),
-            ],
-          ),
-          Label(text: '解读'),
-          InfoCardGroup(
-            cards: const [
-              InfoCard(
-                content: '潜藏而无法施展，\n比喻君子压抑于下层，\n不能有所作为。',
+                content: yao?.words,
                 centered: true,
               ),
               InfoCard(
-                content: '勿用取女',
-                centered: true,
+                content: yao?.changeWords,
               ),
             ],
           ),
-          Label(text: '总评'),
+          const Label(text: '策略'),
+          InfoCardGroup(
+            cards: [
+              InfoCard(
+                content: yao?.interpret,
+              ),
+              InfoCard(
+                content: yao?.changeInterpret,
+              ),
+            ],
+          ),
+          const Label(text: '总评'),
           Container(
             width: double.infinity,
             margin: const EdgeInsets.only(top: 5, bottom: 5),
@@ -118,9 +100,10 @@ class _HexagramDetailState extends State<HexagramDetail> {
             child: Column(
               children: [
                 GlowingHexagram(
-                  text: '坤',
-                  enableAnimation: false,
-                  bgType: HexagramBgType.purple,
+                  text: yao?.determine ?? '付费解锁',
+                  bgType: yao?.determine.contains('凶') ?? false
+                      ? HexagramBgType.orange
+                      : HexagramBgType.purple,
                 ),
               ],
             ),

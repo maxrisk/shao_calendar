@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../widgets/verify_code_input.dart';
+import '../../services/user_service.dart';
 
 /// 设置支付密码页面
 class SetPayPasswordPage extends StatefulWidget {
   /// 创建设置支付密码页面
-  const SetPayPasswordPage({super.key});
+  const SetPayPasswordPage({super.key, required this.verificationCode});
+
+  /// 验证码
+  final String verificationCode;
 
   @override
   State<SetPayPasswordPage> createState() => _SetPayPasswordPageState();
@@ -32,7 +36,7 @@ class _SetPayPasswordPageState extends State<SetPayPasswordPage>
     super.dispose();
   }
 
-  void _handleSubmit(String password) {
+  void _handleSubmit(String password) async {
     if (_firstPassword == null) {
       setState(() {
         _firstPassword = password;
@@ -41,10 +45,24 @@ class _SetPayPasswordPageState extends State<SetPayPasswordPage>
       _animationController.forward(from: 0.0);
     } else {
       if (_firstPassword == password) {
-        // 密码设置成功，返回到安全页面
-        Navigator.pop(context);
-        Navigator.pop(context);
-        Navigator.pop(context);
+        final success = await UserService().updatePayPassword(
+          code: widget.verificationCode,
+          password: password,
+        );
+        if (mounted) {
+          if (success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('支付密码设置成功')),
+            );
+            // 密码设置成功，返回到安全页面
+            Navigator.pop(context);
+            Navigator.pop(context);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('支付密码设置失败')),
+            );
+          }
+        }
       } else {
         // 两次密码不一致
         ScaffoldMessenger.of(context).showSnackBar(

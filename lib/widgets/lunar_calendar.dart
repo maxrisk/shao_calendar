@@ -7,9 +7,11 @@ class LunarCalendar extends StatefulWidget {
   const LunarCalendar({
     super.key,
     this.onDaySelected,
+    this.onPageChanged,
   });
 
   final void Function(DateTime selectedDay, DateTime focusedDay)? onDaySelected;
+  final void Function(DateTime focusedDay)? onPageChanged;
 
   @override
   State<LunarCalendar> createState() => _LunarCalendarState();
@@ -27,7 +29,7 @@ class _LunarCalendarState extends State<LunarCalendar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
       child: Column(
         children: [
           // 日历头部 - 透明背景
@@ -103,12 +105,13 @@ class _LunarCalendarState extends State<LunarCalendar> {
             child: TableCalendar(
               headerVisible: false,
               availableGestures: AvailableGestures.horizontalSwipe,
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
+              firstDay: DateTime.utc(1901, 1, 1),
+              lastDay: DateTime.utc(2100, 12, 31),
               focusedDay: _focusedDay,
               locale: 'zh_CN',
               daysOfWeekHeight: 32,
               onPageChanged: (focusedDay) {
+                widget.onPageChanged?.call(focusedDay);
                 // 处理页面切换事件
                 setState(() {
                   _focusedDay = focusedDay;
@@ -119,11 +122,11 @@ class _LunarCalendarState extends State<LunarCalendar> {
                 weekdayStyle: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
-                weekendStyle: TextStyle(
+                weekendStyle: const TextStyle(
                   color: AppTheme.primaryColor,
                 ),
               ),
-              calendarStyle: CalendarStyle(
+              calendarStyle: const CalendarStyle(
                 outsideDaysVisible: false,
               ),
               selectedDayPredicate: (day) {
@@ -152,7 +155,7 @@ class _LunarCalendarState extends State<LunarCalendar> {
                 selectedBuilder: (context, day, focusedDay) {
                   return Container(
                     margin: const EdgeInsets.all(4.0),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppTheme.primaryColor,
                       shape: BoxShape.circle,
                     ),

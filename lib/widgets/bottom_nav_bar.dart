@@ -1,3 +1,11 @@
+/*
+ * @Author: maxrisk 469057099@qq.com
+ * @Date: 2024-12-31 15:10:25
+ * @LastEditors: maxrisk 469057099@qq.com
+ * @LastEditTime: 2025-05-15 15:01:33
+ * @FilePath: /flutter_calendar/lib/widgets/bottom_nav_bar.dart
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
@@ -28,7 +36,7 @@ class BottomNavBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(Icons.auto_awesome_outlined),
           activeIcon: Icon(Icons.auto_awesome),
-          label: '个人运势',
+          label: '本数历',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../widgets/verify_code_input.dart';
 import '../../pages/profile/complete_info_page.dart';
+import '../../pages/profile/confirm_area_page.dart';
 import '../../services/user_service.dart';
 
 /// 验证码页面
@@ -11,6 +12,8 @@ class VerifyCodePage extends StatefulWidget {
     super.key,
     required this.phone,
     this.autoStart = false,
+    this.openid,
+    this.unionid,
   });
 
   /// 手机号
@@ -19,12 +22,20 @@ class VerifyCodePage extends StatefulWidget {
   /// 是否自动开始倒计时
   final bool autoStart;
 
+  /// 微信openid，用于绑定手机号
+  final String? openid;
+
+  /// 微信unionid，用于绑定手机号
+  final String? unionid;
+
   @override
   State<VerifyCodePage> createState() => _VerifyCodePageState();
 }
 
 class _VerifyCodePageState extends State<VerifyCodePage> {
   bool _isSubmitting = false;
+  Map<String, dynamic>? _province;
+  Map<String, dynamic>? _city;
 
   void showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -45,11 +56,15 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
       });
 
       final userService = context.read<UserService>();
-      final success = await userService.getVerificationCode(widget.phone);
+      final (success, province, city) =
+          await userService.getVerificationCode(widget.phone);
       if (!mounted) return false;
 
       if (!success) {
         showMessage('发送验证码失败，请重试');
+      } else {
+        _province = province;
+        _city = city;
       }
       return success;
     } catch (e) {
@@ -68,15 +83,33 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
   Future<void> _handleSubmit(String code) async {
     try {
       final userService = context.read<UserService>();
-      final userInfo = await userService.login(widget.phone, code);
-      print('userInfo: $userInfo');
+      final userInfo = await userService.login(
+        phone: widget.phone,
+        code: code,
+        openid: widget.openid,
+        unionid: widget.unionid,
+      );
 
       if (!mounted) return;
 
       if (userInfo != null) {
-        // 登录成功，判断是否需要完善信息
-        if (userInfo.userInfo.birthDate?.isEmpty ?? true) {
-          // 需要完善生日信息
+        // 登录成功，检查用户信息
+        final user = userInfo.userInfo;
+
+        if (user.provinceId == null || user.cityId == null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ConfirmAreaPage(
+                phone: widget.phone,
+                code: code,
+                province: _province,
+                city: _city,
+              ),
+            ),
+          );
+        } else if (user.birthDate?.isEmpty ?? true) {
+          // 如果生日信息为空，跳转到完善信息页面
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -84,8 +117,12 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
             ),
           );
         } else {
-          // 直接返回上一页
+          // 信息完整，直接返回
           Navigator.pop(context);
+          if (widget.openid != null) {
+            // 如果是微信登录绑定手机号，多返回一层
+            Navigator.pop(context);
+          }
           Navigator.pop(context);
         }
       } else {

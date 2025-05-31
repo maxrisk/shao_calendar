@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../models/commission_order.dart';
+import '../../../models/commission_record.dart';
 
 /// 提成记录单元格
 class CommissionRecordCell extends StatelessWidget {
@@ -14,7 +14,7 @@ class CommissionRecordCell extends StatelessWidget {
   });
 
   /// 提成类型
-  final CommissionOrderType type;
+  final CommissionRecordType type;
 
   /// 单号
   final String orderNo;

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../models/commission_order.dart';
+import '../../models/commission_record.dart';
 
-/// 订单详情页面
-class CommissionOrderPage extends StatelessWidget {
-  /// 创建订单详情页面
-  const CommissionOrderPage({
+/// 佣金记录详情页面
+class CommissionRecordPage extends StatelessWidget {
+  /// 创建佣金记录详情页面
+  const CommissionRecordPage({
     super.key,
-    required this.order,
+    required this.record,
   });
 
   /// 订单信息
-  final CommissionOrder order;
+  final CommissionRecord record;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class CommissionOrderPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            order.type.label,
+                            record.level.label,
                             style: TextStyle(
                               fontSize: 13,
                               color: colorScheme.primary,
@@ -75,13 +75,13 @@ class CommissionOrderPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          order.amount >= 0
-                              ? '+${order.amount.toStringAsFixed(2)}'
-                              : order.amount.toStringAsFixed(2),
+                          record.changeAmount >= 0
+                              ? '+${record.changeAmount.toStringAsFixed(2)}'
+                              : record.changeAmount.toStringAsFixed(2),
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.w600,
-                            color: order.amount >= 0
+                            color: record.changeAmount >= 0
                                 ? colorScheme.primary
                                 : colorScheme.error,
                             height: 1.1,
@@ -92,12 +92,12 @@ class CommissionOrderPage extends StatelessWidget {
                     ),
                   ),
                   // 订单信息列表
-                  _buildInfoItem(context, '时间', order.dateTime),
-                  _buildInfoItem(context, '订单编号', order.orderNo),
-                  _buildInfoItem(context, '说明', order.description),
-                  if (order.type == CommissionOrderType.withdraw &&
-                      order.cardNo != null)
-                    _buildInfoItem(context, '卡号', order.cardNo!),
+                  _buildInfoItem(context, '时间', record.createTime ?? ''),
+                  _buildInfoItem(context, '订单编号', record.orderNo),
+                  _buildInfoItem(context, '说明', record.remark ?? ''),
+                  // if (record.type == CommissionRecordType.withdraw &&
+                  //     record.cardNo != null)
+                  //   _buildInfoItem(context, '卡号', order.cardNo!),
                 ],
               ),
             ),

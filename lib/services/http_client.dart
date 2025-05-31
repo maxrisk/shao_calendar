@@ -41,6 +41,7 @@ class HttpClient {
       },
       onResponse: (response, handler) {
         if (!AppConfig.isProduction) {
+          print('response headers: ${response.headers}');
           print(
               '${response.requestOptions.method}:${response.requestOptions.path} response: ${response.data}');
         }

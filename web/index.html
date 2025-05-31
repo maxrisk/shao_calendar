@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -27,12 +28,115 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
-  <title>flutter_calendar</title>
+  <title>邵氏先天历</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      margin-top: 20px;
+      font-family: "PingFang SC", "Helvetica Neue", sans-serif;
+      font-size: 16px;
+      color: #666;
+    }
+
+    /* 移动设备样式 */
+    @media screen and (max-width: 768px) {
+      .loading-spinner {
+        width: 80px;
+        height: 80px;
+        border-width: 8px;
+      }
+
+      .loading-text {
+        margin-top: 24px;
+        font-size: 20px;
+      }
+    }
+
+    /* 针对小屏幕手机的样式 */
+    @media screen and (max-width: 375px) {
+      .loading-spinner {
+        width: 70px;
+        height: 70px;
+        border-width: 7px;
+      }
+
+      .loading-text {
+        margin-top: 22px;
+        font-size: 18px;
+      }
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    body {
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .flutter-loader {
+      display: none;
+    }
+  </style>
 </head>
+
 <body>
+  <div id="loading" class="loading">
+    <div style="text-align: center;">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">正在加载...</div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('load', function () {
+      // 监听 Flutter 初始化完成事件
+      window.addEventListener('flutter-first-frame', function () {
+        var loadingElement = document.getElementById('loading');
+        if (loadingElement) {
+          loadingElement.remove();
+        }
+      });
+    });
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
+
 </html>

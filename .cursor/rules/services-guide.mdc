@@ -1,0 +1,49 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 服务类指南
+
+本项目中的服务类负责处理业务逻辑和 API 调用。
+
+## 主要服务类
+- [lib/services/user_service.dart](mdc:lib/services/user_service.dart) - 用户服务
+- [lib/services/invite_service.dart](mdc:lib/services/invite_service.dart) - 邀请服务
+- [lib/services/http_client.dart](mdc:lib/services/http_client.dart) - HTTP 客户端
+
+## 服务类实现模式
+```dart
+class SomeService {
+  static final SomeService _instance = SomeService._internal();
+  final Dio _dio = HttpClient().dio;
+  
+  factory SomeService() {
+    return _instance;
+  }
+  
+  SomeService._internal();
+  
+  // API 方法
+  Future<ResultType> someApiCall() async {
+    try {
+      final response = await _dio.get('/some/endpoint');
+      // 处理响应...
+    } catch (e) {
+      // 处理错误...
+    }
+  }
+}
+```
+
+## 错误处理策略
+- 使用 try-catch 捕获所有异常
+- 区分不同类型的错误（网络错误、服务器错误、解析错误）
+- 返回空列表或默认对象而不是 null
+- 记录详细的错误信息，包括请求和响应数据
+
+## 缓存策略
+- 某些服务类（如 UserService）缓存数据
+- 使用 `notifyListeners()` 通知变更
+- 提供刷新数据的方法
+- 适当处理缓存失效的情况

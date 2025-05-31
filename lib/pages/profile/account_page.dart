@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../services/user_service.dart';
+import '../../services/fortune_service.dart';
 import 'edit_nickname_page.dart';
 import '../../widgets/dialogs/index.dart';
 import 'change_phone_page.dart';
@@ -54,7 +55,7 @@ class _AccountPageState extends State<AccountPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              userInfo?.id?.toString() ?? '-',
+                              userInfo?.referralCode?.toString() ?? '-',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: colorScheme.onSurfaceVariant,
@@ -98,7 +99,7 @@ class _AccountPageState extends State<AccountPage> {
                         title: '天历服务',
                         trailing: Text(
                           userInfo?.isVip == true
-                              ? '剩余 ${_getRemainingDays(userInfo!.expirationTime!)} 天'
+                              ? '剩余 ${userService.remainingDays} 天'
                               : '未开通',
                           style: TextStyle(
                             fontSize: 15,
@@ -207,7 +208,28 @@ class _AccountPageState extends State<AccountPage> {
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: _handleLogout,
+                onPressed: () async {
+                  final confirmed = await ConfirmDialog.show(
+                    context: context,
+                    title: '退出登录',
+                    content: '确定要退出登录吗？',
+                    isDanger: true,
+                  );
+
+                  if (confirmed == true && mounted) {
+                    // 退出登录
+                    final userService = context.read<UserService>();
+                    await userService.logout();
+                    // 清理运势数据
+                    final fortuneService =
+                        Provider.of<FortuneService>(context, listen: false);
+                    fortuneService.clearFortuneData();
+                    // 返回到首页
+                    if (context.mounted) {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    }
+                  }
+                },
                 style: FilledButton.styleFrom(
                   backgroundColor: colorScheme.primary,
                   foregroundColor: colorScheme.onPrimary,
@@ -255,29 +277,6 @@ class _AccountPageState extends State<AccountPage> {
       return phone;
     }
     return '${phone.substring(0, 3)}****${phone.substring(7)}';
-  }
-
-  int _getRemainingDays(String expirationTime) {
-    final expiration = DateTime.parse(expirationTime);
-    final now = DateTime.now();
-    return expiration.difference(now).inDays;
-  }
-
-  void _handleLogout() async {
-    final confirmed = await ConfirmDialog.show(
-      context: context,
-      title: '退出登录',
-      content: '确定要退出登录吗？',
-      isDanger: true,
-    );
-
-    if (confirmed == true && mounted) {
-      final userService = context.read<UserService>();
-      await userService.logout();
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    }
   }
 
   Future<void> _copyToClipboard(BuildContext context, String text) async {

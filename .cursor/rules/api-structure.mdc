@@ -1,0 +1,36 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# API 结构指南
+
+本项目使用 RESTful API 与后端服务通信。
+
+## API 响应格式
+所有 API 响应遵循统一格式：
+```json
+{
+  "code": 0,       // 0 表示成功，非 0 表示错误
+  "msg": null,     // 成功时为 null，失败时为错误信息
+  "data": {}       // 响应数据
+}
+```
+
+## 错误处理
+- 服务类应处理所有可能的异常
+- 使用 try-catch 捕获 DioException 和其他异常
+- 在日志中记录错误信息
+- 返回合理的默认值或空值
+
+## 常见 API 端点
+- `/app/user` - 获取/创建用户信息
+- `/app/user/referral` - 获取邀请明细
+- `/app/withdraw/record` - 获取提现记录
+- `/app/amount/record` - 获取余额明细
+
+## 数据模型
+- 模型类使用 `@JsonSerializable()` 注解
+- 枚举类型使用 `@JsonValue()` 注解
+- 处理可能为 null 的字段
+- 提供强大的解析错误处理

@@ -1,18 +1,68 @@
 import 'package:flutter/material.dart';
+import '../../services/order_service.dart';
+import '../../models/product.dart';
+import '../../models/order_list.dart';
 import 'payment_page.dart';
+import '../../services/user_service.dart';
+import 'package:provider/provider.dart';
 
 /// 天历服务页面
-class CalendarServicePage extends StatelessWidget {
+class CalendarServicePage extends StatefulWidget {
   /// 创建天历服务页面
-  const CalendarServicePage({super.key});
+  const CalendarServicePage({super.key, this.type = 1});
+
+  final int type;
+
+  @override
+  State<CalendarServicePage> createState() => _CalendarServicePageState();
+}
+
+class _CalendarServicePageState extends State<CalendarServicePage> {
+  Product? _product;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProduct();
+  }
+
+  Future<void> _loadProduct() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final product = await OrderService().getProduct(type: widget.type);
+      if (mounted) {
+        setState(() {
+          _product = product;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('获取产品信息失败')),
+        );
+      }
+    }
+  }
 
   void _handlePurchase(BuildContext context) {
+    if (_product == null) return;
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const PaymentPage(
-          amount: 365,
-          title: '天历1年服务订阅',
+        builder: (context) => PaymentPage(
+          amount: _product!.price,
+          title: _product!.name,
+          productId: _product!.id,
+          serviceType: ServiceType.calendar,
         ),
       ),
     );
@@ -20,7 +70,9 @@ class CalendarServicePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final userService = context.watch<UserService>();
 
     return Scaffold(
       appBar: AppBar(
@@ -45,80 +97,78 @@ class CalendarServicePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 剩余天数卡片
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary.withAlpha(25),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '剩余天数',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: colorScheme.onSurface,
+                  if (_product == null || _product!.type != 2)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: theme.cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '剩余天数',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: colorScheme.onSurface,
+                            ),
                           ),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              '45',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: colorScheme.primary,
+                          Row(
+                            children: [
+                              Text(
+                                '${userService.remainingDays}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: colorScheme.primary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '天',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: colorScheme.primary,
+                              const SizedBox(width: 4),
+                              Text(
+                                '天',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: colorScheme.primary,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                  // 只有当显示了剩余天数卡片时才显示间距
+                  if (_product == null || _product!.type != 2)
+                    const SizedBox(height: 24),
                   // 价格信息
                   Center(
                     child: Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: colorScheme.outlineVariant,
-                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            '订阅服务 - 1年计划',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: colorScheme.onSurface,
+                            _product?.name ?? '服务名称',
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 24),
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -134,12 +184,11 @@ class CalendarServicePage extends StatelessWidget {
                               ),
                               const SizedBox(width: 2),
                               Text(
-                                '365',
+                                _product?.price.toString() ?? '0',
                                 style: TextStyle(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                   color: colorScheme.primary,
-                                  height: 1,
                                 ),
                               ),
                             ],
@@ -148,50 +197,138 @@ class CalendarServicePage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 24),
+
+                  // 详情说明卡片
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              color: colorScheme.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '详情说明',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        _buildDetailItem(
+                          _product?.description ?? '服务描述',
+                          colorScheme,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-          // 购买按钮
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              16,
-              16,
-              16,
-              16 + MediaQuery.of(context).padding.bottom,
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              child: FilledButton(
-                onPressed: () => _handlePurchase(context),
-                style: FilledButton.styleFrom(
-                  backgroundColor: colorScheme.primary,
-                  foregroundColor: colorScheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  '立即购买',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
+      bottomNavigationBar: SafeArea(
+        minimum: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: 16 + MediaQuery.of(context).padding.bottom,
+        ),
+        child: FilledButton(
+          onPressed: _product != null ? () => _handlePurchase(context) : null,
+          style: FilledButton.styleFrom(
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary,
+            minimumSize: const Size.fromHeight(48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
-        ],
+          child: const Text(
+            '立即购买',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildDetailItem(String text, ColorScheme colorScheme) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.8,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
 /// 购买记录页面
-class PurchaseHistoryPage extends StatelessWidget {
+class PurchaseHistoryPage extends StatefulWidget {
   /// 创建购买记录页面
   const PurchaseHistoryPage({super.key});
+
+  @override
+  State<PurchaseHistoryPage> createState() => _PurchaseHistoryPageState();
+}
+
+class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
+  List<OrderItem>? _orders;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOrders();
+  }
+
+  Future<void> _loadOrders() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final orders = await OrderService().getOrders();
+      if (mounted) {
+        setState(() {
+          _orders = orders;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('获取订单列表失败')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -207,57 +344,132 @@ class PurchaseHistoryPage extends StatelessWidget {
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: colorScheme.outlineVariant,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '1年期服务',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface,
-                      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _orders == null || _orders!.isEmpty
+              ? Center(
+                  child: Text(
+                    '暂无购买记录',
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
                     ),
-                    Text(
-                      '¥365',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '2024-02-28 12:00:00',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: colorScheme.onSurfaceVariant,
                   ),
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: _orders!.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final order = _orders![index];
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: colorScheme.outlineVariant.withAlpha(50),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        order.title ?? '天历服务',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        order.formattedCreateTime,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: colorScheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '¥${order.total}',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: colorScheme.primary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: order.status == 'PAYED'
+                                            ? colorScheme.primary.withAlpha(20)
+                                            : colorScheme.error.withAlpha(20),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        order.status == 'PAYED' ? '已支付' : '未支付',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: order.status == 'PAYED'
+                                              ? colorScheme.primary
+                                              : colorScheme.error,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color:
+                                      colorScheme.outlineVariant.withAlpha(50),
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '订单号',
+                                  style: TextStyle(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                                Text(
+                                  order.orderNo,
+                                  style: const TextStyle(
+                                    fontFamily: 'monospace',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              ],
-            ),
-          );
-        },
-        itemCount: 10, // 示例数据
-      ),
     );
   }
 }

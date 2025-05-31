@@ -166,15 +166,18 @@ class _GlowingHexagramState extends State<GlowingHexagram>
             child: Text(
               widget.text,
               style: TextStyle(
-                fontSize: widget.size * 0.375,
-                color: Colors.white,
-                shadows: const [
+                fontSize: widget.text.length > 2
+                    ? widget.size * 0.17 // 四字时使用更小的字号
+                    : widget.size * 0.33,
+                color: Theme.of(context).primaryColor,
+                shadows: [
                   Shadow(
-                    color: Colors.white,
+                    color: Theme.of(context).primaryColor,
                     blurRadius: 10,
                   ),
                 ],
               ),
+              textAlign: TextAlign.center,
             ),
           ),
         ),

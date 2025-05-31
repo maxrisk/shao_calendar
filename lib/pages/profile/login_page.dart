@@ -1,10 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../widgets/rounded_icon_button.dart';
 import 'verify_code_page.dart';
-import 'user_agreement_page.dart';
-import 'privacy_policy_page.dart';
+import '../../config/urls.dart';
+import '../../services/wechat_login_manager.dart';
+import 'package:fluwx/fluwx.dart';
 
 /// 登录页面
 class LoginPage extends StatefulWidget {
@@ -20,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final _focusNode = FocusNode();
   bool _isAgreed = false;
   bool _isPhoneValid = false;
+  WeChatResponseSubscriber? _wechatSubscription;
 
   @override
   void initState() {
@@ -28,12 +32,35 @@ class _LoginPageState extends State<LoginPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
+
+    // 监听微信登录回调
+    _wechatSubscription = (resp) async {
+      if (!mounted) return;
+      if (resp is WeChatAuthResponse) {
+        if (resp.code != null) {
+          final success = await WechatLoginManager().handleLoginResponse(
+            resp.code!,
+            context: context,
+          );
+          if (!success && mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('微信登录失败')),
+            );
+          }
+        }
+      }
+    };
+
+    Fluwx().addSubscriber(_wechatSubscription!);
   }
 
   @override
   void dispose() {
     _phoneController.dispose();
     _focusNode.dispose();
+    if (_wechatSubscription != null) {
+      Fluwx().removeSubscriber(_wechatSubscription!);
+    }
     super.dispose();
   }
 
@@ -56,22 +83,49 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> _openUrl(String url) async {
+    try {
+      if (!await launchUrl(Uri.parse(url))) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('无法打开链接')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('打开链接失败')),
+        );
+      }
+    }
+  }
+
   void _handleAgreement() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const UserAgreementPage(),
-      ),
-    );
+    _openUrl(URLs.userAgreement);
   }
 
   void _handlePrivacy() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const PrivacyPolicyPage(),
-      ),
-    );
+    _openUrl(URLs.privacyPolicy);
+  }
+
+  Future<void> _handleWechatLogin() async {
+    if (!_isAgreed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请先同意用户协议和隐私政策')),
+      );
+      return;
+    }
+
+    try {
+      await WechatLoginManager.login();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('发起微信登录失败')),
+        );
+      }
+    }
   }
 
   @override
@@ -134,34 +188,53 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 64),
-                      Center(
-                        child: Text(
-                          '其他登录方式',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: colorScheme.onSurfaceVariant,
+                      if (!kIsWeb)
+                        Center(
+                          child: Text(
+                            '其他登录方式',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
-                      ),
                       const SizedBox(height: 16),
-                      // 微信图标
-                      Center(
-                        child: IconButton(
-                          onPressed: () {
-                            // TODO: 处理微信登录
-                          },
-                          style: IconButton.styleFrom(
-                            backgroundColor: const Color(0xFF07C160),
-                            padding: const EdgeInsets.all(8),
-                            shape: const CircleBorder(),
-                          ),
-                          icon: const Icon(
-                            Icons.wechat_rounded,
-                            size: 35,
-                            color: Colors.white, // 微信绿色
+                      // 微信图标 - 仅在非web平台显示
+                      if (!kIsWeb)
+                        Center(
+                          child: IconButton(
+                            onPressed: () async {
+                              // 让键盘失焦
+                              FocusScope.of(context).unfocus();
+                              // 检查是否同意协议
+                              if (!_isAgreed) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('请先同意用户协议和隐私政策')),
+                                );
+                                return;
+                              }
+                              try {
+                                await WechatLoginManager.login();
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('微信登录失败')),
+                                  );
+                                }
+                              }
+                            },
+                            style: IconButton.styleFrom(
+                              backgroundColor: const Color(0xFF07C160),
+                              padding: const EdgeInsets.all(10),
+                            ),
+                            icon: const Icon(
+                              Icons.wechat,
+                              size: 35,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
                       const SizedBox(height: 32),
                       // 用户协议
                       Row(
