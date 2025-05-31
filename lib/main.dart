@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'theme/app_theme.dart';
 import 'services/user_service.dart';
 import 'package:provider/provider.dart';
@@ -10,9 +12,15 @@ import 'pages/profile/complete_info_page.dart';
 import 'services/fortune_service.dart';
 import 'utils/shared_prefs.dart';
 import 'widgets/dialogs/agreement_dialog.dart';
+import 'pages/profile/payment_result_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 设置 URL 策略为路径模式
+  if (kIsWeb) {
+    setUrlStrategy(PathUrlStrategy());
+  }
 
   // 初始化共享偏好设置
   await SharedPrefs.init();
@@ -141,6 +149,29 @@ class _AppState extends State<App> {
       ],
       locale: const Locale('zh', 'CN'),
       home: const HomePage(title: '邵氏先天历'),
+      onGenerateRoute: (settings) {
+        if (settings.name?.startsWith('/payment-result') == true) {
+          // 解析 URL 中的查询参数
+          final uri = Uri.parse(settings.name!);
+          final params = Map<String, String>.from(uri.queryParameters);
+          print('支付回调参数: $params');
+
+          return MaterialPageRoute(
+            builder: (context) {
+              if (params.isEmpty) {
+                return const Scaffold(
+                  body: Center(
+                    child: Text('无效的支付结果参数'),
+                  ),
+                );
+              }
+              return PaymentResultPage(params: params);
+            },
+          );
+        }
+        // 处理其他路由...
+        return null;
+      },
     );
   }
 }

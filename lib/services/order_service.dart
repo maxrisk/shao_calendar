@@ -7,10 +7,20 @@ import '../models/order_list.dart';
 /// 支付类型
 enum PayType {
   /// 支付宝
-  alipay,
+  alipay('alipay'),
 
   /// 微信支付
-  wechat,
+  wechat('wechat'),
+
+  /// 支付宝 H5
+  alipayH5('alipay_h5'),
+
+  /// 微信 H5
+  wechatH5('wechat_h5');
+
+  final String value;
+
+  const PayType(this.value);
 }
 
 /// 产品类型
@@ -47,7 +57,7 @@ class OrderService {
   Future<OrderResponse?> createOrder(PayType payType, int productId) async {
     try {
       final response = await _dio.post(
-        '/app/order/create/${payType.name.toUpperCase()}/$productId',
+        '/app/order/create/${payType.value.toUpperCase()}/$productId',
       );
       return OrderResponse.fromJson(response.data);
     } on DioException catch (e) {

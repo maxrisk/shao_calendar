@@ -3,18 +3,9 @@ import 'http_client.dart';
 import '../models/order.dart';
 import '../models/package.dart';
 import '../models/package_group.dart';
-import '../models/order_list.dart';
 import '../models/package_order.dart';
 import '../models/single_package_order.dart';
-
-/// 支付类型
-enum PayType {
-  /// 支付宝
-  alipay,
-
-  /// 微信支付
-  wechat,
-}
+import '../services/order_service.dart';
 
 /// 服务包服务
 class PackageService {
@@ -35,7 +26,7 @@ class PackageService {
         '/app/order/packageOrder',
         data: {
           'id': packageId,
-          'payType': payType.name.toUpperCase(),
+          'payType': payType.value.toUpperCase(),
         },
       );
       return OrderResponse.fromJson(response.data);
@@ -53,7 +44,7 @@ class PackageService {
         '/app/order/packageGroupOrder',
         data: {
           'id': groupId,
-          'payType': payType.name.toUpperCase(),
+          'payType': payType.value.toUpperCase(),
         },
       );
       return OrderResponse.fromJson(response.data);

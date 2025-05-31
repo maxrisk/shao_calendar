@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -187,50 +188,53 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 64),
-                      Center(
-                        child: Text(
-                          '其他登录方式',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: colorScheme.onSurfaceVariant,
+                      if (!kIsWeb)
+                        Center(
+                          child: Text(
+                            '其他登录方式',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
-                      ),
                       const SizedBox(height: 16),
-                      // 微信图标
-                      Center(
-                        child: IconButton(
-                          onPressed: () async {
-                            // 让键盘失焦
-                            FocusScope.of(context).unfocus();
-                            // 检查是否同意协议
-                            if (!_isAgreed) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('请先同意用户协议和隐私政策')),
-                              );
-                              return;
-                            }
-                            try {
-                              await WechatLoginManager.login();
-                            } catch (e) {
-                              if (mounted) {
+                      // 微信图标 - 仅在非web平台显示
+                      if (!kIsWeb)
+                        Center(
+                          child: IconButton(
+                            onPressed: () async {
+                              // 让键盘失焦
+                              FocusScope.of(context).unfocus();
+                              // 检查是否同意协议
+                              if (!_isAgreed) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('微信登录失败')),
+                                  const SnackBar(
+                                      content: Text('请先同意用户协议和隐私政策')),
                                 );
+                                return;
                               }
-                            }
-                          },
-                          style: IconButton.styleFrom(
-                            backgroundColor: const Color(0xFF07C160),
-                            padding: const EdgeInsets.all(10),
-                          ),
-                          icon: const Icon(
-                            Icons.wechat,
-                            size: 35,
-                            color: Colors.white,
+                              try {
+                                await WechatLoginManager.login();
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('微信登录失败')),
+                                  );
+                                }
+                              }
+                            },
+                            style: IconButton.styleFrom(
+                              backgroundColor: const Color(0xFF07C160),
+                              padding: const EdgeInsets.all(10),
+                            ),
+                            icon: const Icon(
+                              Icons.wechat,
+                              size: 35,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
                       const SizedBox(height: 32),
                       // 用户协议
                       Row(

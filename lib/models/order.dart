@@ -60,6 +60,9 @@ class OrderResponse {
   /// 支付宝支付链接
   String? get alipayUrl => data is String ? data : null;
 
+  /// 支付宝支付H5表单
+  String? get alipayH5PayForm => data is String ? data : null;
+
   /// 微信支付数据
   WechatOrderData? get wechatData =>
       data is Map<String, dynamic> ? WechatOrderData.fromJson(data) : null;

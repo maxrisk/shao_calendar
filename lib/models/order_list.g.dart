@@ -60,7 +60,9 @@ Map<String, dynamic> _$OrderItemToJson(OrderItem instance) => <String, dynamic>{
 
 const _$PayTypeEnumMap = {
   PayType.wechat: 'WECHAT',
+  PayType.wechatH5: 'WECHAT_H5',
   PayType.alipay: 'ALIPAY',
+  PayType.alipayH5: 'ALIPAY_H5',
 };
 
 OrderListResponse _$OrderListResponseFromJson(Map<String, dynamic> json) =>

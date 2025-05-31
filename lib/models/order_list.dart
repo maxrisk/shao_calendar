@@ -8,9 +8,17 @@ enum PayType {
   @JsonValue('WECHAT')
   wechat,
 
+  /// 微信H5支付
+  @JsonValue('WECHAT_H5')
+  wechatH5,
+
   /// 支付宝支付
   @JsonValue('ALIPAY')
   alipay,
+
+  /// 支付宝H5支付
+  @JsonValue('ALIPAY_H5')
+  alipayH5,
 }
 
 /// 支付类型的扩展方法
@@ -20,8 +28,12 @@ extension PayTypeExtension on PayType {
     switch (this) {
       case PayType.wechat:
         return '微信支付';
+      case PayType.wechatH5:
+        return '微信H5支付';
       case PayType.alipay:
         return '支付宝支付';
+      case PayType.alipayH5:
+        return '支付宝H5支付';
     }
   }
 
@@ -30,8 +42,12 @@ extension PayTypeExtension on PayType {
     switch (this) {
       case PayType.wechat:
         return 'WECHAT';
+      case PayType.wechatH5:
+        return 'WECHAT_H5';
       case PayType.alipay:
         return 'ALIPAY';
+      case PayType.alipayH5:
+        return 'ALIPAY_H5';
     }
   }
 }

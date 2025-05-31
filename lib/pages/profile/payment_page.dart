@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+// Web 支持
+import 'package:web/web.dart' as web;
 import '../../widgets/list/list_cell.dart';
 import '../../widgets/list/list_group.dart';
 import '../../models/order.dart';
@@ -138,8 +141,34 @@ class _PaymentPageState extends State<PaymentPage> {
       final response = await _createOrder();
 
       if (response?.code == 0) {
-        print('aliUrl: ${response?.alipayUrl}');
-        if (_selectedPaymentMethod == 'alipay' && response?.alipayUrl != null) {
+        if (kIsWeb &&
+            _selectedPaymentMethod == 'alipay' &&
+            response?.alipayH5PayForm != null) {
+          // 调用支付宝H5支付
+          // 创建一个隐藏的 div 来放置支付宝表单
+          final div = web.document.createElement('div');
+          if (div is web.HTMLElement) {
+            div.style.setProperty('display', 'none');
+            // 修改表单的 return_url 参数
+            final formHtml = response!.alipayH5PayForm!;
+            div.innerHTML = formHtml;
+
+            // 将 div 添加到页面中
+            web.document.body?.appendChild(div);
+
+            // 获取表单并提交
+            final form = div.querySelector('form');
+            if (form is web.HTMLFormElement) {
+              form.submit();
+            }
+
+            // 提交后移除 div
+            Future.delayed(const Duration(seconds: 1), () {
+              div.remove();
+            });
+          }
+        } else if (_selectedPaymentMethod == 'alipay' &&
+            response?.alipayUrl != null) {
           // 调用支付宝支付
           final success = await _alipayService.pay(response!.alipayUrl!);
           if (success) {
@@ -186,7 +215,7 @@ class _PaymentPageState extends State<PaymentPage> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text(
+                  content: Text(response?.msg ??
                       '创建${_selectedPaymentMethod == 'alipay' ? '支付宝' : '微信'}订单失败')),
             );
           }
@@ -194,14 +223,14 @@ class _PaymentPageState extends State<PaymentPage> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('创建订单失败')),
+            SnackBar(content: Text(response?.msg ?? '创建订单失败')),
           );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('支付异常: $e')),
+          SnackBar(content: Text('支付异常: ${e.toString()}')),
         );
       }
     } finally {
@@ -215,30 +244,19 @@ class _PaymentPageState extends State<PaymentPage> {
 
   /// 根据服务类型创建对应的订单
   Future<OrderResponse?> _createOrder() async {
-    // 选择支付类型
-    // final payTypeStr = _selectedPaymentMethod == 'alipay' ? 'ALIPAY' : 'WECHAT';
-
+    // 根据平台选择支付类型，web端使用H5支付，移动端使用原生支付
+    final orderPayType = _selectedPaymentMethod == 'alipay'
+        ? (kIsWeb ? PayType.alipayH5 : PayType.alipay)
+        : (kIsWeb ? PayType.wechatH5 : PayType.wechat);
     switch (widget.serviceType) {
       case ServiceType.calendar:
-        // 使用订单服务的PayType
-        final orderPayType = _selectedPaymentMethod == 'alipay'
-            ? PayType.alipay
-            : PayType.wechat;
         return await _orderService.createOrder(orderPayType, widget.productId!);
       case ServiceType.package:
-        // 使用包服务的PayType
-        final packagePayType = _selectedPaymentMethod == 'alipay'
-            ? package_service.PayType.alipay
-            : package_service.PayType.wechat;
         return await _packageService.createPackageOrder(
-            widget.packageId!, packagePayType);
+            widget.packageId!, orderPayType);
       case ServiceType.packageGroup:
-        // 使用包服务的PayType
-        final packagePayType = _selectedPaymentMethod == 'alipay'
-            ? package_service.PayType.alipay
-            : package_service.PayType.wechat;
         return await _packageService.createPackageGroupOrder(
-            widget.packageGroupId!, packagePayType);
+            widget.packageGroupId!, orderPayType);
     }
   }
 

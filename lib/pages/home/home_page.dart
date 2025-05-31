@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -171,13 +172,15 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 centerTitle: false,
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.qr_code_scanner_rounded),
-                    onPressed: _onScanPressed,
-                    color: Colors.white,
-                  ),
-                ],
+                actions: kIsWeb
+                    ? []
+                    : [
+                        IconButton(
+                          icon: const Icon(Icons.qr_code_scanner_rounded),
+                          onPressed: _onScanPressed,
+                          color: Colors.white,
+                        ),
+                      ],
               )
             : null,
         body: Stack(
